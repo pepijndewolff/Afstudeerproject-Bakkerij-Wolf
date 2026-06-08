@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.2 Bestellingen per Datum — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    .font-gt-ext-rg { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .font-gt-ext-md { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 600; }
+    .font-gt-rg     { font-family: Arial, sans-serif; font-weight: 400; }
+    .font-gt-bd     { font-family: Arial, sans-serif; font-weight: 700; }
+    .inter-regular  { font-family: 'Inter', sans-serif; font-weight: 400; }
+    .inter-medium   { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .inter-bold     { font-family: 'Inter', sans-serif; font-weight: 700; }
+    a.nav-item { display: flex; flex-direction: column; width: 100%; text-decoration: none; }
+    a.nav-item:hover { background-color: rgba(249,247,242,0.5); }
+  </style>
+</head>
+<body class="bg-[#dfdacd] flex flex-col w-full h-full">
+
+  <header class="border-b border-[#b5ae9c] flex items-center justify-between px-8 py-6 shrink-0 w-full">
+    <div class="flex gap-5 items-center">
+      <div class="h-[30px] w-[27px] shrink-0 relative">
+        <img alt="" class="block w-full h-full object-contain" src="assets/wolf logo 1.svg">
+      </div>
+      <p class="font-gt-ext-rg text-black tracking-[6.4px] uppercase whitespace-nowrap text-[16px]">
+        Bakkerij <span class="font-gt-ext-md">Wolf</span>
+      </p>
+    </div>
+    <div class="relative flex items-center bg-[#f9f7f2] rounded-[100px] px-4 py-2 whitespace-nowrap">
+      <span class="font-gt-rg text-[14px] text-[#1e1e1e]">Noor</span>
+    </div>
+  </header>
+
+  <div class="flex flex-1 min-h-0 w-full">
+    <aside data-wolf-sidebar="bestellingen" class="border-r border-[#b5ae9c] flex flex-col h-full shrink-0 w-[271px] pt-10 pb-4"></aside>
+
+    <main class="bg-[#f9f7f2] flex flex-1 flex-col gap-6 h-full overflow-y-auto min-w-0 p-10">
+
+      <div class="flex flex-col gap-3 shrink-0 w-full">
+        <div class="flex gap-2 inter-regular text-[#2e2e2e] text-[16px] whitespace-nowrap">
+          <a href="1-109-bestellingen.html" class="text-[#2e2e2e] no-underline hover:underline">Bestellingen</a>
+          <span>&gt;</span>
+          <span id="bc-dag"></span>
+        </div>
+        <div class="flex gap-3 items-center w-full">
+          <p class="inter-bold text-[32px] text-black whitespace-nowrap">Bestellingen</p>
+          <div class="flex gap-3 items-center flex-1">
+            <p id="titel-dag" class="inter-medium text-[20px] text-black whitespace-nowrap"></p>
+            <div id="dag-badge"></div>
+          </div>
+          <div id="sluit-actie" class="shrink-0"></div>
+        </div>
+      </div>
+
+      <div class="border border-[#b5ae9c] rounded-[8px] overflow-hidden w-full">
+        <div class="bg-[#dfdacd] border-b border-[#b5ae9c] flex items-center gap-4 px-6 py-3 w-full">
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] w-[90px]">Bestelnr</p>
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] flex-1 min-w-0">Klant</p>
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] w-[120px]">Wijze</p>
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] w-[100px]">Tijdstip</p>
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] w-[150px]">Status</p>
+          <div class="w-5 shrink-0"></div>
+        </div>
+        <div id="order-rijen"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const W = window.WolfData;
+    const params = new URLSearchParams(window.location.search);
+    const dagen = W.getDeliveryDays();
+    const dagParam = params.get('dag');
+    const dag = (dagParam && dagen.find(function (d) { return d.id === dagParam; }))
+      || dagen.find(function (d) { return d.isFocus; }) || dagen[0];
+
+    document.getElementById('bc-dag').textContent = dag.label;
+    document.getElementById('titel-dag').textContent = dag.label;
+
+    const gesloten = dag.gesloten || W.isDagGesloten(dag.id);
+    document.getElementById('dag-badge').innerHTML = gesloten
+      ? `<div class="bg-[#e5e5e5] flex gap-2 items-center px-3 py-1 rounded-[100px]">
+           <div class="w-[7px] h-[7px] rounded-full" style="background-color: #737373;"></div>
+           <p class="inter-medium text-[#737373] text-[14px] uppercase whitespace-nowrap">Gesloten</p></div>`
+      : `<div class="bg-[#c8f4ce] flex gap-2 items-center px-3 py-1 rounded-[100px]">
+           <div class="w-[7px] h-[7px] rounded-full" style="background-color: #32b443;"></div>
+           <p class="inter-medium text-[#32b443] text-[14px] uppercase whitespace-nowrap">Open</p></div>`;
+
+    // "Bestellingen sluiten"-knop: alleen tonen zodra het sluitmoment (15:00,
+    // de dag vóór de leverdag = uiterste besteldeadline) is bereikt en de dag nog open is.
+    const sm = dag.sluitMoment;
+    const deadlineBehaald = sm && W.nu() >= sm;
+    if (!gesloten && deadlineBehaald) {
+      document.getElementById('sluit-actie').innerHTML =
+        `<a href="1-356-sluiten.html" class="bg-[#2e2e2e] flex items-center justify-center px-4 py-2 rounded-[8px] no-underline hover:bg-[#1e1e1e]"><p class="inter-regular text-[16px] text-white whitespace-nowrap">Bestellingen sluiten</p></a>`;
+    }
+
+    const orders = W.getOrders(dag.id);
+    // Aanvragen alleen tonen op de focusdag (daar hoort de openstaande aanvraag bij)
+    const aanvragen = dag.isFocus ? W.getAanvragen() : [];
+
+    function wijzePill(leverwijze, label) {
+      const isLevering = leverwijze === 'levering';
+      const bg = isLevering ? '#e3eef0' : '#f0ece0';
+      const kleur = isLevering ? '#2f6f78' : '#6b6456';
+      return `<div class="inline-flex gap-2 items-center px-3 py-1 rounded-[100px]" style="background-color:${bg};">
+        <p class="inter-medium text-[13px] whitespace-nowrap" style="color:${kleur};">${label}</p></div>`;
+    }
+
+    function orderRij(o, bg, hover) {
+      return `
+        <div class="${bg} flex items-center gap-4 px-6 py-4 w-full cursor-pointer ${hover}" onclick="window.location.href='1-323-bestelling-bekijken.html?klant=${o.klantId}&dag=${o.dagId}'">
+          <div class="w-[90px]"><p class="inter-regular text-[15px] text-[#6b6456] whitespace-nowrap">${o.bestelnr}</p></div>
+          <div class="flex-1 min-w-0"><p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${o.klant}</p></div>
+          <div class="w-[120px]">${wijzePill(o.leverwijze, o.leverwijzeLabel)}</div>
+          <div class="w-[100px]"><p class="inter-medium text-[15px] text-[#1e1e1e] whitespace-nowrap">${o.tijdstip}</p></div>
+          <div class="w-[150px]">
+            <div class="bg-[#c8f4ce] inline-flex gap-2 items-center px-3 py-1 rounded-[100px]">
+              <div class="w-[7px] h-[7px] rounded-full" style="background-color: #1c892b;"></div>
+              <p class="inter-medium text-[#1c892b] text-[14px] whitespace-nowrap">Ingepland</p>
+            </div>
+          </div>
+          <div class="w-5 h-5 shrink-0"><img alt="" class="block w-full h-full object-contain" src="assets/arrow-right.svg"></div>
+        </div>`;
+    }
+
+    function aanvraagRij(a, bg, hover) {
+      const beoordeeld = a.status !== 'te-beoordelen';
+      const klant = W.klantById(a.klantId);
+      const badge = beoordeeld
+        ? `<div class="${a.status === 'goedgekeurd' ? 'bg-[#c8f4ce]' : 'bg-[#f4e0c8]'} inline-flex gap-2 items-center px-3 py-1 rounded-[100px]">
+             <div class="w-[7px] h-[7px] rounded-full" style="background-color: ${a.status === 'goedgekeurd' ? '#1c892b' : '#B8341A'};"></div>
+             <p class="inter-medium text-[14px] whitespace-nowrap" style="color:${a.status === 'goedgekeurd' ? '#1c892b' : '#B8341A'};">${a.status === 'goedgekeurd' ? 'Goedgekeurd' : 'Afgewezen'}</p></div>`
+        : `<div class="bg-[#f4e0c8] inline-flex gap-2 items-center px-3 py-1 rounded-[100px]">
+             <div class="w-[7px] h-[7px] rounded-full" style="background-color: #c45d1d;"></div>
+             <p class="inter-medium text-[#c45d1d] text-[14px] whitespace-nowrap">Beoordelen</p></div>`;
+      return `
+        <div class="${bg} flex items-center gap-4 px-6 py-4 w-full cursor-pointer ${hover}" onclick="window.location.href='1-234-beoordelen.html?id=${a.id}'">
+          <div class="w-[90px]"><p class="inter-regular text-[15px] text-[#6b6456] whitespace-nowrap">${a.bestelnr}</p></div>
+          <div class="flex-1 min-w-0"><p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${a.klant} <span class="inter-regular text-[14px] text-[#c45d1d]">· aanvraag</span></p></div>
+          <div class="w-[120px]">${wijzePill(klant.leverwijze, klant.leverwijze === 'levering' ? 'Levering' : 'Ophalen')}</div>
+          <div class="w-[100px]"><p class="inter-medium text-[15px] text-[#1e1e1e] whitespace-nowrap">${a.tijdstip}</p></div>
+          <div class="w-[150px]">${badge}</div>
+          <div class="w-5 h-5 shrink-0"><img alt="" class="block w-full h-full object-contain" src="assets/arrow-right.svg"></div>
+        </div>`;
+    }
+
+    let rows = '';
+    orders.forEach(function (o, i) {
+      rows += orderRij(o, i % 2 === 0 ? 'bg-[#f4f0e7]' : 'bg-[#fdfbf7]', i % 2 === 0 ? 'hover:bg-[#f0ebe0]' : 'hover:bg-[#f7f5f0]');
+    });
+    aanvragen.forEach(function (a, i) {
+      const idx = orders.length + i;
+      rows += aanvraagRij(a, idx % 2 === 0 ? 'bg-[#f4f0e7]' : 'bg-[#fdfbf7]', idx % 2 === 0 ? 'hover:bg-[#f0ebe0]' : 'hover:bg-[#f7f5f0]');
+    });
+    document.getElementById('order-rijen').innerHTML = rows;
+  </script>
+
+</body>
+</html>

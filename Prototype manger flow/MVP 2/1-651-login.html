@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1 Login — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    .font-gt-ext-rg { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; letter-spacing: inherit; }
+    .font-gt-ext-md { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 600; }
+    .font-gt-rg     { font-family: Arial, sans-serif; font-weight: 400; }
+    .font-gt-md     { font-family: Arial, sans-serif; font-weight: 500; }
+    .font-gt-bd     { font-family: Arial, sans-serif; font-weight: 700; }
+    input::placeholder { color: rgba(0,0,0,0.4); font-weight: 300; }
+    input:focus { outline: none; }
+    #fout-melding { display: none; }
+  </style>
+</head>
+<body class="bg-[#dfdacd] flex items-center justify-center w-full h-full">
+
+  <!-- Login card -->
+  <div class="bg-[#f9f7f2] flex flex-col gap-6 items-center px-16 py-14 rounded-[20px]">
+
+    <!-- Logo + tagline -->
+    <div class="flex flex-col gap-2 items-center">
+      <div class="flex gap-9 items-center">
+        <div class="h-[50px] w-[46px] relative shrink-0">
+          <img alt="" class="block w-full h-full object-contain" src="assets/wolf logo 1.svg">
+        </div>
+        <p class="font-gt-ext-rg text-black tracking-[12.8px] uppercase whitespace-nowrap text-[32px]">
+          Bakkerij <span class="font-gt-ext-md">Wolf</span>
+        </p>
+      </div>
+      <p class="font-gt-md text-black tracking-[1.6px] text-[16px] whitespace-nowrap">Beheerpaneel</p>
+    </div>
+
+    <!-- Form -->
+    <form id="login-form" class="flex flex-col gap-4 items-start" onsubmit="handleLogin(event)">
+      <p class="font-['Inter',sans-serif] font-medium text-[16px] text-black whitespace-nowrap">Inloggen</p>
+      <div class="flex flex-col gap-4 items-start">
+
+        <!-- Email field -->
+        <div class="border border-[#737373] flex gap-4 items-center p-3 rounded-[4px] w-[322px]">
+          <div class="h-[11px] w-[15px] shrink-0">
+            <img alt="" class="block w-full h-full object-contain" src="assets/envelope.svg">
+          </div>
+          <input
+            id="email"
+            type="email"
+            placeholder="E-mailadres"
+            class="font-['Inter',sans-serif] text-[16px] text-black bg-transparent w-full"
+          >
+        </div>
+
+        <!-- Password field + forgot link -->
+        <div class="flex flex-col gap-1 items-end">
+          <div class="border border-[#737373] flex gap-4 items-center p-3 rounded-[4px] w-[322px]">
+            <div class="h-[15px] w-[13px] shrink-0">
+              <img alt="" class="block w-full h-full object-contain" src="assets/lock.svg">
+            </div>
+            <input
+              id="wachtwoord"
+              type="password"
+              placeholder="Wachtwoord"
+              class="font-['Inter',sans-serif] text-[16px] text-black bg-transparent w-full"
+            >
+          </div>
+          <p class="font-['Inter',sans-serif] font-medium text-[10px] text-[#324cb4] underline w-full cursor-pointer">Wachtwoord vergeten?</p>
+        </div>
+
+        <!-- Foutmelding -->
+        <p id="fout-melding" class="font-['Inter',sans-serif] text-[13px] text-red-600 w-full">Onbekend e-mailadres of wachtwoord.</p>
+
+        <!-- Login button -->
+        <button
+          type="submit"
+          class="bg-[#2e2e2e] border border-[#737373] flex items-center justify-center p-3 rounded-[4px] w-[322px] cursor-pointer hover:bg-[#1e1e1e] transition-colors"
+        >
+          <p class="font-['Inter',sans-serif] font-medium text-[16px] text-[#f9f7f2] whitespace-nowrap">Inloggen</p>
+        </button>
+
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const wachtwoord = document.getElementById('wachtwoord').value;
+      const fout = document.getElementById('fout-melding');
+
+      if (email === 'noor@bakkerijwolf.nl' && wachtwoord === 'wolf2026') {
+        // Verse testsessie: reset alle onthouden acties
+        if (window.WolfData) window.WolfData.reset();
+        sessionStorage.setItem('ingelogd', 'true');
+        window.location.href = '1-23-dashboard.html';
+      } else {
+        fout.style.display = 'block';
+      }
+    }
+  </script>
+
+</body>
+</html>

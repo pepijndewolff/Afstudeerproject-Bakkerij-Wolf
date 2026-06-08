@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aanvragen — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="aanvragen"></aside>
+
+  <main class="wolf-main">
+
+    <div class="flex flex-col gap-[0.2rem]">
+      <p id="datum-tijd" class="wolf-date"></p>
+      <p class="wolf-h1">Aanvragen</p>
+      <p class="wolf-intro">Bekijk en beoordeel aanvragen voor aankomende leverdagen en handel deze af.</p>
+    </div>
+
+    <!-- Status-tegels -->
+    <section class="wolf-section">
+      <div class="wolf-stats">
+        <div class="wolf-stat is-alert">
+          <p class="wolf-stat-label">Te beoordelen</p>
+          <div class="flex items-end gap-[10px]"><p id="getal-tebeoordelen" class="wolf-stat-num">0</p><p class="wolf-stat-sub">Wacht op actie</p></div>
+        </div>
+        <div class="wolf-stat">
+          <p class="wolf-stat-label">Goedgekeurd</p>
+          <div class="flex items-end gap-[10px]"><p id="getal-goedgekeurd" class="wolf-stat-num">0</p><p class="wolf-stat-sub">Deze week</p></div>
+        </div>
+        <div class="wolf-stat">
+          <p class="wolf-stat-label">Afgewezen</p>
+          <div class="flex items-end gap-[10px]"><p id="getal-afgewezen" class="wolf-stat-num">0</p><p class="wolf-stat-sub">Deze week</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters + tabel -->
+    <section class="wolf-section flex flex-col gap-4">
+      <div id="filters" class="flex gap-2 flex-wrap"></div>
+      <div class="wolf-table">
+        <div class="wolf-thead">
+          <p class="wolf-th w-[56px]">Nr</p>
+          <p class="wolf-th flex-1">Klant</p>
+          <p class="wolf-th w-[150px]">Leverdatum</p>
+          <p class="wolf-th w-[110px]">Producten</p>
+          <p class="wolf-th w-[130px]">Reden</p>
+          <p class="wolf-th w-[140px] text-right">Status</p>
+          <div class="w-5 shrink-0"></div>
+        </div>
+        <div id="aanvraag-rijen"></div>
+        <div id="leeg-melding" style="display:none" class="wolf-row"><p class="wolf-td wolf-td--muted">Geen aanvragen in deze weergave.</p></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const W = window.WolfData;
+    W.bindKlok('datum-tijd');
+
+    const alle = W.getAanvragen();
+    const tel = function (s) { return alle.filter(function (a) { return a.status === s; }).length; };
+    document.getElementById('getal-tebeoordelen').textContent = String(tel('te-beoordelen'));
+    document.getElementById('getal-goedgekeurd').textContent = String(tel('goedgekeurd'));
+    document.getElementById('getal-afgewezen').textContent = String(tel('afgewezen'));
+
+    const FILTERS = [
+      { key: 'alle', label: 'Alle' },
+      { key: 'Bestellimiet', label: 'Bestellimiet' },
+      { key: 'Na deadline', label: 'Na deadline' },
+    ];
+    let actiefFilter = 'alle';
+    function filterAanvragen() {
+      return alle.filter(function (a) { return actiefFilter === 'alle' || a.reden === actiefFilter; });
+    }
+    function renderFilters() {
+      document.getElementById('filters').innerHTML = FILTERS.map(function (f) {
+        const actief = f.key === actiefFilter;
+        const cls = actief
+          ? 'bg-[#2e2e2e] text-white'
+          : 'bg-[#f9f7f2] text-[#1e1e1e] border border-[#b5ae9c] hover:bg-[#f0ece3]';
+        return `<button onclick="zetFilter('${f.key}')" class="${cls} inter-medium text-[14px] px-4 py-2 rounded-[100px] cursor-pointer">${f.label}</button>`;
+      }).join('');
+    }
+    function zetFilter(key) { actiefFilter = key; renderFilters(); renderRijen(); }
+    window.zetFilter = zetFilter;
+
+    function statusBadge(a) {
+      if (a.status === 'goedgekeurd') return a.aangepast
+        ? '<span class="wolf-badge wolf-badge--orange"><span class="dot"></span>Aangepast</span>'
+        : '<span class="wolf-badge wolf-badge--green"><span class="dot"></span>Goedgekeurd</span>';
+      if (a.status === 'afgewezen') return '<span class="wolf-badge wolf-badge--grey"><span class="dot"></span>Afgewezen</span>';
+      return '<span class="wolf-badge wolf-badge--orange"><span class="dot"></span>Te beoordelen</span>';
+    }
+
+    function renderRijen() {
+      const lijst = filterAanvragen();
+      document.getElementById('leeg-melding').style.display = lijst.length ? 'none' : 'flex';
+      document.getElementById('aanvraag-rijen').innerHTML = lijst.map(function (a) {
+        const afgehandeld = a.status !== 'te-beoordelen' ? ' style="opacity:.7"' : '';
+        return `
+          <div class="wolf-row is-clickable"${afgehandeld} onclick="window.location.href='1-234-beoordelen.html?id=${a.id}&van=aanvragen'">
+            <p class="wolf-td w-[56px] wolf-td--muted">${a.bestelnr}</p>
+            <p class="wolf-td flex-1 truncate">${a.klant}</p>
+            <p class="wolf-td w-[150px]">${a.leverdagLabel}</p>
+            <p class="wolf-td w-[110px]">${a.producten.length} product${a.producten.length === 1 ? '' : 'en'}</p>
+            <p class="wolf-td w-[130px]">${a.reden}</p>
+            <div class="w-[140px] flex justify-end">${statusBadge(a)}</div>
+            <div class="wolf-caret"><img alt="" src="Assets/arrow-right.svg"></div>
+          </div>`;
+      }).join('');
+    }
+
+    renderFilters();
+    renderRijen();
+  </script>
+</body>
+</html>

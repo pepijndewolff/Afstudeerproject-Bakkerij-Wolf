@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paklijst — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="paklijsten"></aside>
+
+  <main class="wolf-main">
+
+    <div class="flex flex-col gap-[0.2rem]">
+      <div class="wolf-breadcrumb"><span>Paklijsten</span><span>&gt;</span><span id="bc-dag"></span></div>
+      <div class="flex gap-3 items-baseline">
+        <p class="wolf-h1">Paklijst</p>
+        <p id="titel-dag" class="wolf-value" style="font-size:20px;"></p>
+      </div>
+      <p class="wolf-intro">Gebruik deze lijst om bestellingen per klant te controleren, in te pakken en af te ronden tot levering of ophalen.</p>
+    </div>
+
+    <section class="wolf-section">
+      <div class="wolf-stats">
+        <div class="wolf-stat"><p class="wolf-stat-label">Te pakken</p><p id="stat-tepakken" class="wolf-stat-num">0</p></div>
+        <div class="wolf-stat"><p class="wolf-stat-label">Ingepakt</p><p id="stat-ingepakt" class="wolf-stat-num">0</p></div>
+        <div class="wolf-stat" style="background:var(--green-bg);border-color:var(--green);"><p class="wolf-stat-label">Afgerond</p><p id="stat-afgerond" class="wolf-stat-num" style="color:var(--green)">0</p></div>
+      </div>
+    </section>
+
+    <section class="wolf-section">
+      <div class="wolf-table">
+        <div class="wolf-thead">
+          <p class="wolf-th flex-1">Klant</p>
+          <p class="wolf-th w-[110px]">Producten</p>
+          <p class="wolf-th w-[130px]">Leverwijze</p>
+          <p class="wolf-th w-[150px]">Status</p>
+          <p class="wolf-th w-[90px] text-center">Afgerond</p>
+          <div class="w-5 shrink-0"></div>
+        </div>
+        <div id="paklijst-rijen"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="paklijst-tip" class="fixed z-50 bg-white border border-[#b5ae9c] rounded-[8px] p-3 min-w-[200px]" style="display:none; box-shadow:0 4px 16px rgba(0,0,0,0.12);">
+    <p class="inter-regular text-[#979797] text-[12px] uppercase tracking-[0.32px] mb-2">Producten in deze bestelling</p>
+    <div id="tip-body"></div>
+  </div>
+
+  <script>
+    const W = window.WolfData;
+    const dag = W.getPaklijstDag();
+    document.getElementById('bc-dag').textContent = dag.label;
+    document.getElementById('titel-dag').textContent = dag.label;
+
+    function statusBadge(k) {
+      if (k.status === 'afgerond') return `<span class="wolf-badge wolf-badge--green"><span class="dot"></span>Afgerond</span>`;
+      if (k.status === 'ingepakt') return `<span class="wolf-badge wolf-badge--orange"><span class="dot"></span>Ingepakt</span>`;
+      return `<span class="wolf-badge wolf-badge--grey"><span class="dot"></span>Nog te pakken</span>`;
+    }
+    function leverwijzePill(k) {
+      return k.leverwijze === 'levering'
+        ? `<span class="wolf-badge wolf-badge--blue">Levering</span>`
+        : `<span class="wolf-badge wolf-badge--pink">Ophalen</span>`;
+    }
+    function afgerondCel(k) {
+      if (k.status === 'afgerond') return `<div class="wolf-check is-done" title="Afgerond"><img alt="" src="Assets/checkmark.svg" style="filter:brightness(0) invert(1);"></div>`;
+      if (k.status === 'ingepakt') return `<button class="wolf-check is-clickable" title="Markeer als afgerond" onclick="event.stopPropagation(); markeerAfgerond('${k.klantId}')"></button>`;
+      return `<div class="wolf-check is-empty" title="Eerst inpakken"></div>`;
+    }
+
+    function render() {
+      const klanten = W.getPaklijstKlanten();
+      let teP = 0, ingepakt = 0, afgerond = 0;
+      klanten.forEach(function (k) {
+        if (k.status === 'te-pakken') teP += 1; else if (k.status === 'ingepakt') ingepakt += 1; else afgerond += 1;
+      });
+      document.getElementById('stat-tepakken').textContent = String(teP);
+      document.getElementById('stat-ingepakt').textContent = String(ingepakt);
+      document.getElementById('stat-afgerond').textContent = String(afgerond);
+
+      document.getElementById('paklijst-rijen').innerHTML = klanten.map(function (k) {
+        return `
+          <div class="wolf-row is-clickable" onclick="window.location.href='1-324-paklijst-detail.html?klant=${k.klantId}'">
+            <div class="flex-1 min-w-0">
+              <p class="wolf-td">${k.klant}</p>
+              <p class="wolf-td wolf-td--muted" style="font-weight:400;font-size:14px;">${k.bestelnr}</p>
+            </div>
+            <div class="w-[110px]"><span class="wolf-td underline underline-offset-2 cursor-help" onmouseenter="toonPreview(event,'${k.klantId}')" onmousemove="toonPreview(event,'${k.klantId}')" onmouseleave="verbergPreview()">${k.totaal}</span></div>
+            <div class="w-[130px]">${leverwijzePill(k)}</div>
+            <div class="w-[150px]">${statusBadge(k)}</div>
+            <div class="w-[90px] flex justify-center">${afgerondCel(k)}</div>
+            <div class="wolf-caret"><img alt="" src="Assets/arrow-right.svg"></div>
+          </div>`;
+      }).join('');
+
+      bindPreviews(klanten);
+    }
+
+    function markeerAfgerond(klantId) { W.setPaklijstAfgerond(klantId, true); render(); }
+    window.markeerAfgerond = markeerAfgerond;
+
+    // Hover-preview met productregels
+    let previews = {};
+    function bindPreviews(klanten) {
+      previews = {};
+      klanten.forEach(function (k) {
+        previews[k.klantId] = k.items.map(function (it) {
+          return `<div class="flex items-center justify-between gap-6 py-[2px]"><span class="inter-regular text-[14px] text-[#1e1e1e] whitespace-nowrap">${it.product}</span><span class="inter-medium text-[14px] text-[#1e1e1e]">${it.aantal}</span></div>`;
+        }).join('');
+      });
+    }
+    const tip = document.getElementById('paklijst-tip');
+    const tipBody = document.getElementById('tip-body');
+    function toonPreview(e, kid) { tipBody.innerHTML = previews[kid] || ''; tip.style.display = 'block'; tip.style.left = (e.clientX + 14) + 'px'; tip.style.top = (e.clientY + 14) + 'px'; }
+    function verbergPreview() { tip.style.display = 'none'; }
+    window.toonPreview = toonPreview; window.verbergPreview = verbergPreview;
+
+    render();
+  </script>
+
+</body>
+</html>

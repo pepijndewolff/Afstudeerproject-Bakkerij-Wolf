@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klanten — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="klanten"></aside>
+
+  <main class="wolf-main">
+
+    <div class="flex flex-col gap-[0.2rem]">
+      <p id="datetime" class="wolf-date"></p>
+      <div class="flex items-center justify-between w-full">
+        <p class="wolf-h1">Klanten</p>
+        <a href="1-337-nieuw-klant.html" class="wolf-btn wolf-btn--primary">Nieuwe klant</a>
+      </div>
+    </div>
+
+    <section class="wolf-section flex flex-col gap-2">
+      <div class="flex justify-end">
+        <p id="klant-aantal" class="inter-regular text-[#b5ae9c] text-[13px] uppercase tracking-[0.5px]"></p>
+      </div>
+      <div class="wolf-table">
+        <div class="wolf-thead">
+          <p class="wolf-th flex-1">Klant</p>
+          <p class="wolf-th w-[200px]">Type</p>
+          <p class="wolf-th w-[180px]">Contactpersoon</p>
+          <p class="wolf-th w-[100px] text-right">Producten</p>
+          <div class="w-5 shrink-0"></div>
+        </div>
+        <div id="klant-rijen"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const W = window.WolfData;
+    W.bindKlok('datetime');
+
+    const klanten = W.getKlanten();
+    document.getElementById('klant-aantal').textContent = `${klanten.length} klanten`;
+
+    function typePill(k) {
+      if (k.type === 'uitzondering') return `<span class="wolf-type wolf-type--uitzondering"><span class="dot"></span>Uitzonderingsklant</span>`;
+      return `<span class="wolf-type wolf-type--regulier"><span class="dot"></span>Standaardklant</span>`;
+    }
+
+    document.getElementById('klant-rijen').innerHTML = klanten.map(function (k) {
+      const aantalProducten = Object.keys(k.producten).length;
+      return `
+        <div class="wolf-row is-clickable" onclick="window.location.href='1-536-klant.html?klant=${k.id}'">
+          <p class="wolf-td flex-1">${k.naam}</p>
+          <div class="w-[200px]">${typePill(k)}</div>
+          <p class="wolf-td w-[180px]">${k.contact}</p>
+          <div class="w-[100px] flex justify-end">
+            <span class="wolf-type wolf-type--regulier" style="min-width:32px;justify-content:center;">${aantalProducten}</span>
+          </div>
+          <div class="wolf-caret"><img alt="" src="Assets/arrow-right.svg"></div>
+        </div>`;
+    }).join('');
+  </script>
+
+</body>
+</html>

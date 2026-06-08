@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klantprofiel — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="klanten"></aside>
+
+  <main class="wolf-main">
+
+    <!-- Breadcrumb + titel -->
+    <div class="flex flex-col gap-[0.2rem]">
+      <div class="wolf-breadcrumb">
+        <a href="1-336-klanten-overzicht.html">Klanten</a>
+        <span>&gt;</span>
+        <span id="bc-klant"></span>
+      </div>
+      <div class="flex gap-3 items-center">
+        <p id="titel-klant" class="wolf-h1"></p>
+        <div id="type-pill"></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex flex-col">
+      <div id="tabs" class="wolf-tabs"></div>
+      <div id="tab-panel" class="wolf-tab-panel"></div>
+    </div>
+
+  </main>
+
+  <script>
+    const W = window.WolfData;
+    const klantId = new URLSearchParams(location.search).get('klant') || 'juno';
+    function klant() { return W.klantById(klantId) || W.KLANTEN[0]; }
+
+    const TABS = [
+      { key: 'gegevens',      label: 'Klantgegevens' },
+      { key: 'producten',     label: 'Producten & Prijzen' },
+      { key: 'geschiedenis',  label: 'Bestelgeschiedenis' },
+      { key: 'facturen',      label: 'Facturen' },
+    ];
+    let actief = 'gegevens';
+    let editProducten = false;
+
+    // ---- Kop ----------------------------------------------------------------
+    function typePill(klein) {
+      const k = klant();
+      if (k.type === 'uitzondering') {
+        return `<span class="wolf-type wolf-type--uitzondering"><span class="dot"></span>Uitzonderingsklant</span>`;
+      }
+      return `<span class="wolf-type wolf-type--regulier"><span class="dot"></span>Standaardklant</span>`;
+    }
+    function renderKop() {
+      document.getElementById('bc-klant').textContent = klant().naam;
+      document.getElementById('titel-klant').textContent = klant().naam;
+      document.getElementById('type-pill').innerHTML = typePill();
+    }
+
+    // ---- Tabs ---------------------------------------------------------------
+    function renderTabs() {
+      document.getElementById('tabs').innerHTML = TABS.map(function (t) {
+        return `<button class="wolf-tab${t.key === actief ? ' is-active' : ''}" onclick="showTab('${t.key}')">${t.label}</button>`;
+      }).join('');
+    }
+    function showTab(key) { actief = key; editProducten = false; renderTabs(); renderPanel(); }
+    window.showTab = showTab;
+
+    // ---- Paneelinhoud per tab ----------------------------------------------
+    function infoRow(label, valueHtml) {
+      return `<div class="wolf-info-row"><p class="wolf-info-label">${label}</p><div class="wolf-info-value">${valueHtml}</div></div>`;
+    }
+    function rechtValue(toegestaan) {
+      return toegestaan
+        ? '<span class="wolf-info-value wolf-info-value--green">Toegestaan</span>'
+        : '<span class="wolf-info-value" style="color:var(--grey-text)">Niet toegestaan</span>';
+    }
+
+    function panelGegevens() {
+      const k = klant();
+      const f = k.factuur || {};
+      const contact = `
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Contactgegevens</p>
+          ${infoRow('Contactpersoon', k.contact)}
+          ${infoRow('Telefoon', k.telefoon)}
+          ${infoRow('Email', k.email)}
+          ${infoRow('Adres', (k.adres || []).join('<br>'))}
+        </div>`;
+      const rechten = `
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Bestelrechten</p>
+          ${infoRow('Klanttype', typePill())}
+          ${infoRow('Aanvraag na deadline', rechtValue(k.aanvraagNaDeadline))}
+          ${infoRow('Aanvraag bestellimiet', rechtValue(k.aanvraagBestellimiet))}
+          ${infoRow('Leverwijze', W.LEVERWIJZE_LABEL[k.leverwijze] || '—')}
+          ${infoRow('Leverinstructies', k.leverinstructies || '—')}
+        </div>`;
+      const factuur = `
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Factuurgegevens</p>
+          ${infoRow('Bedrijfsnaam', f.bedrijfsnaam || '—')}
+          ${infoRow('Factuur e-mail', f.email || '—')}
+          ${infoRow('Factuuradres', (f.adres || ['—']).join('<br>'))}
+          ${infoRow('Btw-nummer', f.btw || '—')}
+        </div>`;
+      return `
+        <div class="flex flex-col gap-6">
+          <div class="flex items-start justify-between gap-6">
+            <p class="wolf-intro" style="max-width:560px;">Beheer de contactgegevens en bestelrechten van deze klant. Wijzigingen in klanttype of limieten gelden direct voor nieuwe bestellingen.</p>
+            <a href="1-326-klant-bewerken.html?klant=${k.id}" class="wolf-btn wolf-btn--primary shrink-0">Bewerken <img alt="" src="Assets/pencil.svg"></a>
+          </div>
+          <div class="grid grid-cols-2 gap-6">${contact}${rechten}</div>
+          ${factuur}
+        </div>`;
+    }
+
+    function panelProducten() {
+      const k = klant();
+      const pids = Object.keys(k.producten);
+      const rijen = pids.map(function (pid) {
+        const p = k.producten[pid];
+        const naam = W.PRODUCTEN[pid].naam;
+        if (editProducten) {
+          return `
+            <div class="wolf-row">
+              <p class="wolf-td flex-1">${naam}</p>
+              <div class="w-[120px] flex justify-end">
+                <span class="mr-1">€</span>
+                <input data-prijs="${pid}" value="${p.prijs}" class="w-[64px] text-right border border-[#b5ae9c] rounded px-2 py-1 inter-medium text-[16px]">
+              </div>
+              <div class="w-[90px] flex justify-end">
+                <input data-max="${pid}" value="${p.max}" type="number" class="w-[64px] text-right border border-[#b5ae9c] rounded px-2 py-1 inter-medium text-[16px]">
+              </div>
+            </div>`;
+        }
+        return `
+          <div class="wolf-row">
+            <p class="wolf-td flex-1">${naam}</p>
+            <p class="wolf-td w-[120px] text-right">€ ${p.prijs}</p>
+            <p class="wolf-td w-[90px] text-right">${p.max}</p>
+          </div>`;
+      }).join('');
+      const knop = editProducten
+        ? `<div class="flex gap-3">
+             <button class="wolf-btn wolf-btn--ghost" onclick="annuleerProducten()">Annuleren</button>
+             <button class="wolf-btn wolf-btn--primary" onclick="bewaarProducten()">Opslaan</button>
+           </div>`
+        : `<button class="wolf-btn wolf-btn--primary" onclick="bewerkProducten()">Bewerken <img alt="" src="Assets/pencil.svg"></button>`;
+      return `
+        <div class="flex flex-col gap-4">
+          <div class="flex items-start justify-between gap-6">
+            <p class="wolf-intro" style="max-width:560px;">Maximum per product en de klantprijzen. Deze limieten en prijzen wegen mee bij het beoordelen van aanvragen.</p>
+            ${knop}
+          </div>
+          <div class="wolf-table">
+            <div class="wolf-thead">
+              <p class="wolf-th flex-1">Product</p>
+              <p class="wolf-th w-[120px] text-right">Prijs €</p>
+              <p class="wolf-th w-[90px] text-right">Max</p>
+            </div>
+            ${rijen}
+          </div>
+        </div>`;
+    }
+
+    function panelGeschiedenis() {
+      const k = klant();
+      const STATUS_LABEL = { geleverd: 'Geleverd', opgehaald: 'Opgehaald' };
+      const rijen = W.getBestelgeschiedenis(k.id).map(function (g) {
+        const wijze = W.LEVERWIJZE_LABEL[g.leverwijze] || '—';
+        const statusLabel = STATUS_LABEL[g.status] || g.status;
+        const vandaag = g.vandaag ? ' <span class="inter-regular text-[13px]" style="color:var(--green)">· vandaag</span>' : '';
+        return `
+          <div class="wolf-row is-clickable" onclick="window.location.href='1-323-bestelling-bekijken.html?klant=${k.id}'">
+            <p class="wolf-td w-[80px] wolf-td--muted">${g.bestelnr}</p>
+            <p class="wolf-td w-[150px]">${g.datum}${vandaag}</p>
+            <p class="wolf-td flex-1">${g.producten} product${g.producten === 1 ? '' : 'en'}</p>
+            <p class="wolf-td w-[120px]">${wijze}</p>
+            <div class="w-[140px] flex">${'<span class="wolf-badge wolf-badge--green"><span class="dot"></span>' + statusLabel + '</span>'}</div>
+            <div class="wolf-caret"><img alt="" src="Assets/arrow-right.svg"></div>
+          </div>`;
+      }).join('');
+      return `
+        <div class="flex flex-col gap-4">
+          <p class="wolf-intro">Eerdere bestellingen van deze klant. Klik door voor de details.</p>
+          <div class="wolf-table">
+            <div class="wolf-thead">
+              <p class="wolf-th w-[80px]">Bestelnr</p>
+              <p class="wolf-th w-[150px]">Datum</p>
+              <p class="wolf-th flex-1">Producten</p>
+              <p class="wolf-th w-[120px]">Wijze</p>
+              <p class="wolf-th w-[140px]">Status</p>
+              <div class="w-5 shrink-0"></div>
+            </div>
+            ${rijen}
+          </div>
+        </div>`;
+    }
+
+    function panelFacturen() {
+      return `
+        <div class="flex items-center justify-center text-center" style="padding:48px 24px;">
+          <p class="wolf-intro">Facturen nog niet beschikbaar</p>
+        </div>`;
+    }
+
+    function renderPanel() {
+      const el = document.getElementById('tab-panel');
+      if (actief === 'gegevens')      el.innerHTML = panelGegevens();
+      else if (actief === 'producten') el.innerHTML = panelProducten();
+      else if (actief === 'geschiedenis') el.innerHTML = panelGeschiedenis();
+      else el.innerHTML = panelFacturen();
+    }
+
+    // ---- Producten bewerken -------------------------------------------------
+    function bewerkProducten() { editProducten = true; renderPanel(); }
+    function annuleerProducten() { editProducten = false; renderPanel(); }
+    function bewaarProducten() {
+      const k = klant();
+      const nieuw = {};
+      Object.keys(k.producten).forEach(function (pid) {
+        const prijsEl = document.querySelector(`[data-prijs="${pid}"]`);
+        const maxEl = document.querySelector(`[data-max="${pid}"]`);
+        nieuw[pid] = {
+          prijs: (prijsEl ? prijsEl.value : k.producten[pid].prijs).trim(),
+          max: parseInt(maxEl ? maxEl.value : k.producten[pid].max, 10) || k.producten[pid].max,
+        };
+      });
+      W.setKlant(klantId, { producten: nieuw });
+      editProducten = false;
+      renderPanel();
+    }
+    window.bewerkProducten = bewerkProducten;
+    window.annuleerProducten = annuleerProducten;
+    window.bewaarProducten = bewaarProducten;
+
+    // ---- Init ---------------------------------------------------------------
+    renderKop();
+    renderTabs();
+    renderPanel();
+  </script>
+
+</body>
+</html>

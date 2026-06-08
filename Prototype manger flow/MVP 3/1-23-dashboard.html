@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dagoverzicht — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="dagoverzicht"></aside>
+
+  <main class="wolf-main">
+
+    <!-- Begroeting -->
+    <div class="flex flex-col gap-[0.2rem]">
+      <p id="datum-tijd" class="wolf-date"></p>
+      <p id="begroeting" class="wolf-h1"></p>
+      <p class="wolf-intro">Hier is wat er vandaag aandacht nodig heeft.</p>
+    </div>
+
+    <!-- Sectie: eerstvolgende leverdag -->
+    <section class="wolf-section flex flex-col gap-6">
+      <div class="flex items-start justify-between gap-6 flex-wrap">
+        <div class="flex flex-col gap-2 min-w-0">
+          <p class="wolf-eyebrow">Eerstvolgende leverdag</p>
+          <p id="leverdag-titel" class="wolf-value"></p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <p class="wolf-eyebrow">Tijd over tot sluiten:</p>
+          <div id="sluit-timer" class="wolf-timer">–</div>
+        </div>
+      </div>
+
+      <div class="wolf-stats">
+        <!-- Open aanvragen (nu eerst) -->
+        <div id="tegel-aanvragen" class="wolf-stat is-clickable">
+          <div class="wolf-stat-arrow"><img alt="" src="Assets/arrow-up-right.svg"></div>
+          <p class="wolf-stat-label">Open aanvragen</p>
+          <div class="flex items-end gap-[10px]">
+            <p id="aanvragen-getal" class="wolf-stat-num"></p>
+            <p id="aanvragen-sub" class="wolf-stat-sub"></p>
+          </div>
+        </div>
+        <!-- Ingepland -->
+        <div id="tegel-ingepland" class="wolf-stat is-clickable">
+          <div class="wolf-stat-arrow"><img alt="" src="Assets/arrow-up-right.svg"></div>
+          <p class="wolf-stat-label">Ingepland</p>
+          <div class="flex items-end gap-[10px]">
+            <p id="ingepland-getal" class="wolf-stat-num"></p>
+            <p class="wolf-stat-sub">Automatische bestellingen</p>
+          </div>
+        </div>
+        <!-- Aantal bestellingen -->
+        <div id="tegel-alle" class="wolf-stat is-clickable">
+          <div class="wolf-stat-arrow"><img alt="" src="Assets/arrow-up-right.svg"></div>
+          <p class="wolf-stat-label">Aantal bestellingen</p>
+          <div class="flex items-end gap-[10px]">
+            <p id="alle-getal" class="wolf-stat-num"></p>
+            <p id="alle-sub" class="wolf-stat-sub"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sectie: overige leverdagen -->
+    <section class="wolf-section flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <p class="wolf-eyebrow">Overige leverdagen</p>
+        <p id="week-label" class="wolf-value"></p>
+      </div>
+
+      <div class="wolf-table">
+        <div class="wolf-thead">
+          <div class="flex flex-1 items-center justify-between min-w-0">
+            <p class="wolf-th w-[180px]">Leverdag</p>
+            <p class="wolf-th w-[116px]">Ingepland</p>
+            <p class="wolf-th w-[130px]">Sluitmoment</p>
+            <p class="wolf-th text-right w-[160px]">Status</p>
+          </div>
+          <div class="w-5 h-5 shrink-0"></div>
+        </div>
+        <div id="overige-leverdagen"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const W = window.WolfData;
+    const pad = W.pad;
+    W.bindKlok('datum-tijd');
+
+    // Begroeting op basis van het (test)uur
+    (function () {
+      const uur = W.nu().getHours();
+      const groet = uur < 12 ? 'Goedemorgen' : uur < 18 ? 'Goedemiddag' : 'Goedenavond';
+      document.getElementById('begroeting').textContent = `${groet}, Noor`;
+    })();
+
+    const dagen = W.getDeliveryDays();
+    const focus = dagen.find(function (d) { return d.isFocus; }) || dagen.find(function (d) { return d.actief; });
+
+    // ---- Eerstvolgende leverdag-kaart ---------------------------------------
+    document.getElementById('leverdag-titel').textContent = focus ? focus.label : '—';
+
+    const ordersFocus     = focus ? W.getOrders(focus.id) : [];
+    const aanvragenFocus  = focus ? W.getAanvragen().filter(function (a) { return a.leverdagId === focus.id; }) : [];
+    const openFocus       = focus ? W.aantalOpenAanvragenVoorDag(focus.id) : 0;
+
+    // Open aanvragen-tegel (peach wanneer er nog te beoordelen zijn)
+    const aanvragenTegel = document.getElementById('tegel-aanvragen');
+    document.getElementById('aanvragen-getal').textContent = String(openFocus);
+    document.getElementById('aanvragen-sub').textContent = openFocus > 0 ? 'Beoordelen voor 15:00' : 'Alles beoordeeld';
+    if (openFocus > 0) aanvragenTegel.classList.add('is-alert');
+
+    document.getElementById('ingepland-getal').textContent = String(ordersFocus.length);
+
+    document.getElementById('alle-getal').textContent = String(ordersFocus.length + aanvragenFocus.length);
+    document.getElementById('alle-sub').textContent = focus ? `Gepland voor ${focus.weekdag.toLowerCase()}` : '';
+
+    // Tegels klikbaar
+    const dagUrl = focus ? `1-109-bestellingen.html?dag=${focus.id}` : '1-109-bestellingen.html';
+    document.getElementById('tegel-ingepland').onclick = function () { window.location.href = dagUrl; };
+    document.getElementById('tegel-alle').onclick = function () { window.location.href = dagUrl; };
+    aanvragenTegel.onclick = function () { window.location.href = '1-298-aanvragen.html'; };
+
+    // ---- Afteltimer "tijd over tot sluiten" ---------------------------------
+    function renderTimer() {
+      const el = document.getElementById('sluit-timer');
+      if (!focus) { el.textContent = '—'; return; }
+      const diff = focus.sluitMoment - W.nu();
+      if (diff <= 0) { el.textContent = 'Verstreken'; el.classList.add('is-expired'); return; }
+      el.classList.remove('is-expired');
+      const t = Math.floor(diff / 1000);
+      const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+      // ≥1 uur → uren:minuten; daaronder minuten:seconden zodat hij zichtbaar aftelt.
+      el.textContent = h >= 1 ? `${pad(h)}:${pad(m)}` : `${pad(m)}:${pad(s)}`;
+    }
+    renderTimer();
+    setInterval(renderTimer, 1000);
+
+    // ---- Overige leverdagen (tabel, geen zebra) -----------------------------
+    document.getElementById('week-label').textContent = focus ? `Week ${W.weeknummer(focus.datum)}` : '';
+    const overige = dagen.filter(function (d) { return d.actief && (!focus || d.id !== focus.id); });
+    document.getElementById('overige-leverdagen').innerHTML = overige.map(function (d) {
+      const sluitLabel = `${W.DAGEN[d.sluitMoment.getDay()]} 15:00`;
+      const aantal = W.getOrders(d.id).length;
+      const badge = d.teSluiten
+        ? '<span class="wolf-badge wolf-badge--orange"><span class="dot"></span>Te sluiten</span>'
+        : '<span class="wolf-badge wolf-badge--green"><span class="dot"></span>Open</span>';
+      return `
+        <div class="wolf-row is-clickable" onclick="window.location.href='1-109-bestellingen.html?dag=${d.id}'">
+          <div class="flex flex-1 items-center justify-between min-w-0">
+            <p class="wolf-td w-[180px] whitespace-nowrap">${d.label}</p>
+            <p class="wolf-td w-[116px]">${aantal}</p>
+            <p class="wolf-td w-[130px]">${sluitLabel}</p>
+            <div class="flex justify-end w-[160px]">${badge}</div>
+          </div>
+          <div class="wolf-caret"><img alt="" src="Assets/arrow-right.svg"></div>
+        </div>`;
+    }).join('');
+  </script>
+
+</body>
+</html>

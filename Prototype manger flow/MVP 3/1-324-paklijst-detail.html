@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paklijst detail — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+  <style> input[type="checkbox"] { accent-color: #32b443; } </style>
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="paklijsten"></aside>
+
+  <main class="wolf-main">
+
+    <div class="flex flex-col gap-[0.2rem]">
+      <div class="wolf-breadcrumb">
+        <a href="1-441-paklijst.html">Paklijsten</a><span>&gt;</span>
+        <span id="bc-dag"></span><span>&gt;</span><span id="bc-klant"></span>
+      </div>
+      <p id="titel-klant" class="wolf-h1"></p>
+      <p id="meta" class="wolf-intro"></p>
+    </div>
+
+    <!-- Voortgang -->
+    <section class="wolf-section flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <p class="inter-regular text-[16px] text-[#1e1e1e]">Voortgang</p>
+        <p class="inter-semibold text-[16px] text-[#1e1e1e]"><span id="vg-tekst"></span></p>
+      </div>
+      <div class="flex items-center w-full h-[15px] rounded-full overflow-hidden bg-[#e9e4d8]">
+        <div id="vg-balk" class="bg-[#32b443] h-full rounded-full" style="width: 0%;"></div>
+      </div>
+    </section>
+
+    <section class="wolf-section">
+      <div class="wolf-table">
+        <div class="wolf-thead">
+          <div class="w-5 shrink-0"></div>
+          <p class="wolf-th flex-1">Product</p>
+          <p class="wolf-th w-[100px]">Aantal</p>
+          <p class="wolf-th w-[140px] text-right">Status</p>
+        </div>
+        <div id="paklijst-items"></div>
+      </div>
+    </section>
+
+    <div class="flex flex-col gap-3">
+      <div id="afrond-knoppen" class="flex gap-3 items-center flex-wrap"></div>
+      <p id="afrond-sub" class="inter-regular text-[#2e2e2e] text-[12px]" style="font-weight:300;"></p>
+    </div>
+
+  </main>
+
+  <script>
+    const W = window.WolfData;
+    const params = new URLSearchParams(window.location.search);
+    const klantId = params.get('klant') || 'juno';
+    const klant = W.klantById(klantId) || W.KLANTEN[0];
+    const dag = W.getPaklijstDag();
+    const wijzeLabel = klant.leverwijze === 'levering' ? 'Levering' : 'Ophalen';
+
+    document.getElementById('bc-dag').textContent = dag.label;
+    document.getElementById('bc-klant').textContent = klant.naam;
+    document.getElementById('titel-klant').textContent = klant.naam;
+    document.getElementById('meta').textContent = `Paklijst — ${dag.label} · ${wijzeLabel}`;
+
+    function badge(variant, tekst) { return `<span class="wolf-badge wolf-badge--${variant}"><span class="dot"></span>${tekst}</span>`; }
+
+    function render() {
+      const items = W.getPaklijstItems(klantId);
+      document.getElementById('paklijst-items').innerHTML = items.map(function (it) {
+        const status = it.ingepakt ? badge('green', 'Ingepakt') : badge('grey', 'Te pakken');
+        const rowStyle = it.ingepakt ? ' style="background:#f5fff6;"' : '';
+        return `
+          <div class="wolf-row"${rowStyle}>
+            <input type="checkbox" ${it.ingepakt ? 'checked' : ''} class="w-5 h-5 cursor-pointer" onchange="toggleItem('${it.productId}', this.checked)">
+            <p class="wolf-td flex-1">${it.product}</p>
+            <p class="wolf-td w-[100px]">${it.aantal}</p>
+            <div class="w-[140px] flex justify-end">${status}</div>
+          </div>`;
+      }).join('');
+
+      const ingepakt = items.filter(function (it) { return it.ingepakt; }).length;
+      const totaal = items.length;
+      document.getElementById('vg-tekst').textContent = `${ingepakt} van de ${totaal} ingepakt`;
+      document.getElementById('vg-balk').style.width = `${totaal ? Math.round(ingepakt / totaal * 100) : 0}%`;
+      renderActie(ingepakt === totaal && totaal > 0);
+    }
+
+    function renderActie(alleAfgevinkt) {
+      const knoppen = document.getElementById('afrond-knoppen');
+      const sub = document.getElementById('afrond-sub');
+      const pl = W.getPaklijstKlanten().find(function (p) { return p.klantId === klantId; });
+
+      if (pl && pl.status === 'afgerond') {
+        knoppen.innerHTML = `${badge('green', 'Afgerond')}
+          <a href="1-441-paklijst.html" class="inter-medium text-[#1e1e1e] text-[16px] underline">Terug naar paklijst</a>`;
+        sub.textContent = 'Deze bestelling is overgedragen en telt mee als afgerond.';
+        return;
+      }
+      if (pl && pl.status === 'ingepakt') {
+        knoppen.innerHTML = `${badge('green', 'Ingepakt')}
+          <a href="1-441-paklijst.html" class="inter-medium text-[#1e1e1e] text-[16px] underline">Terug naar paklijst</a>`;
+        sub.textContent = 'Gemarkeerd als ingepakt. Markeer de bestelling als afgerond in het paklijstoverzicht.';
+        return;
+      }
+      if (!alleAfgevinkt) {
+        knoppen.innerHTML = `<button class="wolf-btn wolf-btn--disabled" disabled>Markeer als ingepakt</button>`;
+        const items = W.getPaklijstItems(klantId);
+        const nog = items.filter(function (it) { return !it.ingepakt; }).length;
+        sub.textContent = `Nog ${nog} product${nog === 1 ? '' : 'en'} te pakken voordat je kunt markeren als ingepakt.`;
+        return;
+      }
+      knoppen.innerHTML = `<button class="wolf-btn wolf-btn--primary" onclick="markeerIngepakt()">Markeer als ingepakt</button>`;
+      sub.textContent = 'Alle producten afgevinkt — markeer de bestelling als ingepakt.';
+    }
+
+    function toggleItem(productId, checked) { W.setPaklijstItem(klantId, productId, checked); render(); }
+    function markeerIngepakt() { W.setPaklijstIngepakt(klantId, true); render(); }
+    window.toggleItem = toggleItem; window.markeerIngepakt = markeerIngepakt;
+
+    render();
+  </script>
+
+</body>
+</html>

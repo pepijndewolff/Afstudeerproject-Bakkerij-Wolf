@@ -1,0 +1,367 @@
+/* ============================================================
+   Wolf MVP — gedeelde stijl (wolf.css)
+   Eén bron van waarheid voor het nieuwe designsysteem.
+   Wordt op elke pagina ingeladen vóór de pagina-eigen markup:
+     <link rel="stylesheet" href="wolf.css">
+   Tailwind (CDN) blijft beschikbaar voor losse layout-utilities.
+   ============================================================ */
+
+/* ---- Lettertypen --------------------------------------------------------- */
+@font-face {
+  font-family: 'GT America Extended';
+  src: url('Assets/GT America Extended Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ---- Design tokens ------------------------------------------------------- */
+:root {
+  --wolf-bg:        #f9f7f2;   /* paginakleur                  */
+  --wolf-sidebar:   #efeadd;   /* sidebar + crème kaarten      */
+  --wolf-section:   #ffffff;   /* witte sectie-container       */
+  --wolf-card:      #efeadd;   /* stat-/infokaart (crème)      */
+  --wolf-card-peach:#f9ead8;   /* open-aanvragen kaart         */
+  --wolf-row:       #fdfbf7;   /* tabelrij (uniform, geen zebra)*/
+  --wolf-tan:       #dfdacd;   /* geselecteerde weekknop       */
+  --stroke:         #b5ae9c;
+  --wolf-ink:       #1e1e1e;
+  --wolf-ink-2:     #2b2b2b;
+  --wolf-ink-3:     #2e2e2e;
+  --muted:          #8a857d;   /* kaartlabels                  */
+  --muted-2:        #979797;   /* tabelkoppen / veldlabels     */
+  --muted-3:        #757575;   /* datumregel                   */
+  --muted-mail:     #868686;
+  --orange:         #c45d1d;
+  --orange-bg:      #f4e0c8;
+  --orange-bg-soft: #f9ead8;
+  --green:          #1c892b;
+  --green-bright:   #32b443;
+  --green-bg:       #c8f4ce;
+  --grey-bg:        #e5e5e5;
+  --grey-text:      #737373;
+  --shadow:         2px 2px 4px 0 rgba(0,0,0,.05);
+}
+
+/* ---- Basis --------------------------------------------------------------- */
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+
+/* Bestaande font-utilityklassen (compat met nog niet-herstylede schermen) */
+.font-gt-ext-rg { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+.font-gt-ext-md { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 600; }
+.font-gt-rg     { font-family: Arial, sans-serif; font-weight: 400; }
+.font-gt-md     { font-family: Arial, sans-serif; font-weight: 500; }
+.font-gt-bd     { font-family: Arial, sans-serif; font-weight: 700; }
+.inter-regular  { font-family: 'Inter', sans-serif; font-weight: 400; }
+.inter-medium   { font-family: 'Inter', sans-serif; font-weight: 500; }
+.inter-semibold { font-family: 'Inter', sans-serif; font-weight: 600; }
+.inter-bold     { font-family: 'Inter', sans-serif; font-weight: 700; }
+
+/* ============================================================
+   App-shell: sidebar (links, vast) + main (rechts, scrollt)
+   ============================================================ */
+.wolf-body {
+  display: flex;
+  height: 100vh;
+  padding: 12px;
+  gap: 0;
+  background: var(--wolf-bg);
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+.wolf-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---- Sidebar ------------------------------------------------------------- */
+.wolf-sidebar {
+  width: 225px;
+  flex-shrink: 0;
+  background: var(--wolf-sidebar);
+  border: 0.6px solid var(--stroke);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 8px 16px;
+}
+.wolf-sidebar-top { display: flex; flex-direction: column; align-items: stretch; gap: 24px; }
+.wolf-brand { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.wolf-brand-logo { width: 24px; height: 26.67px; object-fit: contain; }
+.wolf-brand-name {
+  margin: 0;
+  font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 4.2px;
+  text-transform: uppercase;
+  color: #000;
+}
+.wolf-brand-name span { font-weight: 600; }
+.wolf-sidebar-divider { height: 1px; background: var(--stroke); opacity: .5; }
+
+.wolf-nav { display: flex; flex-direction: column; gap: 4px; }
+.wolf-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--wolf-ink);
+}
+.wolf-nav-item:hover { background: rgba(255,255,255,.4); }
+.wolf-nav-item.is-active { background: #fff; }
+.wolf-nav-item.is-active .wolf-nav-label { font-weight: 600; }
+.wolf-nav-icon { width: 16px; height: 16px; object-fit: contain; flex-shrink: 0; }
+.wolf-nav-label { flex: 1; font-family: 'Inter', sans-serif; font-weight: 400; font-size: 16px; color: var(--wolf-ink); }
+.wolf-nav-badge {
+  background: var(--orange);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 100px;
+  min-width: 22px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+/* Submenu "Afgeronde leveringen" (disabled) */
+.wolf-nav-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 4px 16px;
+}
+.wolf-nav-sub.is-disabled { cursor: not-allowed; }
+.wolf-nav-sub.is-disabled span {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: rgba(30,30,30,.4);
+}
+.wolf-nav-subicon { width: 11px; height: 11px; object-fit: contain; opacity: .3; }
+
+/* ---- Gebruikersblok onderaan sidebar ------------------------------------ */
+.wolf-sidebar-bottom { display: flex; flex-direction: column; gap: 12px; }
+.wolf-user { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+.wolf-user:hover { background: rgba(255,255,255,.4); }
+.wolf-user-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #b9aeff; color: #62615e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px;
+  flex-shrink: 0;
+}
+.wolf-user-meta { display: flex; flex-direction: column; }
+.wolf-user-name { margin: 0; font-family: 'Inter', sans-serif; font-size: 15px; color: var(--wolf-ink); }
+.wolf-user-mail { margin: 0; font-family: 'Inter', sans-serif; font-weight: 300; font-size: 13px; color: var(--muted-mail); }
+.wolf-logout {
+  display: flex; align-items: center; gap: 6px;
+  background: transparent; border: 0; cursor: pointer;
+  padding: 4px 8px;
+  font-family: 'Inter', sans-serif; font-size: 14px; color: #6b6456;
+}
+.wolf-logout:hover { opacity: .7; }
+
+/* ============================================================
+   Typografie op pagina-niveau
+   ============================================================ */
+.wolf-date    { font-family: 'Inter', sans-serif; font-size: 16px; color: var(--muted-3); margin: 0; }
+.wolf-h1      { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 24px; color: var(--wolf-ink); margin: 0; }
+.wolf-intro   { font-family: 'Inter', sans-serif; font-size: 16px; color: var(--wolf-ink-3); margin: 0; }
+.wolf-eyebrow { font-family: 'Inter', sans-serif; font-size: 16px; color: var(--wolf-ink-3); margin: 0; }
+.wolf-value   { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 24px; color: var(--wolf-ink-2); margin: 0; }
+.wolf-breadcrumb { font-family: 'Inter', sans-serif; font-size: 16px; color: var(--wolf-ink-3); display: flex; gap: 8px; align-items: center; }
+.wolf-breadcrumb a { color: var(--wolf-ink-3); text-decoration: none; }
+.wolf-breadcrumb a:hover { text-decoration: underline; }
+
+/* ============================================================
+   Witte sectie-container (achter elke sectie)
+   ============================================================ */
+.wolf-section {
+  background: var(--wolf-section);
+  border: 0.6px solid var(--stroke);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+/* ---- Stat-kaarten (dashboard) ------------------------------------------- */
+.wolf-stats { display: flex; gap: 24px; align-items: stretch; }
+.wolf-stat {
+  position: relative;
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+  padding: 24px; min-height: 140px;
+  background: var(--wolf-card);
+  border: 0.6px solid var(--stroke);
+  border-radius: 8px;
+}
+.wolf-stat.is-clickable { cursor: pointer; transition: border-color .15s; }
+.wolf-stat.is-clickable:hover { border-color: var(--wolf-ink); }
+.wolf-stat.is-alert { background: var(--wolf-card-peach); border-color: var(--orange-bg); }
+.wolf-stat-label { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 16px; text-transform: uppercase; letter-spacing: .02em; color: var(--muted); margin: 0; }
+.wolf-stat-num   { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 48px; line-height: 1; color: var(--wolf-ink); margin: 0; }
+.wolf-stat.is-alert .wolf-stat-num { color: var(--orange); }
+.wolf-stat-sub   { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 16px; color: var(--muted); margin: 0; }
+.wolf-stat-arrow { position: absolute; top: 16px; right: 16px; width: 14px; height: 14px; opacity: .5; }
+.wolf-stat-arrow img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ---- Afteltimer (tijd over tot sluiten) --------------------------------- */
+.wolf-timer {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 4px 8px; border-radius: 4px;
+  background: var(--orange-bg-soft); border: 0.5px solid var(--orange);
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 16px; color: var(--orange);
+}
+.wolf-timer.is-expired { background: var(--grey-bg); border-color: var(--grey-text); color: var(--grey-text); }
+
+/* ============================================================
+   Tabellen — geen zebra, alleen dunne borders
+   ============================================================ */
+.wolf-table { width: 100%; border: 0.6px solid var(--stroke); border-radius: 8px; overflow: hidden; }
+.wolf-thead {
+  display: flex; align-items: center; gap: 20px;
+  padding: 12px 24px;
+  background: var(--wolf-sidebar);
+  border-bottom: 0.6px solid var(--stroke);
+}
+.wolf-th { font-family: 'Inter', sans-serif; font-size: 14px; text-transform: uppercase; color: var(--muted-2); margin: 0; }
+.wolf-row {
+  display: flex; align-items: center; gap: 20px;
+  padding: 16px 16px 16px 24px;
+  background: var(--wolf-row);
+  border-bottom: 0.5px solid var(--stroke);
+}
+.wolf-row:last-child { border-bottom: none; }
+.wolf-row.is-clickable { cursor: pointer; }
+.wolf-row.is-clickable:hover { background: #f6f2ea; }
+.wolf-td { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 16px; color: var(--wolf-ink); margin: 0; }
+.wolf-td--muted { color: var(--muted-2); }
+.wolf-caret { width: 20px; height: 20px; flex-shrink: 0; }
+.wolf-caret img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Afgerond-checkmark (paklijstoverzicht) */
+.wolf-check { width: 24px; height: 24px; border-radius: 5px; border: 1.5px solid var(--stroke); background: #fff; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+.wolf-check.is-empty { opacity: .45; }
+.wolf-check.is-clickable { cursor: pointer; border-color: var(--green); }
+.wolf-check.is-clickable:hover { background: #eafbec; }
+.wolf-check.is-done { background: var(--green); border-color: var(--green); }
+.wolf-check img { width: 14px; height: 10px; }
+
+/* ============================================================
+   Tabs (leverdagen + klantprofiel)
+   ============================================================ */
+.wolf-tabs { display: flex; gap: 16px; }
+.wolf-tab {
+  flex: 1; text-align: center; cursor: pointer;
+  padding: 12px 24px;
+  border: 0.3px solid var(--stroke);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  font-family: 'Inter', sans-serif; font-weight: 400; font-size: 18px;
+  color: rgba(43,43,43,.5);
+}
+.wolf-tab:hover { color: rgba(43,43,43,.8); }
+.wolf-tab.is-active {
+  background: var(--wolf-section);
+  color: var(--wolf-ink-2);
+  font-weight: 600;
+}
+.wolf-tab.is-disabled { cursor: not-allowed; color: rgba(43,43,43,.35); }
+.wolf-tab-panel {
+  background: var(--wolf-section);
+  border: 0.6px solid var(--stroke);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+/* ============================================================
+   Status-badges & pills
+   ============================================================ */
+.wolf-badge { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 100px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; white-space: nowrap; }
+.wolf-badge .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.wolf-badge--green  { background: var(--green-bg); color: var(--green); }
+.wolf-badge--green  .dot { background: var(--green); }
+.wolf-badge--orange { background: var(--orange-bg); color: var(--orange); }
+.wolf-badge--orange .dot { background: var(--orange); }
+.wolf-badge--grey   { background: var(--grey-bg); color: var(--grey-text); }
+.wolf-badge--grey   .dot { background: var(--grey-text); }
+.wolf-badge--blue   { background: #d9e6f2; color: #3a6ea5; }
+.wolf-badge--blue   .dot { background: #3a6ea5; }
+.wolf-badge--pink   { background: #f7e1ec; color: #b25d84; }
+.wolf-badge--pink   .dot { background: #b25d84; }
+/* Zwart label "Eerstvolgende leverdag" */
+.wolf-tag-dark { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 100px; background: var(--wolf-ink); color: #fff; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; text-transform: uppercase; white-space: nowrap; }
+/* Klanttype-pill */
+.wolf-type { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 100px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; white-space: nowrap; }
+.wolf-type--uitzondering { background: var(--orange-bg); color: var(--orange); }
+.wolf-type--uitzondering .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
+.wolf-type--regulier { background: #e5e1d8; color: #6b6456; }
+.wolf-type--regulier .dot { width: 7px; height: 7px; border-radius: 50%; background: #6b6456; }
+
+/* ============================================================
+   Knoppen
+   ============================================================ */
+.wolf-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; border-radius: 8px; border: 0; cursor: pointer; text-decoration: none; font-family: 'Inter', sans-serif; font-size: 16px; white-space: nowrap; }
+.wolf-btn--primary { background: var(--wolf-ink-3); color: #fff; }
+.wolf-btn--primary:hover { background: var(--wolf-ink); }
+.wolf-btn--ghost { background: transparent; border: 1px solid var(--stroke); color: var(--wolf-ink); }
+.wolf-btn--ghost:hover { background: #f0ece3; }
+.wolf-btn--disabled { background: rgba(46,46,46,.3); color: #fff; cursor: not-allowed; }
+.wolf-btn img { width: 15px; height: 15px; object-fit: contain; }
+
+/* ---- Weekknoppen (besteloverzicht) -------------------------------------- */
+.wolf-weeks { display: flex; gap: 16px; align-items: stretch; }
+.wolf-week { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 16px; border: 0.5px solid var(--stroke); border-radius: 8px; background: var(--wolf-section); cursor: pointer; }
+.wolf-week:hover { background: #f5f2eb; }
+.wolf-week.is-active { background: var(--wolf-tan); }
+.wolf-week-wk { font-family: 'Inter', sans-serif; font-size: 16px; text-transform: uppercase; color: var(--muted-2); margin: 0; text-align: center; }
+.wolf-week-range { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; color: #000; margin: 0; text-align: center; }
+.wolf-week--cal { justify-content: center; gap: 8px; }
+.wolf-week--cal img { width: 17px; height: 19px; object-fit: contain; }
+
+/* ============================================================
+   Infokaart (klantprofiel: contactgegevens / bestelrechten / ...)
+   ============================================================ */
+.wolf-infocard { background: var(--wolf-card); border: 0.5px solid var(--stroke); border-radius: 8px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+.wolf-infocard-title { font-family: 'Inter', sans-serif; font-size: 16px; text-transform: uppercase; color: var(--muted-2); margin: 0; }
+.wolf-info-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--stroke); }
+.wolf-info-row:last-child { border-bottom: none; padding-bottom: 0; }
+.wolf-info-label { font-family: 'Inter', sans-serif; font-size: 16px; color: var(--wolf-ink); margin: 0; }
+.wolf-info-value { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 16px; color: var(--wolf-ink); margin: 0; text-align: right; }
+.wolf-info-value--green { color: var(--green); }
+
+/* ============================================================
+   Modal / pop-up
+   ============================================================ */
+.wolf-modal-overlay { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; background: rgba(30,30,30,.45); }
+.wolf-modal-overlay.is-open { display: flex; }
+.wolf-modal { background: #fff; border-radius: 16px; overflow: hidden; width: 481px; max-width: calc(100vw - 32px); box-shadow: 0 10px 40px rgba(0,0,0,.2); }
+.wolf-modal-head { display: flex; gap: 8px; padding: 24px; background: var(--orange-bg); }
+.wolf-modal-warnicon { background: #fff; border-radius: 4px; padding: 6px; align-self: flex-start; display: flex; }
+.wolf-modal-warnicon img { width: 16px; height: 14px; }
+.wolf-modal-title { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 22px; color: var(--orange); margin: 0 0 4px; }
+.wolf-modal-sub   { font-family: 'Inter', sans-serif; font-size: 16px; color: var(--wolf-ink); margin: 0; }
+.wolf-modal-body  { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.wolf-modal-infobox { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+.wolf-modal-infobox h4 { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 16px; text-transform: uppercase; letter-spacing: .02em; color: var(--wolf-ink-3); margin: 0; }
+.wolf-modal-point { display: flex; align-items: center; gap: 12px; }
+.wolf-modal-point img { width: 14px; height: 10px; flex-shrink: 0; }
+.wolf-modal-point span { font-family: 'Inter', sans-serif; font-size: 16px; color: var(--wolf-ink); }
+.wolf-modal-divider { height: 1px; background: var(--stroke); }
+.wolf-modal-actions { display: flex; justify-content: flex-end; gap: 24px; }

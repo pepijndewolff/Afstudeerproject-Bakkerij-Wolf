@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bestellingen — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="bestellingen"></aside>
+
+  <main class="wolf-main">
+
+    <!-- Kop + weekknoppen (witte sectie) -->
+    <section class="wolf-section flex flex-col gap-6">
+      <div class="flex flex-col gap-[0.2rem]">
+        <p id="datum-tijd" class="wolf-date"></p>
+        <p class="wolf-h1">Bestellingen</p>
+        <p class="wolf-intro">Besteloverzicht per week</p>
+      </div>
+      <div id="week-buttons" class="wolf-weeks"></div>
+    </section>
+
+    <!-- Leverdag-tabs + paneel -->
+    <div class="flex flex-col">
+      <div id="dag-tabs" class="wolf-tabs"></div>
+      <div id="dag-panel" class="wolf-tab-panel flex flex-col gap-7"></div>
+    </div>
+
+  </main>
+
+  <!-- Kalender-modal -->
+  <div id="kal-modal" class="wolf-modal-overlay" onclick="if (event.target === this) sluitKalender()">
+    <div class="bg-[#f9f7f2] border border-[#b5ae9c] rounded-[12px] p-8" style="width: 560px;">
+      <div class="flex items-start justify-between mb-1">
+        <p class="inter-bold text-[22px] text-black">Kies een leverdag</p>
+        <button onclick="sluitKalender()" class="w-8 h-8 rounded-full flex items-center justify-center bg-transparent border-0 cursor-pointer hover:bg-[#ece8df]">
+          <span class="inter-regular text-[22px] text-[#1e1e1e] leading-none">&times;</span>
+        </button>
+      </div>
+      <p class="inter-regular text-[#6b6456] text-[14px] mb-5">Leverdagen zijn dinsdag, donderdag en zaterdag.</p>
+      <div class="flex items-center justify-between mb-6">
+        <button id="kal-prev" class="w-9 h-9 rounded-full border border-[#b5ae9c] flex items-center justify-center hover:bg-[#ece8df] cursor-pointer bg-transparent">
+          <span class="inter-regular text-[18px] text-[#1e1e1e]">&lsaquo;</span>
+        </button>
+        <p id="kal-maand" class="inter-bold text-[20px] text-black"></p>
+        <button id="kal-next" class="w-9 h-9 rounded-full border border-[#b5ae9c] flex items-center justify-center hover:bg-[#ece8df] cursor-pointer bg-transparent">
+          <span class="inter-regular text-[18px] text-[#1e1e1e]">&rsaquo;</span>
+        </button>
+      </div>
+      <div class="grid grid-cols-7 gap-1 mb-2">
+        <p class="inter-regular text-[#979797] text-[14px] text-center">M</p>
+        <p class="inter-regular text-[#979797] text-[14px] text-center">D</p>
+        <p class="inter-regular text-[#979797] text-[14px] text-center">W</p>
+        <p class="inter-regular text-[#979797] text-[14px] text-center">D</p>
+        <p class="inter-regular text-[#979797] text-[14px] text-center">V</p>
+        <p class="inter-regular text-[#979797] text-[14px] text-center">Z</p>
+        <p class="inter-regular text-[#979797] text-[14px] text-center">Z</p>
+      </div>
+      <div id="kal-grid" class="grid grid-cols-7 gap-1"></div>
+      <div class="flex gap-6 items-center mt-6">
+        <div class="flex gap-2 items-center"><div class="w-3 h-3 rounded-full" style="background-color:#c9c2b0;"></div><p class="inter-regular text-[#2e2e2e] text-[14px]">Leverdag</p></div>
+        <div class="flex gap-2 items-center"><div class="w-3 h-3 rounded-full bg-[#1e1e1e]"></div><p class="inter-regular text-[#2e2e2e] text-[14px]">Vandaag</p></div>
+        <div class="flex gap-2 items-center"><div class="w-3 h-3 rounded-full" style="background-color:#ece8df;"></div><p class="inter-regular text-[#2e2e2e] text-[14px]">Geen leverdag</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sluit-pop-up -->
+  <div id="sluit-modal" class="wolf-modal-overlay" onclick="if (event.target === this) sluitPopupClose()">
+    <div class="wolf-modal">
+      <div class="wolf-modal-head">
+        <div class="wolf-modal-warnicon"><img alt="" src="Assets/warning.svg"></div>
+        <div>
+          <p id="sluit-modal-title" class="wolf-modal-title"></p>
+          <p class="wolf-modal-sub">Deze actie kan niet ongedaan worden gemaakt. Controleer of alles klopt voordat je verdergaat.</p>
+        </div>
+      </div>
+      <div class="wolf-modal-body">
+        <div class="wolf-modal-infobox">
+          <h4>Wat gebeurt er na het sluiten?</h4>
+          <div class="wolf-modal-point"><img alt="" src="Assets/checkmark.svg"><span id="sluit-point-1"></span></div>
+          <div class="wolf-modal-point"><img alt="" src="Assets/checkmark.svg"><span>Paklijst per klant wordt automatisch aangemaakt</span></div>
+          <div class="wolf-modal-point"><img alt="" src="Assets/checkmark.svg"><span>Bakkers ontvangen de definitieve productieopdracht</span></div>
+        </div>
+        <div class="wolf-modal-divider"></div>
+        <div class="wolf-modal-actions">
+          <button class="wolf-btn wolf-btn--ghost" onclick="sluitPopupClose()">Annuleren</button>
+          <button id="sluit-confirm" class="wolf-btn wolf-btn--primary">Bestellingen sluiten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const W = window.WolfData;
+    W.bindKlok('datum-tijd');
+
+    const focusId = (W.getDeliveryDays().find(function (d) { return d.isFocus; }) || {}).id;
+
+    // ---- Helpers -------------------------------------------------------------
+    function weekRange(offset) {
+      const ma = W.startOfWeek(W.nu());
+      ma.setDate(ma.getDate() + offset * 7);
+      const zo = new Date(ma); zo.setDate(zo.getDate() + 6);
+      const m1 = W.MAANDEN[ma.getMonth()].slice(0, 3);
+      const m2 = W.MAANDEN[zo.getMonth()].slice(0, 3);
+      const range = ma.getMonth() === zo.getMonth()
+        ? `${ma.getDate()}–${zo.getDate()} ${m2}`
+        : `${ma.getDate()} ${m1}–${zo.getDate()} ${m2}`;
+      return { wk: W.weeknummer(ma), range: range };
+    }
+
+    function badge(variant, tekst) {
+      return `<span class="wolf-badge wolf-badge--${variant}"><span class="dot"></span>${tekst}</span>`;
+    }
+    function dayBadge(d) {
+      if (d.geleverd) return badge('grey', 'Afgerond');
+      if (d.handmatigGesloten) return badge('grey', 'Gesloten');
+      if (d.teSluiten) return badge('orange', 'Te sluiten');
+      return badge('green', 'Open');
+    }
+    function statusBadge(status) {
+      switch (status) {
+        case 'ingepland':    return badge('green', 'Ingepland');
+        case 'geleverd':     return badge('green', 'Geleverd');
+        case 'opgehaald':    return badge('green', 'Opgehaald');
+        case 'goedgekeurd':  return badge('green', 'Goedgekeurd');
+        case 'aangepast':    return badge('orange', 'Aangepast');
+        case 'afgewezen':    return badge('grey', 'Afgewezen');
+        default:             return badge('orange', 'Beoordelen');
+      }
+    }
+
+    function defaultDayFor(week) {
+      const ds = W.getWeekLeverdagen(week);
+      const f = ds.find(function (d) { return d.id === focusId; });
+      if (f) return f.id;
+      const a = ds.find(function (d) { return d.actief; });
+      if (a) return a.id;
+      return ds.length ? ds[ds.length - 1].id : null;
+    }
+
+    function bepaalStartWeek() {
+      for (let off = 0; off <= 4; off++) {
+        if (W.getWeekLeverdagen(off).some(function (d) { return d.id === focusId; })) return off;
+      }
+      return 0;
+    }
+
+    // ---- State (week + dag), evt. uit ?dag= ---------------------------------
+    let selectedWeek, selectedDay;
+    (function initState() {
+      const dagParam = new URLSearchParams(location.search).get('dag');
+      if (dagParam) {
+        for (let off = 0; off <= 8; off++) {
+          if (W.getWeekLeverdagen(off).some(function (d) { return d.id === dagParam; })) {
+            selectedWeek = off; selectedDay = dagParam; return;
+          }
+        }
+      }
+      selectedWeek = bepaalStartWeek();
+      selectedDay = defaultDayFor(selectedWeek);
+    })();
+
+    // ---- Render: weekknoppen -------------------------------------------------
+    function renderWeeks() {
+      const weeks = [0, 1, 2, 3, 4].map(function (off) {
+        const w = weekRange(off);
+        const actief = off === selectedWeek ? ' is-active' : '';
+        return `
+          <div class="wolf-week${actief}" onclick="selectWeek(${off})">
+            <p class="wolf-week-wk">Week ${w.wk}</p>
+            <p class="wolf-week-range">${w.range}</p>
+          </div>`;
+      }).join('');
+      const kal = `
+        <div class="wolf-week wolf-week--cal" onclick="openKalender()">
+          <img alt="" src="Assets/calendar.svg">
+          <p class="wolf-week-range">Kalender</p>
+        </div>`;
+      document.getElementById('week-buttons').innerHTML = weeks + kal;
+    }
+
+    // ---- Render: leverdag-tabs ----------------------------------------------
+    function renderTabs() {
+      const dagen = W.getWeekLeverdagen(selectedWeek);
+      document.getElementById('dag-tabs').innerHTML = dagen.map(function (d) {
+        const actief = d.id === selectedDay ? ' is-active' : '';
+        return `<button class="wolf-tab${actief}" onclick="selectDay('${d.id}')">${d.label}</button>`;
+      }).join('');
+    }
+
+    // ---- Render: paneel (tabel + sluit-blok) --------------------------------
+    function dagRows(d) {
+      const orders = W.getOrders(d.id).map(function (o) {
+        return {
+          bestelnr: o.bestelnr, klant: o.klant, klantId: o.klantId,
+          type: 'Standaardorder', typeOrange: false,
+          leverwijze: o.leverwijzeLabel, tijdstip: o.tijdstip,
+          status: d.geleverd ? 'geleverd' : 'ingepland',
+          href: `1-323-bestelling-bekijken.html?klant=${o.klantId}&dag=${d.id}`,
+        };
+      });
+      const aanvr = (d.actief ? W.getAanvragen().filter(function (a) { return a.leverdagId === d.id; }) : []).map(function (a) {
+        const k = W.klantById(a.klantId);
+        return {
+          bestelnr: a.bestelnr, klant: a.klant, klantId: a.klantId,
+          type: a.reden, typeOrange: true,
+          leverwijze: W.LEVERWIJZE_LABEL[k.leverwijze] || '—', tijdstip: a.tijdstip,
+          status: a.status,
+          href: `1-234-beoordelen.html?id=${a.id}&van=bestellingen`,
+        };
+      });
+      return orders.concat(aanvr);
+    }
+
+    function renderPanel() {
+      const dagen = W.getWeekLeverdagen(selectedWeek);
+      const d = dagen.find(function (x) { return x.id === selectedDay; }) || dagen[0];
+      if (!d) { document.getElementById('dag-panel').innerHTML = ''; return; }
+
+      const rows = dagRows(d);
+      const tabel = `
+        <div class="wolf-table">
+          <div class="wolf-thead">
+            <p class="wolf-th w-[56px]">Nr</p>
+            <p class="wolf-th w-[150px]">Klant</p>
+            <p class="wolf-th w-[140px]">Type</p>
+            <p class="wolf-th w-[110px]">Leverwijze</p>
+            <p class="wolf-th w-[90px]">Tijdstip</p>
+            <p class="wolf-th flex-1 text-right">Status</p>
+            <div class="w-5 shrink-0"></div>
+          </div>
+          ${rows.map(function (r) {
+            return `
+              <div class="wolf-row is-clickable" onclick="window.location.href='${r.href}'">
+                <p class="wolf-td w-[56px]">${r.bestelnr}</p>
+                <p class="wolf-td w-[150px] truncate">${r.klant}</p>
+                <p class="wolf-td w-[140px] truncate" style="${r.typeOrange ? 'color:var(--orange)' : ''}">${r.type}</p>
+                <p class="wolf-td w-[110px]">${r.leverwijze}</p>
+                <p class="wolf-td w-[90px]">${r.tijdstip}</p>
+                <div class="flex-1 flex justify-end">${statusBadge(r.status)}</div>
+                <div class="wolf-caret"><img alt="" src="Assets/arrow-right.svg"></div>
+              </div>`;
+          }).join('') || '<div class="wolf-row"><p class="wolf-td wolf-td--muted">Geen bestellingen voor deze dag.</p></div>'}
+        </div>`;
+
+      // Sluit-blok / paklijst-link afhankelijk van de status
+      let actie = '';
+      if (d.gesloten || d.geleverd) {
+        actie = `<a href="1-441-paklijst.html?dag=${d.id}" class="wolf-btn wolf-btn--primary self-start">Paklijst bekijken</a>`;
+      } else if (d.actief) {
+        const open = W.aantalOpenAanvragenVoorDag(d.id);
+        if (d.open) {
+          actie = sluitDisabled('Beschikbaar zodra de besteldeadline (15:00) is verstreken');
+        } else if (open > 0) {
+          actie = sluitDisabled('Beschikbaar zodra alle aanvragen zijn beoordeeld');
+        } else {
+          actie = `<button class="wolf-btn wolf-btn--primary self-start" onclick="openSluiten('${d.id}')">Bestellingen sluiten</button>`;
+        }
+      }
+      document.getElementById('dag-panel').innerHTML = tabel + (actie ? `<div class="flex flex-col gap-2 items-start">${actie}</div>` : '');
+    }
+
+    function sluitDisabled(tekst) {
+      return `<button class="wolf-btn wolf-btn--disabled self-start" disabled>Bestellingen sluiten</button>
+              <p class="inter-regular text-[12px]" style="color:var(--wolf-ink-3);font-weight:300;">${tekst}</p>`;
+    }
+
+    function render() { renderWeeks(); renderTabs(); renderPanel(); }
+
+    function selectWeek(off) { selectedWeek = off; selectedDay = defaultDayFor(off); render(); }
+    function selectDay(id) { selectedDay = id; renderTabs(); renderPanel(); }
+    window.selectWeek = selectWeek;
+    window.selectDay = selectDay;
+
+    // ---- Sluit-pop-up --------------------------------------------------------
+    let sluitDagId = null;
+    function openSluiten(id) {
+      const d = W.getWeekLeverdagen(selectedWeek).find(function (x) { return x.id === id; });
+      if (!d) return;
+      sluitDagId = id;
+      document.getElementById('sluit-modal-title').textContent = `Bestellingen sluiten ${d.label.toLowerCase()}?`;
+      document.getElementById('sluit-point-1').textContent =
+        `Geen nieuwe bestellingen of aanvragen meer mogelijk voor ${d.weekdag.toLowerCase()}`;
+      document.getElementById('sluit-modal').classList.add('is-open');
+    }
+    function sluitPopupClose() { document.getElementById('sluit-modal').classList.remove('is-open'); }
+    window.openSluiten = openSluiten;
+    window.sluitPopupClose = sluitPopupClose;
+
+    document.getElementById('sluit-confirm').addEventListener('click', function () {
+      if (!sluitDagId) return;
+      W.setDagGesloten(sluitDagId);
+      window.location.href = `1-441-paklijst.html?dag=${sluitDagId}`;
+    });
+
+    // ---- Kalender-modal ------------------------------------------------------
+    let toonMaand = W.nu().getMonth();
+    let toonJaar = W.nu().getFullYear();
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function renderKalender() {
+      document.getElementById('kal-maand').textContent =
+        `${W.MAANDEN[toonMaand].charAt(0).toUpperCase() + W.MAANDEN[toonMaand].slice(1)} ${toonJaar}`;
+      const eerste = new Date(toonJaar, toonMaand, 1);
+      const startOffset = (eerste.getDay() + 6) % 7;
+      const dagenInMaand = new Date(toonJaar, toonMaand + 1, 0).getDate();
+      const vandaagStr = W.nu().toDateString();
+      let cells = '';
+      for (let i = 0; i < startOffset; i++) cells += '<div></div>';
+      for (let dd = 1; dd <= dagenInMaand; dd++) {
+        const datum = new Date(toonJaar, toonMaand, dd);
+        const isLever = W.LEVER_WEEKDAGEN.indexOf(datum.getDay()) !== -1;
+        const isVandaag = datum.toDateString() === vandaagStr;
+        const id = `${toonJaar}-${pad2(toonMaand + 1)}-${pad2(dd)}`;
+        if (isVandaag) {
+          cells += `<button onclick="window.location.href='1-109-bestellingen.html?dag=${id}'" class="aspect-square rounded-full flex items-center justify-center cursor-pointer bg-[#1e1e1e] border-0"><span class="inter-medium text-[15px] text-white">${dd}</span></button>`;
+        } else if (isLever) {
+          cells += `<button onclick="window.location.href='1-109-bestellingen.html?dag=${id}'" class="aspect-square rounded-full flex items-center justify-center cursor-pointer border-0 hover:opacity-80" style="background-color:#c9c2b0;"><span class="inter-medium text-[15px] text-[#1e1e1e]">${dd}</span></button>`;
+        } else {
+          cells += `<div class="aspect-square rounded-full flex items-center justify-center" style="background-color:#ece8df;"><span class="inter-regular text-[15px] text-[#b5ae9c]">${dd}</span></div>`;
+        }
+      }
+      document.getElementById('kal-grid').innerHTML = cells;
+    }
+    function openKalender() { toonMaand = W.nu().getMonth(); toonJaar = W.nu().getFullYear(); renderKalender(); document.getElementById('kal-modal').classList.add('is-open'); }
+    function sluitKalender() { document.getElementById('kal-modal').classList.remove('is-open'); }
+    window.openKalender = openKalender;
+    window.sluitKalender = sluitKalender;
+    document.getElementById('kal-prev').addEventListener('click', function () { toonMaand--; if (toonMaand < 0) { toonMaand = 11; toonJaar--; } renderKalender(); });
+    document.getElementById('kal-next').addEventListener('click', function () { toonMaand++; if (toonMaand > 11) { toonMaand = 0; toonJaar++; } renderKalender(); });
+
+    // ---- Init + lichte verversing (vangt het verstrijken van 15:00 op) ------
+    render();
+    setInterval(render, 20000);
+  </script>
+
+</body>
+</html>

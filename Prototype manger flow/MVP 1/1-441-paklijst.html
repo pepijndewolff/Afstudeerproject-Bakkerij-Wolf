@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>6 Paklijst — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    .font-gt-ext-rg { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .font-gt-ext-md { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 600; }
+    .font-gt-rg     { font-family: Arial, sans-serif; font-weight: 400; }
+    .font-gt-bd     { font-family: Arial, sans-serif; font-weight: 700; }
+    .inter-regular  { font-family: 'Inter', sans-serif; font-weight: 400; }
+    .inter-medium   { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .inter-bold     { font-family: 'Inter', sans-serif; font-weight: 700; }
+    a.nav-item { display: flex; flex-direction: column; width: 100%; text-decoration: none; }
+    a.nav-item:hover { background-color: rgba(249,247,242,0.5); }
+  </style>
+</head>
+<body class="bg-[#dfdacd] flex flex-col w-full h-full">
+
+  <!-- Top nav bar -->
+  <header class="border-b border-[#b5ae9c] flex items-center justify-between px-8 py-6 shrink-0 w-full">
+    <div class="flex gap-5 items-center">
+      <div class="h-[30px] w-[27px] shrink-0">
+        <img alt="" class="block w-full h-full object-contain" src="assets/wolf logo 1.svg">
+      </div>
+      <p class="font-gt-ext-rg text-black tracking-[6.4px] uppercase whitespace-nowrap text-[16px]">
+        Bakkerij <span class="font-gt-ext-md">Wolf</span>
+      </p>
+    </div>
+    <div class="relative flex items-center bg-[#f9f7f2] rounded-[100px] px-4 py-2 whitespace-nowrap">
+      <span class="font-gt-rg text-[14px] text-[#1e1e1e]">Noor</span>
+    </div>
+  </header>
+
+  <div class="flex flex-1 min-h-0 w-full">
+
+    <!-- Sidebar -->
+    <aside class="border-r border-[#b5ae9c] flex flex-col h-full shrink-0 w-[271px] pt-10 pb-4">
+      <nav class="flex flex-col w-full">
+        <a href="1-23-dashboard.html" class="nav-item border-b border-[#b5ae9c] px-8 py-3">
+          <p class="font-gt-rg text-[18px] text-black w-full">Dashboard</p>
+        </a>
+        <a href="1-109-bestellingen.html" class="nav-item border-b border-[#b5ae9c] px-8 py-3">
+          <p class="font-gt-rg text-[18px] text-black w-full">Bestellingen</p>
+        </a>
+        <a href="1-298-aanvragen.html" class="nav-item border-b border-[#b5ae9c] px-8 py-3">
+          <p class="font-gt-rg text-[18px] text-black w-full">Aanvragen</p>
+        </a>
+        <a href="1-441-paklijst.html" class="nav-item bg-[#f9f7f2] border-l-4 border-black px-8 py-3">
+          <p class="font-gt-bd text-[18px] text-[#1e1e1e] w-full">Paklijsten</p>
+        </a>
+        <a href="1-336-klanten-overzicht.html" class="nav-item border-b border-[#b5ae9c] px-8 py-3">
+          <p class="font-gt-rg text-[18px] text-black w-full">Klanten</p>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="bg-[#f9f7f2] flex flex-1 flex-col gap-6 h-full overflow-y-auto min-w-0 p-10">
+
+      <!-- Header -->
+      <div class="flex flex-col gap-3 shrink-0 w-full">
+        <!-- Breadcrumb -->
+        <div class="flex gap-2 inter-regular text-[#2e2e2e] text-[16px] whitespace-nowrap">
+          <span>Paklijsten</span>
+          <span>&gt;</span>
+          <span id="bc-dag"></span>
+        </div>
+        <!-- Title -->
+        <div class="flex gap-3 items-center whitespace-nowrap">
+          <p class="inter-bold text-[32px] text-black">Paklijst</p>
+          <p id="titel-dag" class="inter-medium text-[20px] text-black"></p>
+        </div>
+        <div class="flex items-start">
+          <p class="inter-regular text-[#2e2e2e] text-[16px] whitespace-nowrap">Na het sluiten worden geen nieuwe orders of aanvragen meer geaccepteerd en wordt de paklijst aangemaakt.</p>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="flex gap-6 h-[116px] items-center w-full">
+          <!-- Te pakken -->
+          <div class="bg-[#dfdacd] border border-[#b5ae9c] flex flex-1 flex-col h-full min-w-0 p-6 rounded-[8px]">
+            <div class="flex flex-col gap-[10px]">
+              <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">Te pakken</p>
+              <p id="stat-tepakken" class="inter-bold text-[32px] text-black w-full">0</p>
+            </div>
+          </div>
+          <!-- Ingepakt -->
+          <div class="bg-[#dfdacd] border border-[#b5ae9c] flex flex-1 flex-col h-full min-w-0 p-6 rounded-[8px]">
+            <div class="flex flex-col gap-[10px]">
+              <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">Ingepakt</p>
+              <p id="stat-ingepakt" class="inter-bold text-[32px] text-black w-full">0</p>
+            </div>
+          </div>
+          <!-- Klaar (green) -->
+          <div class="bg-[#c8f4ce] border border-[#1c892b] flex flex-1 flex-col h-full min-w-0 p-6 rounded-[8px]">
+            <div class="flex flex-col gap-[10px]">
+              <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">Klaar voor overdracht</p>
+              <p id="stat-klaar" class="inter-bold text-[#1c892b] text-[32px] w-full">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Packing table -->
+      <div class="flex flex-col items-start shrink-0 w-full">
+        <div class="border border-[#b5ae9c] flex flex-col overflow-hidden rounded-[8px] w-full">
+          <!-- Header -->
+          <div class="bg-[#dfdacd] border-b border-[#b5ae9c] flex gap-3 items-center px-6 py-3 w-full">
+            <div class="flex flex-1 items-center justify-between min-w-0">
+              <div class="flex items-center w-[236px]">
+                <p class="inter-regular text-[#979797] text-[16px] uppercase w-[145px]">klant</p>
+              </div>
+              <p class="inter-regular text-[#979797] text-[16px] uppercase whitespace-nowrap">Producten</p>
+              <div class="flex items-center justify-center">
+                <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-[174px]">Status</p>
+              </div>
+            </div>
+            <div class="w-5 h-5 shrink-0"></div>
+          </div>
+
+          <!-- Rijen dynamisch vanuit WolfData -->
+          <div id="paklijst-rijen"></div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const W = window.WolfData;
+    const dag = W.getPaklijstDag();
+    document.getElementById('bc-dag').textContent = dag.label;
+    document.getElementById('titel-dag').textContent = dag.label;
+
+    const klanten = W.getPaklijstKlanten();
+
+    // Stat-tellers afgeleid uit afvinkstaat
+    let teP = 0, ingep = 0, klaar = 0;
+    klanten.forEach(function (k) {
+      teP += (k.aantalItems - k.ingepakt);
+      ingep += k.ingepakt;
+      if (k.klaar) klaar += 1;
+    });
+    document.getElementById('stat-tepakken').textContent = String(teP);
+    document.getElementById('stat-ingepakt').textContent = String(ingep);
+    document.getElementById('stat-klaar').textContent = String(klaar);
+
+    document.getElementById('paklijst-rijen').innerHTML = klanten.map(function (k, i) {
+      const bg = i % 2 === 0 ? 'bg-[#f4f0e7]' : 'bg-[#fdfbf7]';
+      const hover = i % 2 === 0 ? 'hover:bg-[#f0ebe0]' : 'hover:bg-[#f7f5f0]';
+      const statusHtml = k.klaar
+        ? `<div class="bg-[#c8f4ce] flex gap-2 items-center px-3 py-1 rounded-[100px]">
+             <div class="w-[7px] h-[7px] rounded-full shrink-0" style="background-color: #1c892b;"></div>
+             <p class="inter-medium text-[#1c892b] text-[14px] whitespace-nowrap">Ingepakt</p></div>`
+        : `<div class="bg-[#dfdacd] flex gap-2 items-center px-3 py-1 rounded-[100px]">
+             <div class="w-[7px] h-[7px] rounded-full shrink-0" style="background-color: #6b6456;"></div>
+             <p class="inter-medium text-[#2e2e2e] text-[14px] whitespace-nowrap">Te pakken</p></div>`;
+      const iconHtml = k.klaar
+        ? `<div class="w-5 h-5 shrink-0 flex items-center justify-center"><img alt="" class="block object-contain" src="assets/checkmark.svg" style="width:18px;height:13px;"></div>`
+        : `<div class="w-5 h-5 shrink-0"><img alt="" class="block w-full h-full object-contain" src="assets/arrow-right.svg"></div>`;
+      return `
+        <div class="${bg} flex gap-5 items-center pl-6 pr-4 py-4 w-full cursor-pointer ${hover}" onclick="window.location.href='1-324-paklijst-detail.html?klant=${k.klantId}'">
+          <div class="flex flex-1 items-center justify-between min-w-0">
+            <div class="flex items-center w-[236px]"><p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${k.klant}</p></div>
+            <div class="flex items-center justify-center"><p class="inter-medium underline text-[16px] text-[#1e1e1e] whitespace-nowrap">${k.totaal}</p></div>
+            <div class="flex items-center justify-end w-[176px]">${statusHtml}</div>
+          </div>
+          ${iconHtml}
+        </div>`;
+    }).join('');
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2 Dagoverzicht — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    .font-gt-ext-rg { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .font-gt-ext-md { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 600; }
+    .font-gt-rg     { font-family: Arial, sans-serif; font-weight: 400; }
+    .font-gt-md     { font-family: Arial, sans-serif; font-weight: 500; }
+    .font-gt-bd     { font-family: Arial, sans-serif; font-weight: 700; }
+    .inter-regular  { font-family: 'Inter', sans-serif; font-weight: 400; }
+    .inter-medium   { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .inter-bold     { font-family: 'Inter', sans-serif; font-weight: 700; }
+    a.nav-item { display: flex; flex-direction: column; width: 100%; text-decoration: none; }
+    a.nav-item:hover { background-color: rgba(249,247,242,0.5); }
+  </style>
+</head>
+<body class="bg-[#dfdacd] flex flex-col w-full h-full">
+
+  <!-- Top nav bar -->
+  <header class="border-b border-[#b5ae9c] flex items-center justify-between px-8 py-6 shrink-0 w-full">
+    <div class="flex gap-5 items-center">
+      <div class="h-[30px] w-[27px] shrink-0 relative">
+        <img alt="" class="block w-full h-full object-contain" src="assets/wolf logo 1.svg">
+      </div>
+      <p class="font-gt-ext-rg text-black tracking-[6.4px] uppercase whitespace-nowrap text-[16px]">
+        Bakkerij <span class="font-gt-ext-md">Wolf</span>
+      </p>
+    </div>
+    <div class="relative flex items-center bg-[#f9f7f2] rounded-[100px] px-4 py-2 whitespace-nowrap">
+      <span class="font-gt-rg text-[14px] text-[#1e1e1e]">Noor</span>
+    </div>
+  </header>
+
+  <!-- Body: sidebar + main -->
+  <div class="flex flex-1 min-h-0 w-full">
+
+    <!-- Sidebar -->
+    <aside data-wolf-sidebar="dagoverzicht" class="border-r border-[#b5ae9c] flex flex-col h-full shrink-0 w-[271px] pt-10 pb-4"></aside>
+
+    <!-- Main content -->
+    <main class="bg-[#f9f7f2] flex flex-1 flex-col gap-6 h-full overflow-y-auto min-w-0 p-10">
+
+      <!-- Greeting -->
+      <div class="flex flex-col gap-3 shrink-0 w-full">
+        <p id="datum-tijd" class="inter-regular text-[#2e2e2e] text-[16px] w-full"></p>
+        <p id="begroeting" class="inter-bold text-[32px] text-black w-full"></p>
+        <p class="inter-regular text-[#2e2e2e] text-[16px] w-full">Hier is wat er vandaag aandacht nodig heeft.</p>
+      </div>
+
+      <!-- Next delivery card -->
+      <div class="bg-[#dfdacd] border border-[#b5ae9c] flex flex-col gap-6 p-6 rounded-[8px] shrink-0 w-full">
+
+        <!-- Header row: title -->
+        <div class="flex gap-6 items-start w-full">
+          <div class="flex flex-1 flex-col gap-2 min-w-0">
+            <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">Eerstvolgende leverdag</p>
+            <p id="leverdag-titel" class="inter-bold text-[32px] text-black w-full"></p>
+            <p id="sluitmoment-tekst" class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] w-full"></p>
+          </div>
+        </div>
+
+        <!-- Stat cards (klikbaar) -->
+        <div class="flex gap-6 h-[145px] items-center w-full">
+          <!-- Ingepland -->
+          <div id="tegel-ingepland" class="relative bg-[#f9f7f2] border border-[#b5ae9c] flex flex-1 flex-col h-full justify-between min-w-0 p-6 rounded-[8px] cursor-pointer hover:border-[#1e1e1e] transition-colors">
+            <div class="absolute top-4 right-4 w-4 h-4 opacity-50"><img alt="" class="block w-full h-full object-contain" src="assets/arrow-up-right.svg"></div>
+            <div class="flex flex-col gap-[10px]">
+              <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">Ingepland</p>
+              <p id="ingepland-getal" class="inter-bold text-[32px] text-black w-full"></p>
+              <p class="inter-bold text-[#2e2e2e] text-[16px] w-full">Automatische orders</p>
+            </div>
+          </div>
+          <!-- Open aanvragen (warning of neutraal op basis van tijd) -->
+          <div id="aanvragen-card" class="relative flex flex-1 flex-col h-full justify-between min-w-0 p-6 rounded-[8px] border cursor-pointer hover:border-[#1e1e1e] transition-colors">
+            <div class="absolute top-4 right-4 w-4 h-4 opacity-50"><img alt="" class="block w-full h-full object-contain" src="assets/arrow-up-right.svg"></div>
+            <div class="flex flex-col gap-[10px]">
+              <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">Open aanvragen</p>
+              <p id="aanvragen-getal" class="inter-bold text-[32px] w-full"></p>
+              <p id="aanvragen-sub" class="inter-bold text-[#2e2e2e] text-[16px] w-full"></p>
+            </div>
+          </div>
+          <!-- Alle bestellingen -->
+          <div id="tegel-alle" class="relative bg-[#f9f7f2] border border-[#b5ae9c] flex flex-1 flex-col h-full justify-between min-w-0 p-6 rounded-[8px] cursor-pointer hover:border-[#1e1e1e] transition-colors">
+            <div class="absolute top-4 right-4 w-4 h-4 opacity-50"><img alt="" class="block w-full h-full object-contain" src="assets/arrow-up-right.svg"></div>
+            <div class="flex flex-col gap-[10px]">
+              <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">alle bestellingen</p>
+              <p id="alle-getal" class="inter-bold text-[32px] text-black w-full"></p>
+              <p id="alle-sub" class="inter-bold text-[#2e2e2e] text-[16px] w-full"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overige leverdagen -->
+      <div class="flex flex-col gap-2 shrink-0 w-full">
+        <div class="flex items-center w-full">
+          <p class="inter-medium text-[20px] text-black whitespace-nowrap">Overige leverdagen</p>
+        </div>
+        <!-- Table -->
+        <div class="border border-[#b5ae9c] flex flex-col overflow-hidden rounded-[8px] w-full">
+
+          <!-- Table header -->
+          <div class="bg-[#dfdacd] border-b border-[#b5ae9c] flex gap-3 items-center px-6 py-3 w-full">
+            <div class="flex flex-1 items-center justify-between min-w-0">
+              <div class="flex items-center w-[236px]">
+                <p class="inter-regular text-[#979797] text-[16px] uppercase w-[145px]">Leverdag</p>
+              </div>
+              <p class="inter-regular text-[#979797] text-[16px] uppercase w-[116px]">Ingepland</p>
+              <p class="inter-regular text-[#979797] text-[16px] uppercase whitespace-nowrap">Sluitmoment</p>
+              <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-[176px]">Status</p>
+            </div>
+            <div class="w-6 h-6 shrink-0"></div>
+          </div>
+
+          <!-- Rijen worden dynamisch gevuld vanuit WolfData -->
+          <div id="overige-leverdagen"></div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const W = window.WolfData;
+
+    W.bindKlok('datum-tijd');
+
+    // Begroeting op basis van het (test)uur
+    (function () {
+      const uur = W.nu().getHours();
+      const groet = uur < 12 ? 'Goedemorgen' : uur < 18 ? 'Goedemiddag' : 'Goedenavond';
+      document.getElementById('begroeting').textContent = `${groet}, Noor`;
+    })();
+
+    const dagen = W.getDeliveryDays();
+    const focus = dagen.find(function (d) { return d.isFocus; }) || dagen.find(function (d) { return !d.gesloten; });
+    const orders = W.getOrders(focus ? focus.id : null);
+
+    // Eerstvolgende leverdag-kaart
+    document.getElementById('leverdag-titel').textContent = focus ? focus.label : '—';
+
+    const nu = W.nu();
+    const sm = focus ? focus.sluitMoment : null;
+    const sluitTekst = document.getElementById('sluitmoment-tekst');
+    const aanvragenCard = document.getElementById('aanvragen-card');
+    const aanvragenGetal = document.getElementById('aanvragen-getal');
+    const aanvragenSub = document.getElementById('aanvragen-sub');
+
+    const open = W.aantalOpenAanvragen();
+    const vandaag = sm && sm.toDateString() === nu.toDateString();
+    const verstreken = sm && nu >= sm;
+
+    if (open > 0) {
+      // Er staan nog aanvragen open — actie vereist
+      sluitTekst.textContent = vandaag ? 'Sluitmoment vandaag 15:00'
+        : `Sluitmoment ${W.DAGEN[sm.getDay()].toLowerCase()} 15:00`;
+      aanvragenCard.className = 'relative bg-[#f4e0c8] border border-[#c45d1d] flex flex-1 flex-col h-full justify-between min-w-0 p-6 rounded-[8px] cursor-pointer hover:border-[#1e1e1e] transition-colors';
+      aanvragenGetal.textContent = String(open);
+      aanvragenGetal.style.color = '#c45d1d';
+      aanvragenSub.textContent = 'Beoordelen voor 15:00';
+    } else if (verstreken) {
+      sluitTekst.textContent = 'Sluitmoment verstreken — bestellingen sluiten';
+      aanvragenCard.className = 'relative bg-[#f9f7f2] border border-[#b5ae9c] flex flex-1 flex-col h-full justify-between min-w-0 p-6 rounded-[8px] cursor-pointer hover:border-[#1e1e1e] transition-colors';
+      aanvragenGetal.textContent = '0';
+      aanvragenGetal.style.color = '#1e1e1e';
+      aanvragenSub.textContent = 'Alle aanvragen beoordeeld';
+    } else {
+      sluitTekst.textContent = vandaag ? 'Sluitmoment vandaag 15:00'
+        : `Sluitmoment ${W.DAGEN[sm.getDay()].toLowerCase()} 15:00`;
+      aanvragenCard.className = 'relative bg-[#f9f7f2] border border-[#b5ae9c] flex flex-1 flex-col h-full justify-between min-w-0 p-6 rounded-[8px] cursor-pointer hover:border-[#1e1e1e] transition-colors';
+      aanvragenGetal.textContent = '0';
+      aanvragenGetal.style.color = '#1e1e1e';
+      aanvragenSub.textContent = 'Alle aanvragen beoordeeld';
+    }
+
+    // Stat-tellers (live uit data)
+    const aanvragen = W.getAanvragen();
+    document.getElementById('ingepland-getal').textContent = String(orders.length);
+    document.getElementById('alle-getal').textContent = String(orders.length + aanvragen.length);
+    document.getElementById('alle-sub').textContent = focus ? `Gepland voor ${focus.weekdag.toLowerCase()}` : '';
+
+    // Tegels klikbaar: Ingepland + Alle bestellingen → bestellingen van de leverdag,
+    // Open aanvragen → aanvragen-overzicht.
+    const dagUrl = focus ? `1-299-bestellingen-per-datum.html?dag=${focus.id}` : '1-109-bestellingen.html';
+    document.getElementById('tegel-ingepland').onclick = function () { window.location.href = dagUrl; };
+    document.getElementById('tegel-alle').onclick = function () { window.location.href = dagUrl; };
+    document.getElementById('aanvragen-card').onclick = function () { window.location.href = '1-298-aanvragen.html'; };
+
+    // Overige leverdagen (alle open leverdagen behalve de focusdag)
+    const overige = dagen.filter(function (d) { return !d.gesloten && (!focus || d.id !== focus.id); });
+    const cont = document.getElementById('overige-leverdagen');
+    cont.innerHTML = overige.map(function (d, i) {
+      const bg = i % 2 === 0 ? 'bg-[#f4f0e7]' : 'bg-[#fdfbf7]';
+      const hover = i % 2 === 0 ? 'hover:bg-[#f0ebe0]' : 'hover:bg-[#f7f5f0]';
+      const sluit = d.sluitMoment;
+      const sluitLabel = `${W.DAGEN[sluit.getDay()]} 15:00`;
+      const aantal = W.getOrders(d.id).length;
+      return `
+        <div class="${bg} flex gap-5 items-center pl-6 pr-4 py-4 w-full cursor-pointer ${hover}" onclick="window.location.href='1-299-bestellingen-per-datum.html?dag=${d.id}'">
+          <div class="flex flex-1 items-center justify-between min-w-0">
+            <div class="flex items-center w-[236px]">
+              <p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${d.label}</p>
+            </div>
+            <div class="flex items-center justify-center">
+              <p class="inter-medium text-[16px] text-[#1e1e1e] w-[116px]">${aantal}</p>
+            </div>
+            <p class="inter-medium text-[16px] text-[#1e1e1e] w-[116px]">${sluitLabel}</p>
+            <div class="flex items-center justify-end w-[176px]">
+              <div class="bg-[#c8f4ce] flex gap-2 items-center px-3 py-1 rounded-[100px]">
+                <div class="w-[7px] h-[7px] rounded-full shrink-0" style="background-color: #1c892b;"></div>
+                <p class="inter-medium text-[#1c892b] text-[14px] whitespace-nowrap">Open</p>
+              </div>
+            </div>
+          </div>
+          <div class="w-5 h-5 shrink-0">
+            <img alt="" class="block w-full h-full object-contain" src="assets/arrow-right.svg">
+          </div>
+        </div>`;
+    }).join('');
+  </script>
+
+</body>
+</html>

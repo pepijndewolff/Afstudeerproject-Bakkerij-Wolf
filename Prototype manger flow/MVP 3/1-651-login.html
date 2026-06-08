@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+  <style>
+    input::placeholder { color: rgba(0,0,0,0.4); font-weight: 300; }
+    input:focus { outline: none; }
+    #fout-melding { display: none; }
+  </style>
+</head>
+<body class="flex items-center justify-center w-full h-full" style="background: var(--wolf-sidebar);">
+
+  <div class="bg-white border border-[#b5ae9c] flex flex-col gap-6 items-center px-16 py-14 rounded-[20px]" style="box-shadow: var(--shadow);">
+
+    <div class="flex flex-col gap-2 items-center">
+      <div class="flex gap-9 items-center">
+        <div class="h-[50px] w-[46px] relative shrink-0">
+          <img alt="" class="block w-full h-full object-contain" src="Assets/wolf logo 1.svg">
+        </div>
+        <p class="font-gt-ext-rg text-black tracking-[12.8px] uppercase whitespace-nowrap text-[32px]">
+          Bakkerij <span class="font-gt-ext-md">Wolf</span>
+        </p>
+      </div>
+      <p class="inter-medium text-black tracking-[1.6px] text-[16px] whitespace-nowrap">Beheerpaneel</p>
+    </div>
+
+    <form id="login-form" class="flex flex-col gap-4 items-start" onsubmit="handleLogin(event)">
+      <p class="inter-medium text-[16px] text-black whitespace-nowrap">Inloggen</p>
+      <div class="flex flex-col gap-4 items-start">
+
+        <div class="border border-[#737373] flex gap-4 items-center p-3 rounded-[4px] w-[322px]">
+          <div class="h-[11px] w-[15px] shrink-0"><img alt="" class="block w-full h-full object-contain" src="Assets/envelope.svg"></div>
+          <input id="email" type="email" placeholder="E-mailadres" class="inter-regular text-[16px] text-black bg-transparent w-full">
+        </div>
+
+        <div class="flex flex-col gap-1 items-end">
+          <div class="border border-[#737373] flex gap-4 items-center p-3 rounded-[4px] w-[322px]">
+            <div class="h-[15px] w-[13px] shrink-0"><img alt="" class="block w-full h-full object-contain" src="Assets/lock.svg"></div>
+            <input id="wachtwoord" type="password" placeholder="Wachtwoord" class="inter-regular text-[16px] text-black bg-transparent w-full">
+          </div>
+          <p class="inter-medium text-[10px] text-[#324cb4] underline w-full cursor-pointer">Wachtwoord vergeten?</p>
+        </div>
+
+        <p id="fout-melding" class="inter-regular text-[13px] text-red-600 w-full">Onbekend e-mailadres of wachtwoord.</p>
+
+        <button type="submit" class="bg-[#2e2e2e] border border-[#737373] flex items-center justify-center p-3 rounded-[4px] w-[322px] cursor-pointer hover:bg-[#1e1e1e] transition-colors">
+          <p class="inter-medium text-[16px] text-[#f9f7f2] whitespace-nowrap">Inloggen</p>
+        </button>
+
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const wachtwoord = document.getElementById('wachtwoord').value;
+      const fout = document.getElementById('fout-melding');
+      if (email === 'noor@bakkerijwolf.nl' && wachtwoord === 'wolf2026') {
+        if (window.WolfData) window.WolfData.reset();
+        sessionStorage.setItem('ingelogd', 'true');
+        window.location.href = '1-23-dashboard.html';
+      } else {
+        fout.style.display = 'block';
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4 Aanvraag Beoordelen — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    .font-gt-ext-rg { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .font-gt-ext-md { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 600; }
+    .font-gt-rg     { font-family: Arial, sans-serif; font-weight: 400; }
+    .font-gt-bd     { font-family: Arial, sans-serif; font-weight: 700; }
+    .inter-regular  { font-family: 'Inter', sans-serif; font-weight: 400; }
+    .inter-medium   { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .inter-bold     { font-family: 'Inter', sans-serif; font-weight: 700; }
+    a.nav-item { display: flex; flex-direction: column; width: 100%; text-decoration: none; }
+    a.nav-item:hover { background-color: rgba(249,247,242,0.5); }
+  </style>
+</head>
+<body class="bg-[#dfdacd] flex flex-col w-full h-full">
+
+  <!-- Top nav bar -->
+  <header class="border-b border-[#b5ae9c] flex items-center justify-between px-8 py-6 shrink-0 w-full">
+    <div class="flex gap-5 items-center">
+      <div class="h-[30px] w-[27px] shrink-0">
+        <img alt="" class="block w-full h-full object-contain" src="assets/wolf logo 1.svg">
+      </div>
+      <p class="font-gt-ext-rg text-black tracking-[6.4px] uppercase whitespace-nowrap text-[16px]">
+        Bakkerij <span class="font-gt-ext-md">Wolf</span>
+      </p>
+    </div>
+    <div class="relative flex items-center bg-[#f9f7f2] rounded-[100px] px-4 py-2 whitespace-nowrap">
+      <span class="font-gt-rg text-[14px] text-[#1e1e1e]">Noor</span>
+    </div>
+  </header>
+
+  <div class="flex flex-1 min-h-0 w-full">
+
+    <!-- Sidebar -->
+    <aside data-wolf-sidebar="aanvragen" class="border-r border-[#b5ae9c] flex flex-col h-full shrink-0 w-[271px] pt-10 pb-4"></aside>
+
+    <!-- Main -->
+    <main class="bg-[#f9f7f2] flex flex-1 flex-col gap-6 h-full overflow-y-auto min-w-0 p-10">
+
+      <!-- Header -->
+      <div class="flex flex-col gap-3 shrink-0 w-full">
+        <!-- Breadcrumb -->
+        <div class="flex gap-2 inter-regular text-[#2e2e2e] text-[16px] whitespace-nowrap">
+          <a id="breadcrumb-link" href="1-109-bestellingen.html" class="text-[#2e2e2e] no-underline hover:underline">Bestellingen donderdag 21 mei</a>
+          <span>&gt;</span>
+          <span>Aanvraag beoordelen</span>
+        </div>
+
+        <!-- Title + status -->
+        <div class="flex gap-3 items-center w-full">
+          <p id="titel-klant" class="inter-bold text-[32px] text-black whitespace-nowrap"></p>
+          <div id="status-pill"></div>
+        </div>
+
+        <!-- Aanvraaggegevens, duidelijk gescheiden (leverdatum, bestelnr, status, reden) -->
+        <div class="flex flex-wrap gap-x-10 gap-y-3 bg-[#dfdacd] border border-[#b5ae9c] rounded-[8px] p-5 w-fit">
+          <div class="flex flex-col gap-1">
+            <p class="inter-regular text-[#979797] text-[13px] uppercase tracking-[0.32px]">Leverdatum</p>
+            <p id="info-leverdatum" class="inter-bold text-[16px] text-[#1e1e1e]"></p>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="inter-regular text-[#979797] text-[13px] uppercase tracking-[0.32px]">Bestelnummer</p>
+            <p id="info-bestelnr" class="inter-bold text-[16px] text-[#1e1e1e]"></p>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="inter-regular text-[#979797] text-[13px] uppercase tracking-[0.32px]">Ingediend</p>
+            <p id="info-ingediend" class="inter-bold text-[16px] text-[#1e1e1e]"></p>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="inter-regular text-[#979797] text-[13px] uppercase tracking-[0.32px]">Status</p>
+            <p id="info-status" class="inter-bold text-[16px] text-[#1e1e1e]"></p>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="inter-regular text-[#979797] text-[13px] uppercase tracking-[0.32px]">Reden</p>
+            <p id="info-reden" class="inter-bold text-[16px] text-[#1e1e1e]"></p>
+          </div>
+        </div>
+
+        <!-- Capaciteitswaarschuwing (alleen wanneer een product gecontroleerd moet worden) -->
+        <div id="reden-box" style="display:none" class="bg-[#f4e0c8] border border-[#c45d1d] flex flex-col gap-3 justify-center p-4 rounded-[8px] w-[351px]"></div>
+      </div>
+
+      <!-- Content: product table + client info side by side -->
+      <div class="flex gap-6 items-start shrink-0 w-full">
+
+        <!-- Left: products + action buttons -->
+        <div class="flex flex-1 flex-col gap-6 min-w-0">
+
+          <!-- Product table -->
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center">
+              <p class="inter-medium text-[20px] text-black whitespace-nowrap">Aangevraagde producten</p>
+            </div>
+            <div class="border border-[#b5ae9c] flex flex-col overflow-hidden rounded-[8px] w-full">
+              <!-- Header -->
+              <div class="bg-[#dfdacd] border-b border-[#b5ae9c] flex gap-3 items-center px-6 py-3 w-full">
+                <div class="flex flex-1 items-center justify-between min-w-0">
+                  <div class="flex items-center w-[236px]">
+                    <p class="inter-regular text-[#979797] text-[16px] uppercase w-[145px]">Product</p>
+                  </div>
+                  <p class="inter-regular text-[#979797] text-[16px] uppercase w-[116px]">Aantal</p>
+                  <p class="inter-regular text-[#979797] text-[16px] uppercase whitespace-nowrap">Klant max</p>
+                  <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-[176px]">Status</p>
+                </div>
+                <div class="w-5 h-5 shrink-0"></div>
+              </div>
+              <!-- Productrijen dynamisch -->
+              <div id="product-rijen"></div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div id="actie-knoppen" class="flex gap-6 items-start">
+            <button onclick="goedkeuren()" class="bg-[#32b443] flex gap-2 items-center justify-center px-4 py-2 rounded-[8px] cursor-pointer hover:bg-[#2aa23b] transition-colors border-0">
+              <div class="h-[18px] w-[19px] shrink-0">
+                <img alt="" class="block w-full h-full object-contain" src="assets/checkmark.svg">
+              </div>
+              <p class="inter-regular text-[16px] text-white whitespace-nowrap">Goedkeuren</p>
+            </button>
+            <button onclick="afwijzen()" class="flex gap-2 items-center justify-center px-4 py-2 rounded-[8px] cursor-pointer transition-colors border-0" style="background-color: #d9543b;" onmouseover="this.style.backgroundColor='#c9472f'" onmouseout="this.style.backgroundColor='#d9543b'">
+              <div class="w-[19px] h-[19px] shrink-0">
+                <img alt="" class="block w-full h-full object-contain" src="assets/exit cross.svg">
+              </div>
+              <p class="inter-regular text-[16px] text-white whitespace-nowrap">Afwijzen</p>
+            </button>
+            <button id="aanpassen-btn" class="bg-[#2e2e2e] flex items-center justify-center px-4 py-2 rounded-[8px] cursor-pointer hover:bg-[#1e1e1e] transition-colors border-0" onclick="aantallenAanpassen()">
+              <p class="inter-regular text-[16px] text-white whitespace-nowrap">Aantallen aanpassen</p>
+            </button>
+            <button id="annuleren-btn" style="display:none" class="inter-regular text-[16px] text-[#1e1e1e] px-4 py-2 rounded-[8px] border border-[#b5ae9c] hover:bg-[#f0ebe0]" onclick="annulerenAanpassen()">
+              Annuleren
+            </button>
+            <span id="aanpassen-bevestiging" style="display:none" class="inter-regular text-[#1c892b] text-[16px]">Aantallen bijgewerkt</span>
+          </div>
+
+          <!-- Bevestiging na actie -->
+          <div id="bevestiging" style="display:none" class="bg-[#c8f4ce] border border-[#1c892b] flex gap-3 items-center p-4 rounded-[8px]">
+            <p id="bevestiging-tekst" class="inter-regular text-[#1c892b] text-[16px]"></p>
+            <a href="1-109-bestellingen.html" class="inter-medium text-[#1c892b] text-[16px] underline whitespace-nowrap">Terug naar bestellingen</a>
+          </div>
+        </div>
+
+        <!-- Right: client info card -->
+        <div class="flex flex-col items-start pt-[30px] shrink-0 w-[361px]">
+          <div class="bg-[#dfdacd] border border-[#b5ae9c] flex flex-col gap-3 p-6 rounded-[8px] w-full">
+            <p class="inter-regular text-[#979797] text-[16px] uppercase whitespace-nowrap">klantgegevens</p>
+
+            <div class="border-b border-[#b5ae9c] flex items-start py-2 w-full">
+              <div class="flex flex-col gap-1 items-start w-[178px] whitespace-nowrap">
+                <p id="kg-naam" class="inter-bold text-[20px] text-black"></p>
+                <p id="kg-type" class="inter-regular text-[16px] text-black"></p>
+              </div>
+            </div>
+
+            <div class="flex items-start justify-between w-full">
+              <p class="inter-regular text-[16px] text-black whitespace-nowrap w-[178px]">Contactpersoon</p>
+              <p id="kg-contact" class="inter-bold text-[16px] text-[#1e1e1e] whitespace-nowrap"></p>
+            </div>
+            <div class="flex items-start justify-between w-full">
+              <p class="inter-regular text-[16px] text-black whitespace-nowrap w-[178px]">Telefoon</p>
+              <p id="kg-telefoon" class="inter-bold text-[16px] text-[#1e1e1e] whitespace-nowrap"></p>
+            </div>
+            <div class="flex items-start justify-between w-full">
+              <p class="inter-regular text-[16px] text-black whitespace-nowrap w-[178px]">Email</p>
+              <p id="kg-email" class="inter-bold text-[16px] text-[#1e1e1e] whitespace-nowrap"></p>
+            </div>
+            <div class="flex items-start justify-between w-full">
+              <p class="inter-regular text-[16px] text-black whitespace-nowrap w-[178px]">Mag aanvraag doen</p>
+              <p id="kg-aanvraag" class="inter-bold text-[16px] whitespace-nowrap"></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const W = window.WolfData;
+    const params = new URLSearchParams(window.location.search);
+    const vanAanvragen = params.get('van') !== 'bestellingen'; // standaard vanuit Aanvragen
+    const terugHref = vanAanvragen ? '1-298-aanvragen.html' : '1-109-bestellingen.html';
+
+    // Breadcrumb terug naar het juiste overzicht
+    const bc = document.getElementById('breadcrumb-link');
+    bc.textContent = vanAanvragen ? 'Aanvragen' : 'Bestellingen';
+    bc.href = terugHref;
+
+    // Laad de aanvraag (?id=, anders de eerste openstaande)
+    const aanvraag = W.getAanvraag(params.get('id'));
+    const klant = W.klantById(aanvraag.klantId);
+
+    document.getElementById('titel-klant').textContent = aanvraag.klant;
+
+    // Status-pill + gescheiden gegevens
+    const statusInfo = {
+      'te-beoordelen': { label: 'Te beoordelen', bg: '#f4e0c8', kleur: '#c45d1d' },
+      'goedgekeurd':   { label: 'Goedgekeurd',   bg: '#c8f4ce', kleur: '#1c892b' },
+      'afgewezen':     { label: 'Afgewezen',     bg: '#f4e0c8', kleur: '#B8341A' },
+    };
+    function vulStatus() {
+      const s = statusInfo[aanvraag.status] || statusInfo['te-beoordelen'];
+      const label = s.label + (aanvraag.aangepast ? ' (aangepast)' : '');
+      document.getElementById('status-pill').innerHTML =
+        `<div class="flex gap-2 items-center px-3 py-1 rounded-[100px]" style="background-color:${s.bg};">
+           <div class="w-[7px] h-[7px] rounded-full shrink-0" style="background-color:${s.kleur};"></div>
+           <p class="inter-medium text-[14px] uppercase whitespace-nowrap" style="color:${s.kleur};">${label}</p></div>`;
+      document.getElementById('info-status').textContent = label;
+      document.getElementById('info-status').style.color = s.kleur;
+    }
+    document.getElementById('info-leverdatum').textContent = aanvraag.leverdagLabel;
+    document.getElementById('info-bestelnr').textContent = aanvraag.bestelnr;
+    document.getElementById('info-ingediend').textContent = aanvraag.tijdstip;
+    document.getElementById('info-reden').textContent = aanvraag.reden;
+    vulStatus();
+
+    // Capaciteitswaarschuwing los van de reden — alleen bij te controleren product
+    const waarschuwingen = [];
+    aanvraag.producten.forEach(function (p) {
+      if (p.status === 'controleer') {
+        const cap = W.PRODUCTEN[p.productId].capaciteit;
+        waarschuwingen.push(`${W.PRODUCTEN[p.productId].naam} loopt tegen de capaciteit (${cap}/${cap})`);
+      }
+    });
+    if (waarschuwingen.length) {
+      const box = document.getElementById('reden-box');
+      box.style.display = 'flex';
+      box.innerHTML = waarschuwingen.map(function (r) {
+        return `<div class="flex gap-3 items-start w-full">
+          <div class="w-[18px] h-[18px] shrink-0"><img alt="" class="block w-full h-full object-contain" src="assets/warning.svg"></div>
+          <p class="inter-regular text-[#c45d1d] text-[16px]">${r}</p></div>`;
+      }).join('');
+    }
+
+    // Productrijen
+    const huidigeAantallen = aanvraag.aantallen || {};
+    document.getElementById('product-rijen').innerHTML = aanvraag.producten.map(function (p, i) {
+      const naam = W.PRODUCTEN[p.productId].naam;
+      const aantal = huidigeAantallen[p.productId] != null ? huidigeAantallen[p.productId] : p.aantal;
+      const max = klant.producten[p.productId] ? klant.producten[p.productId].max : '—';
+      const past = p.status === 'past';
+      const bg = i % 2 === 0 ? 'bg-[#f4f0e7]' : 'bg-[#fdfbf7]';
+      const statusBg = past ? 'bg-[#c8f4ce]' : 'bg-[#f4e0c8]';
+      const kleur = past ? '#1c892b' : '#c45d1d';
+      const tekst = past ? 'Past' : 'Controleer';
+      return `
+        <div class="${bg} flex items-center pl-6 pr-4 py-4 w-full">
+          <div class="flex flex-1 items-center justify-between min-w-0">
+            <div class="flex items-center w-[236px]"><p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${naam}</p></div>
+            <div data-editable="aantal" data-product="${p.productId}" class="flex items-center justify-center"><p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${aantal}</p></div>
+            <p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${max}</p>
+            <div class="flex items-center justify-end w-[176px]">
+              <div class="${statusBg} flex gap-2 items-center px-3 py-1 rounded-[100px]">
+                <div class="w-[7px] h-[7px] rounded-full shrink-0" style="background-color: ${kleur};"></div>
+                <p class="inter-medium text-[14px] whitespace-nowrap" style="color:${kleur};">${tekst}</p>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Klantgegevens
+    document.getElementById('kg-naam').textContent = klant.naam;
+    document.getElementById('kg-type').textContent = klant.type === 'uitzondering' ? 'Uitzonderingsklant' : 'Reguliere klant';
+    document.getElementById('kg-contact').textContent = klant.contact;
+    document.getElementById('kg-telefoon').textContent = klant.telefoon;
+    document.getElementById('kg-email').textContent = klant.email;
+    const kgAanvraag = document.getElementById('kg-aanvraag');
+    kgAanvraag.textContent = klant.aanvraagNaDeadline ? 'Ja' : 'Nee';
+    kgAanvraag.style.color = klant.aanvraagNaDeadline ? '#1c892b' : '#c45d1d';
+
+    // Bevestigingslink terug naar juiste overzicht
+    document.querySelector('#bevestiging a').href = terugHref;
+
+    // Reeds beoordeeld? Toon status, verberg actieknoppen.
+    if (aanvraag.status !== 'te-beoordelen') {
+      toonBevestiging(aanvraag.status);
+    }
+
+    function toonBevestiging(status) {
+      document.getElementById('actie-knoppen').style.display = 'none';
+      const bevestiging = document.getElementById('bevestiging');
+      const tekst = document.getElementById('bevestiging-tekst');
+      const link = document.querySelector('#bevestiging a');
+      if (status === 'afgewezen') {
+        bevestiging.style.borderColor = '#c45d1d';
+        bevestiging.style.backgroundColor = '#f4e0c8';
+        tekst.style.color = '#c45d1d';
+        link.style.color = '#c45d1d';
+        tekst.textContent = `Aanvraag ${aanvraag.klant} afgewezen.`;
+      } else {
+        tekst.textContent = `Aanvraag ${aanvraag.klant} goedgekeurd.`;
+      }
+      bevestiging.style.display = 'flex';
+    }
+
+    function goedkeuren() {
+      const gewijzigd = aantallenGewijzigd();
+      W.setAanvraagStatus(aanvraag.id, 'goedgekeurd', gewijzigd ? leesAantallen() : null);
+      aanvraag.status = 'goedgekeurd';
+      aanvraag.aangepast = gewijzigd;
+      vulStatus();
+      toonBevestiging('goedgekeurd');
+    }
+
+    function afwijzen() {
+      W.setAanvraagStatus(aanvraag.id, 'afgewezen');
+      aanvraag.status = 'afgewezen';
+      vulStatus();
+      toonBevestiging('afgewezen');
+    }
+
+    // 'aangepast' als minstens één aantal afwijkt van de oorspronkelijke aanvraag.
+    function aantallenGewijzigd() {
+      const huidig = leesAantallen();
+      return aanvraag.producten.some(function (p) {
+        return huidig[p.productId] != null && Number(huidig[p.productId]) !== Number(p.aantal);
+      });
+    }
+
+    function leesAantallen() {
+      const result = {};
+      document.querySelectorAll('[data-editable="aantal"]').forEach(function (div) {
+        const pid = div.dataset.product;
+        const input = div.querySelector('input');
+        const p = div.querySelector('p');
+        result[pid] = input ? Number(input.value) : Number((p.textContent || '').trim());
+      });
+      return result;
+    }
+
+    function aantallenAanpassen() {
+      const divs = document.querySelectorAll('[data-editable="aantal"]');
+      const btn = document.getElementById('aanpassen-btn');
+      const annulerBtn = document.getElementById('annuleren-btn');
+      const bevestiging = document.getElementById('aanpassen-bevestiging');
+      if (btn.dataset.mode === 'bewerken') {
+        divs.forEach(div => {
+          const input = div.querySelector('input');
+          div.innerHTML = `<p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${input.value}</p>`;
+        });
+        btn.querySelector('p').textContent = 'Aantallen aanpassen';
+        btn.dataset.mode = '';
+        annulerBtn.style.display = 'none';
+        bevestiging.style.display = 'inline';
+        setTimeout(() => { bevestiging.style.display = 'none'; }, 2500);
+      } else {
+        divs.forEach(div => {
+          const huidig = div.querySelector('p').textContent.trim();
+          div.dataset.origineel = huidig;
+          div.innerHTML = `<input type="number" value="${huidig}" min="0" class="inter-medium text-[16px] text-[#1e1e1e] w-[60px] border border-[#b5ae9c] rounded-[4px] px-2 text-center bg-white">`;
+        });
+        btn.querySelector('p').textContent = 'Bevestigen';
+        btn.dataset.mode = 'bewerken';
+        annulerBtn.style.display = 'inline-flex';
+      }
+    }
+    function annulerenAanpassen() {
+      const divs = document.querySelectorAll('[data-editable="aantal"]');
+      const btn = document.getElementById('aanpassen-btn');
+      divs.forEach(div => {
+        div.innerHTML = `<p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${div.dataset.origineel}</p>`;
+      });
+      btn.querySelector('p').textContent = 'Aantallen aanpassen';
+      btn.dataset.mode = '';
+      document.getElementById('annuleren-btn').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>

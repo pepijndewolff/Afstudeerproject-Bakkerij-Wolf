@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klantprofiel bewerken — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+  <style>
+    .wolf-field { background:#fdfbf7; border:1px solid #b5ae9c; padding:5px 10px; border-radius:4px; font-family:'Inter',sans-serif; font-size:14px; color:#1e1e1e; width:100%; }
+    .wolf-field:focus { outline:none; border-color:#1e1e1e; background:#fff; }
+    select.wolf-field { width:auto; min-width:140px; }
+  </style>
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="klanten"></aside>
+
+  <main class="wolf-main">
+
+    <div class="flex flex-col gap-[0.2rem]">
+      <div class="wolf-breadcrumb"><a href="1-336-klanten-overzicht.html">Klanten</a><span>&gt;</span><span id="bc-klant"></span></div>
+      <div class="flex items-center justify-between w-full">
+        <div class="flex gap-3 items-center"><p id="titel-klant" class="wolf-h1"></p><div id="type-pill"></div></div>
+        <div class="flex gap-3">
+          <button id="annuleren-btn" class="wolf-btn wolf-btn--ghost">Annuleren</button>
+          <button id="opslaan-btn" class="wolf-btn wolf-btn--primary" onclick="opslaan()">Opslaan</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-6 items-start">
+
+      <div class="flex flex-col gap-6 flex-1 min-w-0">
+        <!-- Contactgegevens -->
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Contactgegevens</p>
+          <label class="flex flex-col gap-1"><span class="wolf-info-label">Contactpersoon</span><input id="in-contact" type="text" class="wolf-field"></label>
+          <label class="flex flex-col gap-1"><span class="wolf-info-label">Telefoon</span><input id="in-telefoon" type="text" class="wolf-field"></label>
+          <label class="flex flex-col gap-1"><span class="wolf-info-label">Email</span><input id="in-email" type="email" class="wolf-field"></label>
+          <label class="flex flex-col gap-1"><span class="wolf-info-label">Adres</span><textarea id="in-adres" class="wolf-field" style="height:70px;"></textarea></label>
+        </div>
+
+        <!-- Bestelrechten -->
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Bestelrechten</p>
+          <div class="flex items-center justify-between"><span class="wolf-info-label">Klanttype</span>
+            <select id="in-type" class="wolf-field"><option value="regulier">Regulier</option><option value="uitzondering">Uitzondering</option></select></div>
+          <div class="flex items-center justify-between"><span class="wolf-info-label">Aanvraag na deadline</span>
+            <select id="in-aanvraag" class="wolf-field"><option value="nee">Nee</option><option value="ja">Ja</option></select></div>
+          <div class="flex items-center justify-between"><span class="wolf-info-label">Aanvraag bestellimiet</span>
+            <select id="in-limiet" class="wolf-field"><option value="nee">Nee</option><option value="ja">Ja</option></select></div>
+          <div class="flex items-center justify-between"><span class="wolf-info-label">Leverwijze</span>
+            <select id="in-leverwijze" class="wolf-field"><option value="levering">Levering</option><option value="ophalen">Ophalen</option></select></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Leverinstructies</span>
+            <input id="in-instructies" type="text" class="wolf-field" style="max-width:200px;" placeholder="Instructies..."></div>
+        </div>
+
+        <!-- Factuurgegevens -->
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Factuurgegevens</p>
+          <label class="flex flex-col gap-1"><span class="wolf-info-label">Bedrijfsnaam</span><input id="in-fc-bedrijf" type="text" class="wolf-field"></label>
+          <label class="flex flex-col gap-1"><span class="wolf-info-label">Factuur e-mail</span><input id="in-fc-email" type="email" class="wolf-field"></label>
+          <label class="flex flex-col gap-1"><span class="wolf-info-label">Factuuradres</span><textarea id="in-fc-adres" class="wolf-field" style="height:56px;"></textarea></label>
+          <label class="flex flex-col gap-1"><span class="wolf-info-label">Btw-nummer</span><input id="in-fc-btw" type="text" class="wolf-field"></label>
+          <label class="flex flex-col gap-1"><span class="wolf-info-label">Debiteurnummer</span><input id="in-fc-debiteur" type="text" class="wolf-field"></label>
+        </div>
+
+        <!-- Notities -->
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Notities</p>
+          <textarea id="in-notities" class="wolf-field" style="height:60px;" placeholder="Vaste afspraken of bijzonderheden..."></textarea>
+        </div>
+      </div>
+
+      <!-- Producten & prijzen -->
+      <div class="wolf-infocard flex-1 min-w-0">
+        <p class="wolf-infocard-title">Maximum per product en klantprijzen</p>
+        <div class="wolf-table" style="background:#fff;">
+          <div class="wolf-thead">
+            <p class="wolf-th flex-1">Product</p>
+            <p class="wolf-th w-[100px] text-right">Prijs €</p>
+            <p class="wolf-th w-[70px] text-right">Max</p>
+            <div class="w-6"></div>
+          </div>
+          <div id="product-rijen"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const W = window.WolfData;
+    const params = new URLSearchParams(window.location.search);
+    const klantId = params.get('klant') || 'juno';
+    const klant = W.klantById(klantId) || W.KLANTEN[0];
+    const profielUrl = `1-536-klant.html?klant=${klant.id}`;
+
+    document.getElementById('bc-klant').textContent = klant.naam;
+    document.getElementById('titel-klant').textContent = klant.naam;
+    document.getElementById('annuleren-btn').setAttribute('onclick', `window.location.href='${profielUrl}'`);
+    document.getElementById('type-pill').innerHTML = klant.type === 'uitzondering'
+      ? `<span class="wolf-type wolf-type--uitzondering"><span class="dot"></span>Uitzonderingsklant</span>`
+      : `<span class="wolf-type wolf-type--regulier"><span class="dot"></span>Standaardklant</span>`;
+
+    document.getElementById('in-contact').value = klant.contact;
+    document.getElementById('in-telefoon').value = klant.telefoon;
+    document.getElementById('in-email').value = klant.email;
+    document.getElementById('in-adres').value = klant.adres.join('\n');
+    document.getElementById('in-type').value = klant.type;
+    document.getElementById('in-aanvraag').value = klant.aanvraagNaDeadline ? 'ja' : 'nee';
+    document.getElementById('in-limiet').value = klant.aanvraagBestellimiet ? 'ja' : 'nee';
+    document.getElementById('in-leverwijze').value = klant.leverwijze || 'levering';
+    document.getElementById('in-instructies').value = klant.leverinstructies || '';
+    document.getElementById('in-notities').value = klant.notities || '';
+
+    const f = klant.factuur || {};
+    document.getElementById('in-fc-bedrijf').value = f.bedrijfsnaam || '';
+    document.getElementById('in-fc-email').value = f.email || '';
+    document.getElementById('in-fc-adres').value = (f.adres || []).join('\n');
+    document.getElementById('in-fc-btw').value = f.btw || '';
+    document.getElementById('in-fc-debiteur').value = f.debiteurnr || '';
+
+    document.getElementById('product-rijen').innerHTML = Object.keys(klant.producten).map(function (pid) {
+      const p = klant.producten[pid];
+      return `
+        <div class="wolf-row">
+          <p class="wolf-td flex-1">${W.PRODUCTEN[pid].naam}</p>
+          <div class="w-[100px] flex justify-end"><input type="text" value="${p.prijs}" class="wolf-field" style="width:70px;text-align:right;"></div>
+          <div class="w-[70px] flex justify-end"><input type="text" value="${p.max}" class="wolf-field" style="width:56px;text-align:right;"></div>
+          <button class="w-6 text-[#b43232] text-[20px] leading-none hover:opacity-70" onclick="this.closest('.wolf-row').remove()">×</button>
+        </div>`;
+    }).join('');
+
+    function opslaan() {
+      W.setKlant(klant.id, {
+        contact: document.getElementById('in-contact').value,
+        telefoon: document.getElementById('in-telefoon').value,
+        email: document.getElementById('in-email').value,
+        adres: document.getElementById('in-adres').value.split('\n').filter(function (r) { return r.trim(); }),
+        type: document.getElementById('in-type').value,
+        aanvraagNaDeadline: document.getElementById('in-aanvraag').value === 'ja',
+        aanvraagBestellimiet: document.getElementById('in-limiet').value === 'ja',
+        leverwijze: document.getElementById('in-leverwijze').value,
+        leverinstructies: document.getElementById('in-instructies').value,
+        notities: document.getElementById('in-notities').value,
+        factuur: {
+          bedrijfsnaam: document.getElementById('in-fc-bedrijf').value,
+          email: document.getElementById('in-fc-email').value,
+          adres: document.getElementById('in-fc-adres').value.split('\n').filter(function (r) { return r.trim(); }),
+          btw: document.getElementById('in-fc-btw').value,
+          debiteurnr: document.getElementById('in-fc-debiteur').value,
+        },
+      });
+      const btn = document.getElementById('opslaan-btn');
+      btn.textContent = 'Opgeslagen ✓'; btn.disabled = true; btn.classList.add('opacity-70');
+      setTimeout(function () { window.location.href = profielUrl; }, 900);
+    }
+    window.opslaan = opslaan;
+  </script>
+</body>
+</html>

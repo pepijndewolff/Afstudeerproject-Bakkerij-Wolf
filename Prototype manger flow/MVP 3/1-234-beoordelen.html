@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aanvraag beoordelen — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="aanvragen"></aside>
+
+  <main class="wolf-main">
+
+    <!-- Kop -->
+    <div class="flex flex-col gap-[0.2rem]">
+      <div class="wolf-breadcrumb">
+        <a id="breadcrumb-link" href="1-298-aanvragen.html">Aanvragen</a>
+        <span>&gt;</span>
+        <span>Aanvraag beoordelen</span>
+      </div>
+      <div class="flex gap-3 items-center">
+        <p id="titel-klant" class="wolf-h1"></p>
+        <div id="status-pill"></div>
+      </div>
+      <!-- Aanvraaggegevens -->
+      <div class="wolf-infocard" style="flex-direction:row;flex-wrap:wrap;gap:40px;width:fit-content;background:#fff;">
+        <div class="flex flex-col gap-1"><p class="wolf-th">Leverdatum</p><p id="info-leverdatum" class="wolf-info-value" style="text-align:left"></p></div>
+        <div class="flex flex-col gap-1"><p class="wolf-th">Bestelnummer</p><p id="info-bestelnr" class="wolf-info-value" style="text-align:left"></p></div>
+        <div class="flex flex-col gap-1"><p class="wolf-th">Ingediend</p><p id="info-ingediend" class="wolf-info-value" style="text-align:left"></p></div>
+        <div class="flex flex-col gap-1"><p class="wolf-th">Status</p><p id="info-status" class="wolf-info-value" style="text-align:left"></p></div>
+        <div class="flex flex-col gap-1"><p class="wolf-th">Reden</p><p id="info-reden" class="wolf-info-value" style="text-align:left"></p></div>
+      </div>
+      <div id="reden-box" style="display:none" class="bg-[#f4e0c8] border border-[#c45d1d] flex flex-col gap-3 p-4 rounded-[8px] w-[400px]"></div>
+    </div>
+
+    <!-- Content: producten + klantgegevens -->
+    <div class="flex gap-6 items-start">
+      <section class="wolf-section flex-1 flex flex-col gap-6 min-w-0">
+        <div class="flex flex-col gap-4">
+          <p class="wolf-value" style="font-size:20px;">Aangevraagde producten</p>
+          <div class="wolf-table">
+            <div class="wolf-thead">
+              <p class="wolf-th flex-1">Product</p>
+              <p class="wolf-th w-[100px]">Aantal</p>
+              <p class="wolf-th w-[100px]">Klant max</p>
+              <p class="wolf-th w-[140px] text-right">Status</p>
+            </div>
+            <div id="product-rijen"></div>
+          </div>
+        </div>
+
+        <div id="actie-knoppen" class="flex gap-4 items-center flex-wrap">
+          <button onclick="goedkeuren()" class="wolf-btn border-0 text-white" style="background:#5fb56e;">
+            <img alt="" src="Assets/checkmark.svg" style="width:18px;height:13px;filter:brightness(0) invert(1);"> Goedkeuren
+          </button>
+          <button onclick="afwijzen()" class="wolf-btn border-0 text-white" style="background:#dd7d66;">
+            <img alt="" src="Assets/exit cross.svg" style="width:15px;height:15px;filter:brightness(0) invert(1);"> Afwijzen
+          </button>
+          <button id="aanpassen-btn" class="wolf-btn wolf-btn--primary" onclick="aantallenAanpassen()"><span class="lbl">Aantallen aanpassen</span></button>
+          <button id="annuleren-btn" style="display:none" class="wolf-btn wolf-btn--ghost" onclick="annulerenAanpassen()">Annuleren</button>
+          <span id="aanpassen-bevestiging" style="display:none" class="inter-regular text-[16px]" style="color:var(--green)">Aantallen bijgewerkt</span>
+        </div>
+
+        <div id="bevestiging" style="display:none" class="bg-[#c8f4ce] border border-[#1c892b] flex gap-3 items-center p-4 rounded-[8px]">
+          <p id="bevestiging-tekst" class="inter-regular text-[#1c892b] text-[16px]"></p>
+          <a href="1-298-aanvragen.html" class="inter-medium text-[#1c892b] text-[16px] underline whitespace-nowrap">Terug naar overzicht</a>
+        </div>
+      </section>
+
+      <!-- Klantgegevens -->
+      <div class="wolf-infocard shrink-0" style="width:340px;background:#fff;">
+        <p class="wolf-infocard-title">Klantgegevens</p>
+        <div class="flex flex-col gap-1 pb-2 border-b border-[#b5ae9c]">
+          <p id="kg-naam" class="inter-semibold text-[20px] text-black"></p>
+          <p id="kg-type" class="inter-regular text-[16px] text-black"></p>
+        </div>
+        <div class="wolf-info-row"><p class="wolf-info-label">Contactpersoon</p><p id="kg-contact" class="wolf-info-value"></p></div>
+        <div class="wolf-info-row"><p class="wolf-info-label">Telefoon</p><p id="kg-telefoon" class="wolf-info-value"></p></div>
+        <div class="wolf-info-row"><p class="wolf-info-label">Email</p><p id="kg-email" class="wolf-info-value"></p></div>
+        <div class="wolf-info-row"><p class="wolf-info-label">Aanvraag na deadline</p><p id="kg-aanvraag" class="wolf-info-value"></p></div>
+        <div class="wolf-info-row"><p class="wolf-info-label">Aanvraag bestellimiet</p><p id="kg-limiet" class="wolf-info-value"></p></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const W = window.WolfData;
+    const params = new URLSearchParams(window.location.search);
+    const vanAanvragen = params.get('van') !== 'bestellingen';
+    const terugHref = vanAanvragen ? '1-298-aanvragen.html' : '1-109-bestellingen.html';
+
+    const bc = document.getElementById('breadcrumb-link');
+    bc.textContent = vanAanvragen ? 'Aanvragen' : 'Bestellingen';
+    bc.href = terugHref;
+
+    const aanvraag = W.getAanvraag(params.get('id'));
+    const klant = W.klantById(aanvraag.klantId);
+    document.getElementById('titel-klant').textContent = aanvraag.klant;
+
+    function badge(variant, tekst) { return `<span class="wolf-badge wolf-badge--${variant}"><span class="dot"></span>${tekst}</span>`; }
+    function statusVariant() {
+      if (aanvraag.status === 'goedgekeurd') return aanvraag.aangepast ? ['orange', 'Aangepast'] : ['green', 'Goedgekeurd'];
+      if (aanvraag.status === 'afgewezen') return ['grey', 'Afgewezen'];
+      return ['orange', 'Te beoordelen'];
+    }
+    function vulStatus() {
+      const [v, t] = statusVariant();
+      document.getElementById('status-pill').innerHTML = badge(v, t);
+      const st = document.getElementById('info-status');
+      st.textContent = t;
+      st.style.color = v === 'green' ? 'var(--green)' : v === 'grey' ? 'var(--grey-text)' : 'var(--orange)';
+    }
+    document.getElementById('info-leverdatum').textContent = aanvraag.leverdagLabel;
+    document.getElementById('info-bestelnr').textContent = aanvraag.bestelnr;
+    document.getElementById('info-ingediend').textContent = aanvraag.tijdstip;
+    document.getElementById('info-reden').textContent = aanvraag.reden;
+    vulStatus();
+
+    const waarschuwingen = [];
+    aanvraag.producten.forEach(function (p) {
+      if (p.status === 'controleer') {
+        const cap = W.PRODUCTEN[p.productId].capaciteit;
+        waarschuwingen.push(`${W.PRODUCTEN[p.productId].naam} loopt tegen de capaciteit (${cap}/${cap})`);
+      }
+    });
+    if (waarschuwingen.length) {
+      const box = document.getElementById('reden-box');
+      box.style.display = 'flex';
+      box.innerHTML = waarschuwingen.map(function (r) {
+        return `<div class="flex gap-3 items-start"><img alt="" src="Assets/warning.svg" style="width:18px;height:16px;flex-shrink:0;"><p class="inter-regular text-[#c45d1d] text-[16px]">${r}</p></div>`;
+      }).join('');
+    }
+
+    const huidigeAantallen = aanvraag.aantallen || {};
+    document.getElementById('product-rijen').innerHTML = aanvraag.producten.map(function (p) {
+      const naam = W.PRODUCTEN[p.productId].naam;
+      const aantal = huidigeAantallen[p.productId] != null ? huidigeAantallen[p.productId] : p.aantal;
+      const max = klant.producten[p.productId] ? klant.producten[p.productId].max : '—';
+      const past = p.status === 'past';
+      return `
+        <div class="wolf-row">
+          <p class="wolf-td flex-1">${naam}</p>
+          <div data-editable="aantal" data-product="${p.productId}" class="w-[100px]"><p class="wolf-td">${aantal}</p></div>
+          <p class="wolf-td w-[100px]">${max}</p>
+          <div class="w-[140px] flex justify-end">${past ? badge('green', 'Past') : badge('orange', 'Controleer')}</div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('kg-naam').textContent = klant.naam;
+    document.getElementById('kg-type').textContent = klant.type === 'uitzondering' ? 'Uitzonderingsklant' : 'Reguliere klant';
+    document.getElementById('kg-contact').textContent = klant.contact;
+    document.getElementById('kg-telefoon').textContent = klant.telefoon;
+    document.getElementById('kg-email').textContent = klant.email;
+    function jaNee(el, ja) { el.textContent = ja ? 'Ja' : 'Nee'; el.style.color = ja ? 'var(--green)' : 'var(--grey-text)'; }
+    jaNee(document.getElementById('kg-aanvraag'), klant.aanvraagNaDeadline);
+    jaNee(document.getElementById('kg-limiet'), klant.aanvraagBestellimiet);
+
+    document.querySelector('#bevestiging a').href = terugHref;
+    if (aanvraag.status !== 'te-beoordelen') toonBevestiging(aanvraag.status);
+
+    function toonBevestiging(status) {
+      document.getElementById('actie-knoppen').style.display = 'none';
+      const bevestiging = document.getElementById('bevestiging');
+      const tekst = document.getElementById('bevestiging-tekst');
+      const link = document.querySelector('#bevestiging a');
+      if (status === 'afgewezen') {
+        bevestiging.style.borderColor = '#c45d1d';
+        bevestiging.style.backgroundColor = '#f4e0c8';
+        tekst.style.color = '#c45d1d'; link.style.color = '#c45d1d';
+        tekst.textContent = `Aanvraag ${aanvraag.klant} afgewezen.`;
+      } else {
+        tekst.textContent = `Aanvraag ${aanvraag.klant} goedgekeurd.`;
+      }
+      bevestiging.style.display = 'flex';
+    }
+
+    function goedkeuren() {
+      const gewijzigd = aantallenGewijzigd();
+      W.setAanvraagStatus(aanvraag.id, 'goedgekeurd', gewijzigd ? leesAantallen() : null);
+      aanvraag.status = 'goedgekeurd'; aanvraag.aangepast = gewijzigd;
+      vulStatus(); toonBevestiging('goedgekeurd');
+    }
+    function afwijzen() {
+      W.setAanvraagStatus(aanvraag.id, 'afgewezen');
+      aanvraag.status = 'afgewezen'; vulStatus(); toonBevestiging('afgewezen');
+    }
+    window.goedkeuren = goedkeuren; window.afwijzen = afwijzen;
+
+    function aantallenGewijzigd() {
+      const huidig = leesAantallen();
+      return aanvraag.producten.some(function (p) { return huidig[p.productId] != null && Number(huidig[p.productId]) !== Number(p.aantal); });
+    }
+    function leesAantallen() {
+      const result = {};
+      document.querySelectorAll('[data-editable="aantal"]').forEach(function (div) {
+        const pid = div.dataset.product;
+        const input = div.querySelector('input');
+        const p = div.querySelector('p');
+        result[pid] = input ? Number(input.value) : Number((p.textContent || '').trim());
+      });
+      return result;
+    }
+    function aantallenAanpassen() {
+      const divs = document.querySelectorAll('[data-editable="aantal"]');
+      const btn = document.getElementById('aanpassen-btn');
+      const annulerBtn = document.getElementById('annuleren-btn');
+      const bevestiging = document.getElementById('aanpassen-bevestiging');
+      if (btn.dataset.mode === 'bewerken') {
+        divs.forEach(div => { const input = div.querySelector('input'); div.innerHTML = `<p class="wolf-td">${input.value}</p>`; });
+        btn.querySelector('.lbl').textContent = 'Aantallen aanpassen';
+        btn.dataset.mode = ''; annulerBtn.style.display = 'none';
+        bevestiging.style.display = 'inline'; setTimeout(() => { bevestiging.style.display = 'none'; }, 2500);
+      } else {
+        divs.forEach(div => {
+          const huidig = div.querySelector('p').textContent.trim();
+          div.dataset.origineel = huidig;
+          div.innerHTML = `<input type="number" value="${huidig}" min="0" class="inter-medium text-[16px] text-[#1e1e1e] w-[64px] border border-[#b5ae9c] rounded-[4px] px-2 py-1 text-center bg-white">`;
+        });
+        btn.querySelector('.lbl').textContent = 'Bevestigen';
+        btn.dataset.mode = 'bewerken'; annulerBtn.style.display = 'inline-flex';
+      }
+    }
+    function annulerenAanpassen() {
+      const divs = document.querySelectorAll('[data-editable="aantal"]');
+      const btn = document.getElementById('aanpassen-btn');
+      divs.forEach(div => { div.innerHTML = `<p class="wolf-td">${div.dataset.origineel}</p>`; });
+      btn.querySelector('.lbl').textContent = 'Aantallen aanpassen';
+      btn.dataset.mode = ''; document.getElementById('annuleren-btn').style.display = 'none';
+    }
+    window.aantallenAanpassen = aantallenAanpassen; window.annulerenAanpassen = annulerenAanpassen;
+  </script>
+
+</body>
+</html>

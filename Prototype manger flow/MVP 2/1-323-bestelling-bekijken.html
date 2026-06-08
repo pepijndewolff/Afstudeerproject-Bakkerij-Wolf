@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3.3 Bestelling Bekijken — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    .font-gt-ext-rg { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .font-gt-ext-md { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 600; }
+    .font-gt-rg     { font-family: Arial, sans-serif; font-weight: 400; }
+    .font-gt-bd     { font-family: Arial, sans-serif; font-weight: 700; }
+    .inter-regular  { font-family: 'Inter', sans-serif; font-weight: 400; }
+    .inter-medium   { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .inter-bold     { font-family: 'Inter', sans-serif; font-weight: 700; }
+    a.nav-item { display: flex; flex-direction: column; width: 100%; text-decoration: none; }
+    a.nav-item:hover { background-color: rgba(249,247,242,0.5); }
+  </style>
+</head>
+<body class="bg-[#dfdacd] flex flex-col w-full h-full">
+
+  <header class="border-b border-[#b5ae9c] flex items-center justify-between px-8 py-6 shrink-0 w-full">
+    <div class="flex gap-5 items-center">
+      <div class="h-[30px] w-[27px] shrink-0 relative">
+        <img alt="" class="block w-full h-full object-contain" src="assets/wolf logo 1.svg">
+      </div>
+      <p class="font-gt-ext-rg text-black tracking-[6.4px] uppercase whitespace-nowrap text-[16px]">
+        Bakkerij <span class="font-gt-ext-md">Wolf</span>
+      </p>
+    </div>
+    <div class="relative flex items-center bg-[#f9f7f2] rounded-[100px] px-4 py-2 whitespace-nowrap">
+      <span class="font-gt-rg text-[14px] text-[#1e1e1e]">Noor</span>
+    </div>
+  </header>
+
+  <div class="flex flex-1 min-h-0 w-full">
+    <aside data-wolf-sidebar="bestellingen" class="border-r border-[#b5ae9c] flex flex-col h-full shrink-0 w-[271px] pt-10 pb-4"></aside>
+
+    <main class="bg-[#f9f7f2] flex flex-1 flex-col gap-6 h-full overflow-y-auto min-w-0 p-10">
+
+      <div class="flex flex-col gap-3 shrink-0 w-full">
+        <div class="flex gap-2 inter-regular text-[#2e2e2e] text-[16px] whitespace-nowrap">
+          <a id="bc-link" href="1-109-bestellingen.html" class="text-[#2e2e2e] no-underline hover:underline">Bestellingen</a>
+          <span>&gt;</span>
+          <span id="bc-dag"></span>
+        </div>
+        <div class="flex gap-3 items-center">
+          <p id="titel-klant" class="inter-bold text-[32px] text-black whitespace-nowrap"></p>
+          <div class="bg-[#c8f4ce] flex gap-2 items-center px-3 py-1 rounded-[100px]">
+            <div class="w-[7px] h-[7px] rounded-full" style="background-color: #1c892b;"></div>
+            <p class="inter-medium text-[#1c892b] text-[14px] whitespace-nowrap">Ingepland</p>
+          </div>
+        </div>
+        <p id="bestelling-meta" class="inter-regular text-[#2e2e2e] text-[16px] w-full"></p>
+      </div>
+
+      <div class="flex gap-6 shrink-0 w-full">
+        <div class="flex flex-col gap-6 flex-1 min-w-0">
+
+          <!-- Products section -->
+          <div class="flex flex-col gap-2 shrink-0 w-full">
+            <p class="inter-medium text-[20px] text-black w-full">Producten</p>
+            <div class="border border-[#b5ae9c] rounded-[8px] overflow-hidden">
+              <div class="bg-[#dfdacd] border-b border-[#b5ae9c] flex items-center px-6 py-3 w-full">
+                <div class="flex flex-1 items-center justify-between min-w-0">
+                  <div class="flex items-center w-[236px]">
+                    <p class="inter-regular text-[#979797] text-[16px] uppercase w-[145px]">Product</p>
+                  </div>
+                  <p class="inter-regular text-[#979797] text-[16px] uppercase w-[116px]">Aantal</p>
+                  <p class="inter-regular text-[#979797] text-[16px] uppercase whitespace-nowrap">Klant max</p>
+                  <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-[176px]">Status</p>
+                </div>
+                <div class="w-5 h-5 shrink-0"></div>
+              </div>
+              <!-- Productrijen dynamisch -->
+              <div id="product-rijen"></div>
+            </div>
+          </div>
+
+          <div class="flex gap-3 items-center">
+            <button id="aanpassen-btn" class="bg-[#2e2e2e] text-white inter-regular text-[16px] px-4 py-2 rounded-[8px] hover:bg-[#1e1e1e] w-fit" onclick="aantallenAanpassen()">
+              Aantallen aanpassen
+            </button>
+            <button id="annuleren-btn" style="display:none" class="inter-regular text-[16px] text-[#1e1e1e] px-4 py-2 rounded-[8px] border border-[#b5ae9c] hover:bg-[#f0ebe0]" onclick="annulerenAanpassen()">
+              Annuleren
+            </button>
+            <span id="aanpassen-bevestiging" style="display:none" class="inter-regular text-[#1c892b] text-[16px]">Aantallen bijgewerkt</span>
+          </div>
+
+        </div>
+
+        <!-- Customer info sidebar -->
+        <div class="flex flex-col gap-3 shrink-0 w-[361px]">
+          <div class="bg-[#dfdacd] border border-[#b5ae9c] rounded-[8px] p-6 flex flex-col gap-3">
+            <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-full">klantgegevens</p>
+            <div class="border-b border-[#b5ae9c] py-2 flex flex-col gap-1">
+              <p id="kg-naam" class="inter-bold text-[20px] text-black"></p>
+              <p id="kg-type" class="inter-regular text-[16px] text-black"></p>
+            </div>
+            <div class="flex items-center justify-between">
+              <p class="inter-regular text-[16px] text-black">Contactpersoon</p>
+              <p id="kg-contact" class="inter-bold text-[16px] text-[#1e1e1e]"></p>
+            </div>
+            <div class="flex items-center justify-between">
+              <p class="inter-regular text-[16px] text-black">Telefoon</p>
+              <p id="kg-telefoon" class="inter-bold text-[16px] text-[#1e1e1e]"></p>
+            </div>
+            <div class="flex items-center justify-between">
+              <p class="inter-regular text-[16px] text-black">Email</p>
+              <p id="kg-email" class="inter-bold text-[16px] text-[#1e1e1e]"></p>
+            </div>
+            <div class="flex items-center justify-between">
+              <p class="inter-regular text-[16px] text-black">Mag aanvraag doen</p>
+              <p id="kg-aanvraag" class="inter-bold text-[16px]"></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const W = window.WolfData;
+    const params = new URLSearchParams(window.location.search);
+    const dagen = W.getDeliveryDays();
+    const klantId = params.get('klant') || 'juno';
+    const dagParam = params.get('dag');
+    const dag = (dagParam && dagen.find(function (d) { return d.id === dagParam; }))
+      || dagen.find(function (d) { return d.isFocus; }) || dagen[0];
+    const klant = W.klantById(klantId);
+    const orders = W.getOrders(dag.id);
+    const order = orders.find(function (o) { return o.klantId === klantId; });
+    const aantallen = order ? order.aantallen : klant.standaardorder;
+    const bestelnr = order ? order.bestelnr : '#000';
+
+    // Header
+    document.getElementById('bc-dag').textContent = dag.label;
+    document.getElementById('bc-link').href = `1-299-bestellingen-per-datum.html?dag=${dag.id}`;
+    document.getElementById('titel-klant').textContent = klant.naam;
+    document.getElementById('bestelling-meta').textContent =
+      `Bestelling ${bestelnr} - ${dag.label} - Standaardorder`;
+
+    // Klantgegevens
+    document.getElementById('kg-naam').textContent = klant.naam;
+    document.getElementById('kg-type').textContent = klant.type === 'uitzondering' ? 'Uitzonderingsklant' : 'Reguliere klant';
+    document.getElementById('kg-contact').textContent = klant.contact;
+    document.getElementById('kg-telefoon').textContent = klant.telefoon;
+    document.getElementById('kg-email').textContent = klant.email;
+    const aanvraagEl = document.getElementById('kg-aanvraag');
+    aanvraagEl.textContent = klant.aanvraagNaDeadline ? 'Ja' : 'Nee';
+    aanvraagEl.style.color = klant.aanvraagNaDeadline ? '#1c892b' : '#c45d1d';
+
+    // Productrijen
+    const rijen = Object.keys(aantallen).map(function (pid, i) {
+      const aantal = aantallen[pid];
+      const max = klant.producten[pid] ? klant.producten[pid].max : '—';
+      const past = typeof max === 'number' ? aantal <= max : true;
+      const bg = i % 2 === 0 ? 'bg-[#f4f0e7]' : 'bg-[#fdfbf7]';
+      const statusBg = past ? 'bg-[#c8f4ce]' : 'bg-[#f4e0c8]';
+      const statusDot = past ? '#1c892b' : '#c45d1d';
+      const statusText = past ? 'Past' : 'Controleer';
+      const statusColor = past ? '#1c892b' : '#c45d1d';
+      return `
+        <div class="${bg} flex items-center pl-6 pr-4 py-4 w-full">
+          <div class="flex flex-1 items-center justify-between min-w-0">
+            <div class="flex items-center w-[236px]"><p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${W.PRODUCTEN[pid].naam}</p></div>
+            <div data-editable="aantal" class="flex items-center justify-center"><p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${aantal}</p></div>
+            <p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${max}</p>
+            <div class="flex items-center justify-end w-[176px]">
+              <div class="${statusBg} flex gap-2 items-center px-3 py-1 rounded-[100px]">
+                <div class="w-[7px] h-[7px] rounded-full" style="background-color: ${statusDot};"></div>
+                <p class="inter-medium text-[14px] whitespace-nowrap" style="color:${statusColor};">${statusText}</p>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+    document.getElementById('product-rijen').innerHTML = rijen;
+
+    function aantallenAanpassen() {
+      const divs = document.querySelectorAll('[data-editable="aantal"]');
+      const btn = document.getElementById('aanpassen-btn');
+      const annulerBtn = document.getElementById('annuleren-btn');
+      const bevestiging = document.getElementById('aanpassen-bevestiging');
+      if (btn.dataset.mode === 'bewerken') {
+        divs.forEach(div => {
+          const input = div.querySelector('input');
+          div.innerHTML = `<p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${input.value}</p>`;
+        });
+        btn.textContent = 'Aantallen aanpassen';
+        btn.dataset.mode = '';
+        annulerBtn.style.display = 'none';
+        bevestiging.style.display = 'inline';
+        setTimeout(() => { bevestiging.style.display = 'none'; }, 2500);
+      } else {
+        divs.forEach(div => {
+          const huidig = div.querySelector('p').textContent.trim();
+          div.dataset.origineel = huidig;
+          div.innerHTML = `<input type="number" value="${huidig}" min="0" class="inter-medium text-[16px] text-[#1e1e1e] w-[60px] border border-[#b5ae9c] rounded-[4px] px-2 text-center bg-white">`;
+        });
+        btn.textContent = 'Bevestigen';
+        btn.dataset.mode = 'bewerken';
+        annulerBtn.style.display = 'inline-flex';
+      }
+    }
+    function annulerenAanpassen() {
+      const divs = document.querySelectorAll('[data-editable="aantal"]');
+      const btn = document.getElementById('aanpassen-btn');
+      divs.forEach(div => {
+        div.innerHTML = `<p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${div.dataset.origineel}</p>`;
+      });
+      btn.textContent = 'Aantallen aanpassen';
+      btn.dataset.mode = '';
+      document.getElementById('annuleren-btn').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7.1 Klant Profiel Bewerken — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    .font-gt-ext-rg { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .font-gt-ext-md { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 600; }
+    .font-gt-rg     { font-family: Arial, sans-serif; font-weight: 400; }
+    .font-gt-bd     { font-family: Arial, sans-serif; font-weight: 700; }
+    .inter-regular  { font-family: 'Inter', sans-serif; font-weight: 400; }
+    .inter-medium   { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .inter-bold     { font-family: 'Inter', sans-serif; font-weight: 700; }
+    a.nav-item { display: flex; flex-direction: column; width: 100%; text-decoration: none; }
+    a.nav-item:hover { background-color: rgba(249,247,242,0.5); }
+    input[type="text"], input[type="email"], textarea, select {
+      background-color: #fdfbf7;
+      border: 1px solid #b5ae9c;
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #1e1e1e;
+      background-color: white;
+    }
+  </style>
+</head>
+<body class="bg-[#dfdacd] flex flex-col w-full h-full">
+
+  <header class="border-b border-[#b5ae9c] flex items-center justify-between px-8 py-6 shrink-0 w-full">
+    <div class="flex gap-5 items-center">
+      <div class="h-[30px] w-[27px] shrink-0 relative">
+        <img alt="" class="block w-full h-full object-contain" src="assets/wolf logo 1.svg">
+      </div>
+      <p class="font-gt-ext-rg text-black tracking-[6.4px] uppercase whitespace-nowrap text-[16px]">
+        Bakkerij <span class="font-gt-ext-md">Wolf</span>
+      </p>
+    </div>
+    <div class="relative flex items-center bg-[#f9f7f2] rounded-[100px] px-4 py-2 whitespace-nowrap">
+      <span class="font-gt-rg text-[14px] text-[#1e1e1e]">Noor</span>
+    </div>
+  </header>
+
+  <div class="flex flex-1 min-h-0 w-full">
+    <aside data-wolf-sidebar="klanten" class="border-r border-[#b5ae9c] flex flex-col h-full shrink-0 w-[271px] pt-10 pb-4"></aside>
+
+    <main class="bg-[#f9f7f2] flex flex-1 flex-col gap-6 h-full overflow-y-auto min-w-0 p-10">
+
+      <div class="flex flex-col gap-3 shrink-0 w-full">
+        <div class="flex gap-2 inter-regular text-[#2e2e2e] text-[16px] whitespace-nowrap">
+          <a href="1-336-klanten-overzicht.html" class="text-[#2e2e2e] no-underline hover:underline">Klanten</a>
+          <span>&gt;</span>
+          <span id="bc-klant"></span>
+        </div>
+        <div class="flex items-center justify-between w-full">
+          <div class="flex gap-3 items-center">
+            <p id="titel-klant" class="inter-bold text-[32px] text-black whitespace-nowrap"></p>
+            <div id="type-pill"></div>
+          </div>
+          <div class="flex gap-4">
+            <button id="annuleren-btn" class="inter-regular text-[16px] text-[#1e1e1e] px-4 py-2 rounded-[100px] hover:bg-[#fdfbf7]">
+              Annuleren
+            </button>
+            <button id="opslaan-btn" class="bg-[#2e2e2e] text-white inter-regular text-[16px] px-4 py-2 rounded-[100px] hover:bg-[#1e1e1e]" onclick="opslaan()">
+              Opslaan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 shrink-0 w-full">
+
+        <!-- Left column: Contact and order rights -->
+        <div class="flex flex-col gap-2 shrink-0">
+
+          <!-- Contact details -->
+          <div class="bg-[#dfdacd] border border-[#b5ae9c] rounded-[8px] p-6 flex flex-col gap-3 w-[540px]">
+            <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-full">Contactgegevens</p>
+            <div class="border-b border-[#b5ae9c] py-2 flex flex-col gap-1">
+              <p class="inter-regular text-[16px] text-black">Contactpersoon</p>
+              <input id="in-contact" type="text" class="inter-bold text-[16px] text-[#1e1e1e] w-full">
+            </div>
+            <div class="border-b border-[#b5ae9c] py-2 flex flex-col gap-1">
+              <p class="inter-regular text-[16px] text-black">Telefoon</p>
+              <input id="in-telefoon" type="text" class="inter-bold text-[16px] text-[#1e1e1e] w-full">
+            </div>
+            <div class="border-b border-[#b5ae9c] py-2 flex flex-col gap-1">
+              <p class="inter-regular text-[16px] text-black">Email</p>
+              <input id="in-email" type="email" class="inter-bold text-[16px] text-[#1e1e1e] w-full">
+            </div>
+            <div class="py-2 flex flex-col gap-1">
+              <p class="inter-regular text-[16px] text-black">Adres</p>
+              <textarea id="in-adres" class="inter-bold text-[16px] text-[#1e1e1e] w-full h-[70px]"></textarea>
+            </div>
+          </div>
+
+          <!-- Order rights -->
+          <div class="bg-[#dfdacd] border border-[#b5ae9c] rounded-[8px] p-6 flex flex-col gap-3 w-[540px]">
+            <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-full">Bestelrechten</p>
+            <div class="border-b border-[#b5ae9c] pb-2 flex items-center justify-between">
+              <p class="inter-regular text-[16px] text-black">Klanttype</p>
+              <select id="in-type" class="inter-medium text-[14px] text-[#1e1e1e] px-3 py-1 w-[140px]">
+                <option value="regulier">Regulier</option>
+                <option value="uitzondering">Uitzondering</option>
+              </select>
+            </div>
+            <div class="border-b border-[#b5ae9c] pb-2 flex items-center justify-between">
+              <p class="inter-regular text-[16px] text-black">Aanvraag na deadline</p>
+              <select id="in-aanvraag" class="inter-medium text-[14px] text-[#1e1e1e] px-3 py-1 w-[100px]">
+                <option value="nee">Nee</option>
+                <option value="ja">Ja</option>
+              </select>
+            </div>
+            <div class="border-b border-[#b5ae9c] pb-2 flex items-center justify-between">
+              <p class="inter-regular text-[16px] text-black">Leverwijze</p>
+              <select id="in-leverwijze" class="inter-medium text-[14px] text-[#1e1e1e] px-3 py-1 w-[140px]">
+                <option value="levering">Levering</option>
+                <option value="ophalen">Ophalen</option>
+              </select>
+            </div>
+            <div class="pb-2 flex items-center justify-between">
+              <p class="inter-regular text-[16px] text-black">Leverinstructies</p>
+              <textarea id="in-instructies" class="inter-medium text-[14px] text-[#1e1e1e] px-3 py-1 w-[180px] h-[40px]" placeholder="Instructies..."></textarea>
+            </div>
+          </div>
+
+          <!-- Factuurgegevens -->
+          <div class="bg-[#dfdacd] border border-[#b5ae9c] rounded-[8px] p-6 flex flex-col gap-3 w-[540px]">
+            <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-full">Factuurgegevens</p>
+            <div class="border-b border-[#b5ae9c] py-2 flex flex-col gap-1">
+              <p class="inter-regular text-[16px] text-black">Bedrijfsnaam</p>
+              <input id="in-fc-bedrijf" type="text" class="inter-bold text-[16px] text-[#1e1e1e] w-full">
+            </div>
+            <div class="border-b border-[#b5ae9c] py-2 flex flex-col gap-1">
+              <p class="inter-regular text-[16px] text-black">Factuur e-mail</p>
+              <input id="in-fc-email" type="email" class="inter-bold text-[16px] text-[#1e1e1e] w-full">
+            </div>
+            <div class="border-b border-[#b5ae9c] py-2 flex flex-col gap-1">
+              <p class="inter-regular text-[16px] text-black">Factuuradres</p>
+              <textarea id="in-fc-adres" class="inter-bold text-[16px] text-[#1e1e1e] w-full h-[56px]"></textarea>
+            </div>
+            <div class="border-b border-[#b5ae9c] py-2 flex flex-col gap-1">
+              <p class="inter-regular text-[16px] text-black">Btw-nummer</p>
+              <input id="in-fc-btw" type="text" class="inter-bold text-[16px] text-[#1e1e1e] w-full">
+            </div>
+            <div class="py-2 flex flex-col gap-1">
+              <p class="inter-regular text-[16px] text-black">Debiteurnummer</p>
+              <input id="in-fc-debiteur" type="text" class="inter-bold text-[16px] text-[#1e1e1e] w-full">
+            </div>
+          </div>
+
+          <!-- Notities -->
+          <div class="bg-[#dfdacd] border border-[#b5ae9c] rounded-[8px] p-6 flex flex-col gap-2 w-[540px]">
+            <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-full">Notities</p>
+            <textarea id="in-notities" class="inter-regular text-[14px] text-[#1e1e1e] px-3 py-2 w-full h-[60px]" placeholder="Vaste afspraken of bijzonderheden..."></textarea>
+          </div>
+
+        </div>
+
+        <!-- Right column: Product prices -->
+        <div class="bg-[#dfdacd] border border-[#b5ae9c] rounded-[8px] p-6 flex flex-col gap-3 w-[540px]">
+          <p class="inter-regular text-[#979797] text-[16px] uppercase text-right w-full">Maximum per product en klantprijzen</p>
+          <div class="border border-[#b5ae9c] rounded-[8px] overflow-hidden">
+            <div class="bg-[#2e2e2e] border-b border-[#b5ae9c] flex items-center px-6 py-3 w-full">
+              <div class="flex flex-1 items-center justify-between min-w-0">
+                <p class="inter-regular text-[#fdfbf7] text-[16px] uppercase w-[145px]">Product</p>
+                <p class="inter-regular text-[#fdfbf7] text-[16px] uppercase whitespace-nowrap">Prijs €</p>
+                <p class="inter-regular text-[#fdfbf7] text-[16px] uppercase whitespace-nowrap">Max</p>
+              </div>
+            </div>
+            <!-- Productrijen dynamisch -->
+            <div id="product-rijen"></div>
+            <!-- Add product row -->
+            <div class="bg-[#fdfbf7] flex items-center justify-center px-6 py-4 w-full">
+              <button class="inter-light text-[20px] text-[#b43232] hover:text-[#8a2626]">+</button>
+              <p class="inter-bold text-[16px] text-[#1e1e1e]">Voeg product toe</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const W = window.WolfData;
+    const params = new URLSearchParams(window.location.search);
+    const klantId = params.get('klant') || 'juno';
+    const klant = W.klantById(klantId) || W.KLANTEN[0];
+    const profielUrl = `1-536-klant.html?klant=${klant.id}`;
+
+    // Kop + annuleren
+    document.getElementById('bc-klant').textContent = klant.naam;
+    document.getElementById('titel-klant').textContent = klant.naam;
+    document.getElementById('annuleren-btn').setAttribute('onclick', `window.location.href='${profielUrl}'`);
+    document.getElementById('type-pill').innerHTML = klant.type === 'uitzondering'
+      ? `<div class="bg-[#f4e0c8] flex gap-2 items-center px-3 py-1 rounded-[100px]">
+           <div class="w-[7px] h-[7px] rounded-full" style="background-color: #c45d1d;"></div>
+           <p class="inter-medium text-[#c45d1d] text-[14px] whitespace-nowrap">Uitzonderingsklant</p></div>`
+      : `<div class="bg-[#e5e1d8] flex gap-2 items-center px-3 py-1 rounded-[100px]">
+           <div class="w-[7px] h-[7px] rounded-full" style="background-color: #6b6456;"></div>
+           <p class="inter-medium text-[#6b6456] text-[14px] whitespace-nowrap">Standaardklant</p></div>`;
+
+    // Prefill velden
+    document.getElementById('in-contact').value = klant.contact;
+    document.getElementById('in-telefoon').value = klant.telefoon;
+    document.getElementById('in-email').value = klant.email;
+    document.getElementById('in-adres').value = klant.adres.join('\n');
+    document.getElementById('in-type').value = klant.type;
+    document.getElementById('in-aanvraag').value = klant.aanvraagNaDeadline ? 'ja' : 'nee';
+    document.getElementById('in-leverwijze').value = klant.leverwijze || 'levering';
+    document.getElementById('in-instructies').value = klant.leverinstructies || '';
+    document.getElementById('in-notities').value = klant.notities || '';
+
+    // Prefill factuurgegevens
+    const f = klant.factuur || {};
+    document.getElementById('in-fc-bedrijf').value = f.bedrijfsnaam || '';
+    document.getElementById('in-fc-email').value = f.email || '';
+    document.getElementById('in-fc-adres').value = (f.adres || []).join('\n');
+    document.getElementById('in-fc-btw').value = f.btw || '';
+    document.getElementById('in-fc-debiteur').value = f.debiteurnr || '';
+
+    // Productprijzen-tabel
+    document.getElementById('product-rijen').innerHTML = Object.keys(klant.producten).map(function (pid, i) {
+      const p = klant.producten[pid];
+      const bg = i % 2 === 0 ? 'bg-[#f4f0e7]' : 'bg-[#fdfbf7]';
+      return `
+        <div class="${bg} flex gap-3 items-center px-6 py-4 w-full">
+          <div class="flex flex-1 items-center justify-between min-w-0">
+            <input type="text" value="${W.PRODUCTEN[pid].naam}" class="inter-regular text-[16px] text-[#1e1e1e] w-[145px] bg-transparent">
+            <input type="text" value="${p.prijs}" class="inter-regular text-[16px] text-[#1e1e1e] w-[100px] bg-transparent">
+            <input type="text" value="${p.max}" class="inter-regular text-[16px] text-[#1e1e1e] w-[100px] bg-transparent">
+          </div>
+          <button class="text-[#b43232] inter-light text-[20px] hover:text-[#8a2626]" onclick="this.closest('div.flex.gap-3').remove()">×</button>
+        </div>`;
+    }).join('');
+
+    function opslaan() {
+      // Bewaar de wijzigingen in de sessie
+      W.setKlant(klant.id, {
+        contact: document.getElementById('in-contact').value,
+        telefoon: document.getElementById('in-telefoon').value,
+        email: document.getElementById('in-email').value,
+        adres: document.getElementById('in-adres').value.split('\n').filter(function (r) { return r.trim(); }),
+        type: document.getElementById('in-type').value,
+        aanvraagNaDeadline: document.getElementById('in-aanvraag').value === 'ja',
+        leverwijze: document.getElementById('in-leverwijze').value,
+        leverinstructies: document.getElementById('in-instructies').value,
+        notities: document.getElementById('in-notities').value,
+        factuur: {
+          bedrijfsnaam: document.getElementById('in-fc-bedrijf').value,
+          email: document.getElementById('in-fc-email').value,
+          adres: document.getElementById('in-fc-adres').value.split('\n').filter(function (r) { return r.trim(); }),
+          btw: document.getElementById('in-fc-btw').value,
+          debiteurnr: document.getElementById('in-fc-debiteur').value,
+        },
+      });
+      const btn = document.getElementById('opslaan-btn');
+      btn.textContent = 'Opgeslagen ✓';
+      btn.disabled = true;
+      btn.classList.add('opacity-70');
+      setTimeout(function () { window.location.href = profielUrl; }, 900);
+    }
+  </script>
+</body>
+</html>

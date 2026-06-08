@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4 Aanvragen Overzicht — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    .font-gt-ext-rg { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .font-gt-ext-md { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 600; }
+    .font-gt-rg     { font-family: Arial, sans-serif; font-weight: 400; }
+    .font-gt-bd     { font-family: Arial, sans-serif; font-weight: 700; }
+    .inter-regular  { font-family: 'Inter', sans-serif; font-weight: 400; }
+    .inter-medium   { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .inter-bold     { font-family: 'Inter', sans-serif; font-weight: 700; }
+    a.nav-item { display: flex; flex-direction: column; width: 100%; text-decoration: none; }
+    a.nav-item:hover { background-color: rgba(249,247,242,0.5); }
+  </style>
+</head>
+<body class="bg-[#dfdacd] flex flex-col w-full h-full">
+
+  <header class="border-b border-[#b5ae9c] flex items-center justify-between px-8 py-6 shrink-0 w-full">
+    <div class="flex gap-5 items-center">
+      <div class="h-[30px] w-[27px] shrink-0 relative">
+        <img alt="" class="block w-full h-full object-contain" src="assets/wolf logo 1.svg">
+      </div>
+      <p class="font-gt-ext-rg text-black tracking-[6.4px] uppercase whitespace-nowrap text-[16px]">
+        Bakkerij <span class="font-gt-ext-md">Wolf</span>
+      </p>
+    </div>
+    <div class="relative flex items-center bg-[#f9f7f2] rounded-[100px] px-4 py-2 whitespace-nowrap">
+      <span class="font-gt-rg text-[14px] text-[#1e1e1e]">Noor</span>
+    </div>
+  </header>
+
+  <div class="flex flex-1 min-h-0 w-full">
+    <aside data-wolf-sidebar="aanvragen" class="border-r border-[#b5ae9c] flex flex-col h-full shrink-0 w-[271px] pt-10 pb-4"></aside>
+
+    <main class="bg-[#f9f7f2] flex flex-1 flex-col gap-6 h-full overflow-y-auto min-w-0 p-10">
+
+      <div class="flex flex-col gap-3 shrink-0 w-full">
+        <p id="datum-tijd" class="inter-regular text-[#2e2e2e] text-[16px] w-full"></p>
+        <p class="inter-bold text-[32px] text-black w-full">Aanvragen</p>
+        <p class="inter-regular text-[#2e2e2e] text-[16px] w-full">Bekijk en beoordeel aanvragen voor aankomende leverdagen en handel deze af</p>
+      </div>
+
+      <!-- Status cards -->
+      <div class="flex gap-6 h-[145px] items-center w-full">
+        <div id="card-tebeoordelen" class="bg-[#f4e0c8] border border-[#c45d1d] rounded-[8px] p-6 flex flex-1 flex-col h-full justify-between min-w-0">
+          <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">Te beoordelen</p>
+          <p id="getal-tebeoordelen" class="inter-bold text-[32px] text-[#c45d1d] w-full">0</p>
+          <p class="inter-bold text-[#2e2e2e] text-[16px] w-full">Wacht op actie</p>
+        </div>
+        <div class="bg-[#dfdacd] border border-[#b5ae9c] rounded-[8px] p-6 flex flex-1 flex-col h-full justify-between min-w-0">
+          <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">Goedgekeurd</p>
+          <p id="getal-goedgekeurd" class="inter-bold text-[32px] text-black w-full">0</p>
+          <p class="inter-bold text-[#2e2e2e] text-[16px] w-full">Deze week</p>
+        </div>
+        <div class="bg-[#dfdacd] border border-[#b5ae9c] rounded-[8px] p-6 flex flex-1 flex-col h-full justify-between min-w-0">
+          <p class="inter-regular text-[#2e2e2e] text-[16px] tracking-[0.32px] uppercase w-full">Afgewezen</p>
+          <p id="getal-afgewezen" class="inter-bold text-[32px] text-black w-full">0</p>
+          <p class="inter-bold text-[#2e2e2e] text-[16px] w-full">Deze week</p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div id="filters" class="flex gap-2 flex-wrap shrink-0 w-full"></div>
+
+      <!-- Requests table -->
+      <div class="border border-[#b5ae9c] rounded-[8px] overflow-hidden">
+        <div class="bg-[#dfdacd] border-b border-[#b5ae9c] flex items-center gap-4 px-6 py-3 w-full">
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] w-[90px]">Bestelnr</p>
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] flex-1 min-w-0">Klant</p>
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] w-[150px]">Leverdatum</p>
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] w-[110px]">Producten</p>
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] w-[150px]">Reden</p>
+          <p class="inter-regular text-[#979797] text-[14px] uppercase tracking-[0.32px] w-[150px]">Status</p>
+          <div class="w-5 shrink-0"></div>
+        </div>
+        <div id="aanvraag-rijen"></div>
+        <div id="leeg-melding" style="display:none" class="bg-[#fdfbf7] px-6 py-8 text-center">
+          <p class="inter-regular text-[#6b6456] text-[16px]">Geen aanvragen in deze weergave.</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const W = window.WolfData;
+    W.bindKlok('datum-tijd');
+
+    const alle = W.getAanvragen();
+    const focus = W.getDeliveryDays().find(function (d) { return d.isFocus; });
+
+    // Tellers
+    const tel = function (s) { return alle.filter(function (a) { return a.status === s; }).length; };
+    document.getElementById('getal-tebeoordelen').textContent = String(tel('te-beoordelen'));
+    document.getElementById('getal-goedgekeurd').textContent = String(tel('goedgekeurd'));
+    document.getElementById('getal-afgewezen').textContent = String(tel('afgewezen'));
+
+    // ---- Filters ------------------------------------------------------------
+    const FILTERS = [
+      { key: 'alle', label: 'Alle' },
+      { key: 'Bestellimiet', label: 'Bestel limiet' },
+      { key: 'Na deadline', label: 'Na deadline' },
+    ];
+    let actiefFilter = 'alle';
+
+    function filterAanvragen() {
+      return alle.filter(function (a) {
+        if (actiefFilter === 'alle') return true;
+        return a.reden === actiefFilter;
+      });
+    }
+
+    function renderFilters() {
+      document.getElementById('filters').innerHTML = FILTERS.map(function (f) {
+        const actief = f.key === actiefFilter;
+        const cls = actief
+          ? 'bg-[#2e2e2e] text-white'
+          : 'bg-[#f9f7f2] text-[#1e1e1e] border border-[#b5ae9c] hover:bg-[#f0ece3]';
+        return `<button onclick="zetFilter('${f.key}')" class="${cls} inter-medium text-[14px] px-4 py-2 rounded-[100px] cursor-pointer">${f.label}</button>`;
+      }).join('');
+    }
+    function zetFilter(key) { actiefFilter = key; renderFilters(); renderRijen(); }
+    window.zetFilter = zetFilter;
+
+    // ---- Status / reden gescheiden ------------------------------------------
+    function statusBadge(a) {
+      const map = {
+        'te-beoordelen': { bg: '#f4e0c8', kleur: '#c45d1d', label: 'Te beoordelen' },
+        'goedgekeurd':   { bg: '#c8f4ce', kleur: '#1c892b', label: 'Goedgekeurd' },
+        'afgewezen':     { bg: '#f4e0c8', kleur: '#B8341A', label: 'Afgewezen' },
+      };
+      const s = map[a.status] || map['te-beoordelen'];
+      const label = a.aangepast && a.status === 'goedgekeurd' ? 'Aangepast' : s.label;
+      return `<div class="flex gap-2 items-center px-3 py-1 rounded-[100px]" style="background-color:${s.bg};">
+        <div class="w-[7px] h-[7px] rounded-full shrink-0" style="background-color:${s.kleur};"></div>
+        <p class="inter-medium text-[14px] whitespace-nowrap" style="color:${s.kleur};">${label}</p></div>`;
+    }
+
+    function renderRijen() {
+      const lijst = filterAanvragen();
+      const cont = document.getElementById('aanvraag-rijen');
+      document.getElementById('leeg-melding').style.display = lijst.length ? 'none' : 'block';
+      cont.innerHTML = lijst.map(function (a, i) {
+        const bg = i % 2 === 0 ? 'bg-[#f4f0e7]' : 'bg-[#fdfbf7]';
+        const hover = i % 2 === 0 ? 'hover:bg-[#f0ebe0]' : 'hover:bg-[#f7f5f0]';
+        const afgehandeld = a.status !== 'te-beoordelen';
+        return `
+          <div class="${bg} flex items-center gap-4 px-6 py-4 w-full cursor-pointer ${hover} ${afgehandeld ? 'opacity-70' : ''}" onclick="window.location.href='1-234-beoordelen.html?id=${a.id}&van=aanvragen'">
+            <div class="w-[90px]"><p class="inter-regular text-[15px] text-[#6b6456] whitespace-nowrap">${a.bestelnr}</p></div>
+            <div class="flex-1 min-w-0"><p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${a.klant}</p></div>
+            <div class="w-[150px]"><p class="inter-medium text-[16px] text-[#1e1e1e] whitespace-nowrap">${a.leverdagLabel}</p></div>
+            <div class="w-[110px]"><p class="inter-regular text-[15px] text-[#1e1e1e] whitespace-nowrap">${a.producten.length} product${a.producten.length === 1 ? '' : 'en'}</p></div>
+            <div class="w-[150px]"><p class="inter-regular text-[15px] text-[#1e1e1e] whitespace-nowrap">${a.reden}</p></div>
+            <div class="w-[150px]">${statusBadge(a)}</div>
+            <div class="w-5 h-5 shrink-0"><img alt="" class="block w-full h-full object-contain" src="assets/arrow-right.svg"></div>
+          </div>`;
+      }).join('');
+    }
+
+    renderFilters();
+    renderRijen();
+  </script>
+</body>
+</html>

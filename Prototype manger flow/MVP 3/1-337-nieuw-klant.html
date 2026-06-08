@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nieuwe klant — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+  <style>
+    .wolf-field { background:#fdfbf7; border:1px solid #b5ae9c; padding:5px 10px; border-radius:4px; font-family:'Inter',sans-serif; font-size:14px; color:#1e1e1e; }
+    .wolf-field:focus { outline:none; border-color:#1e1e1e; background:#fff; }
+    input.title-input { background:transparent; border:none; border-bottom:1.5px solid #b5ae9c; border-radius:0; padding:0 0 6px; font-family:'Inter',sans-serif; font-size:24px; font-weight:700; color:#1e1e1e; width:100%; }
+    input.title-input::placeholder { color:#b5ae9c; }
+    input.title-input:focus { outline:none; border-bottom-color:#1e1e1e; }
+  </style>
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="klanten"></aside>
+
+  <main class="wolf-main">
+
+    <div class="flex flex-col gap-[0.2rem]">
+      <div class="wolf-breadcrumb"><a href="1-336-klanten-overzicht.html">Klanten</a><span>&gt;</span><span>Nieuwe klant</span></div>
+      <div class="flex items-end justify-between gap-6 w-full">
+        <div class="flex-1 flex flex-col gap-2">
+          <input id="in-naam" type="text" placeholder="Klantnaam" class="title-input">
+          <p class="inter-regular text-[#6b6456] text-[14px]">Vul de gegevens in om een nieuw klantprofiel aan te maken</p>
+        </div>
+        <div class="flex gap-3 items-center shrink-0 pb-2">
+          <button class="wolf-btn wolf-btn--ghost" onclick="window.location.href='1-336-klanten-overzicht.html'">Annuleren</button>
+          <button id="aanmaken-btn" class="wolf-btn wolf-btn--primary" onclick="aanmaken()">Klant aanmaken</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-6 items-start">
+
+      <div class="flex flex-col gap-6 flex-1 min-w-0">
+        <!-- Contactgegevens -->
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Contactgegevens</p>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Contactpersoon</span><input id="in-contact" type="text" class="wolf-field flex-1 max-w-[260px]"></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Telefoon</span><input id="in-telefoon" type="text" class="wolf-field flex-1 max-w-[260px]"></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Email</span><input id="in-email" type="email" class="wolf-field flex-1 max-w-[260px]"></div>
+          <div class="flex items-start justify-between gap-4"><span class="wolf-info-label">Adres</span><textarea id="in-adres" class="wolf-field flex-1 max-w-[260px]" style="height:72px;"></textarea></div>
+        </div>
+
+        <!-- Bestelrechten -->
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Bestelrechten</p>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Klanttype</span>
+            <select id="in-type" class="wolf-field"><option value="" disabled selected>Selecteer type</option><option value="regulier">Regulier</option><option value="uitzondering">Uitzondering</option></select></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Aanvraag na deadline</span>
+            <select id="in-aanvraag" class="wolf-field"><option value="nee">Nee</option><option value="ja">Ja</option></select></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Aanvraag bestellimiet</span>
+            <select id="in-limiet" class="wolf-field"><option value="nee">Nee</option><option value="ja">Ja</option></select></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Leverwijze</span>
+            <select id="in-leverwijze" class="wolf-field"><option value="levering">Levering</option><option value="ophalen">Ophalen</option></select></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Leverinstructies</span>
+            <input id="in-instructies" type="text" placeholder="Instructies..." class="wolf-field flex-1 max-w-[200px]"></div>
+        </div>
+
+        <!-- Factuurgegevens -->
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Factuurgegevens</p>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Bedrijfsnaam</span><input id="in-fc-bedrijf" type="text" class="wolf-field flex-1 max-w-[260px]"></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Factuur e-mail</span><input id="in-fc-email" type="email" class="wolf-field flex-1 max-w-[260px]"></div>
+          <div class="flex items-start justify-between gap-4"><span class="wolf-info-label">Factuuradres</span><textarea id="in-fc-adres" class="wolf-field flex-1 max-w-[260px]" style="height:56px;"></textarea></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Btw-nummer</span><input id="in-fc-btw" type="text" class="wolf-field flex-1 max-w-[260px]"></div>
+          <div class="flex items-center justify-between gap-4"><span class="wolf-info-label">Debiteurnummer</span><input id="in-fc-debiteur" type="text" class="wolf-field flex-1 max-w-[260px]"></div>
+        </div>
+
+        <!-- Notities -->
+        <div class="wolf-infocard">
+          <p class="wolf-infocard-title">Notities &amp; vaste afspraken</p>
+          <textarea id="in-notities" class="wolf-field w-full" style="height:72px;" placeholder="Bijzonderheden, vaste afspraken..."></textarea>
+        </div>
+      </div>
+
+      <!-- Producten & prijzen -->
+      <div class="wolf-infocard flex-1 min-w-0">
+        <p class="wolf-infocard-title">Maximum per product en klantprijzen</p>
+        <div class="wolf-table" style="background:#fff;">
+          <div class="wolf-thead">
+            <p class="wolf-th flex-1">Product</p>
+            <p class="wolf-th w-[80px] text-right">Prijs €</p>
+            <p class="wolf-th w-[50px] text-right">Max</p>
+            <div class="w-6"></div>
+          </div>
+          <div id="product-rows">
+            <div class="wolf-row product-row">
+              <input type="text" placeholder="Productnaam" class="wolf-field flex-1">
+              <input type="text" value="0,00" class="wolf-field w-[70px] text-right">
+              <input type="text" value="0" class="wolf-field w-[50px] text-right">
+              <button class="w-6 text-[#b43232] text-[18px] leading-none hover:opacity-70" onclick="this.closest('.product-row').remove()">×</button>
+            </div>
+          </div>
+          <div class="wolf-row is-clickable justify-center" onclick="addProductRow()">
+            <span class="wolf-td">+ Voeg product toe</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const W = window.WolfData;
+
+    function aanmaken() {
+      const naam = (document.getElementById('in-naam').value || '').trim();
+      if (!naam) { document.getElementById('in-naam').focus(); return; }
+      const id = 'klant-' + naam.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString().slice(-4);
+      const adres = (document.getElementById('in-adres').value || '').split('\n').filter(function (r) { return r.trim(); });
+      const fcAdres = (document.getElementById('in-fc-adres').value || '').split('\n').filter(function (r) { return r.trim(); });
+      W.addKlant({
+        id: id, naam: naam,
+        type: document.getElementById('in-type').value === 'uitzondering' ? 'uitzondering' : 'regulier',
+        contact: document.getElementById('in-contact').value || '—',
+        telefoon: document.getElementById('in-telefoon').value || '—',
+        email: document.getElementById('in-email').value || '—',
+        adres: adres.length ? adres : ['—'],
+        aanvraagNaDeadline: document.getElementById('in-aanvraag').value === 'ja',
+        aanvraagBestellimiet: document.getElementById('in-limiet').value === 'ja',
+        leverwijze: document.getElementById('in-leverwijze').value || 'levering',
+        leverinstructies: document.getElementById('in-instructies').value || '',
+        notities: document.getElementById('in-notities').value || '',
+        factuur: {
+          bedrijfsnaam: document.getElementById('in-fc-bedrijf').value || naam,
+          email: document.getElementById('in-fc-email').value || '',
+          adres: fcAdres.length ? fcAdres : (adres.length ? adres : ['—']),
+          btw: document.getElementById('in-fc-btw').value || '',
+          debiteurnr: document.getElementById('in-fc-debiteur').value || '',
+        },
+        producten: {}, standaardorder: {}, geschiedenis: [],
+      });
+      const btn = document.getElementById('aanmaken-btn');
+      btn.textContent = 'Aangemaakt ✓'; btn.disabled = true; btn.classList.add('opacity-70');
+      setTimeout(function () { window.location.href = '1-336-klanten-overzicht.html'; }, 900);
+    }
+    window.aanmaken = aanmaken;
+
+    function addProductRow() {
+      const row = document.createElement('div');
+      row.className = 'wolf-row product-row';
+      row.innerHTML = `
+        <input type="text" placeholder="Productnaam" class="wolf-field flex-1">
+        <input type="text" value="0,00" class="wolf-field w-[70px] text-right">
+        <input type="text" value="0" class="wolf-field w-[50px] text-right">
+        <button class="w-6 text-[#b43232] text-[18px] leading-none hover:opacity-70" onclick="this.closest('.product-row').remove()">×</button>`;
+      document.getElementById('product-rows').appendChild(row);
+    }
+    window.addProductRow = addProductRow;
+  </script>
+
+</body>
+</html>

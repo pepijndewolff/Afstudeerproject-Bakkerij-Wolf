@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bestelling bekijken — Bakkerij Wolf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="data.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wolf.css">
+</head>
+<body class="wolf-body">
+
+  <aside class="wolf-sidebar" data-wolf-sidebar="bestellingen"></aside>
+
+  <main class="wolf-main">
+
+    <div class="flex flex-col gap-[0.2rem]">
+      <div class="wolf-breadcrumb">
+        <a id="bc-link" href="1-109-bestellingen.html">Bestellingen</a><span>&gt;</span><span id="bc-dag"></span>
+      </div>
+      <div class="flex gap-3 items-center">
+        <p id="titel-klant" class="wolf-h1"></p>
+        <span class="wolf-badge wolf-badge--green"><span class="dot"></span>Ingepland</span>
+      </div>
+      <p id="bestelling-meta" class="wolf-intro"></p>
+    </div>
+
+    <div class="flex gap-6 items-start">
+      <section class="wolf-section flex-1 flex flex-col gap-6 min-w-0">
+        <div class="flex flex-col gap-4">
+          <p class="wolf-value" style="font-size:20px;">Producten</p>
+          <div class="wolf-table">
+            <div class="wolf-thead">
+              <p class="wolf-th flex-1">Product</p>
+              <p class="wolf-th w-[100px]">Aantal</p>
+              <p class="wolf-th w-[100px]">Klant max</p>
+              <p class="wolf-th w-[140px] text-right">Status</p>
+            </div>
+            <div id="product-rijen"></div>
+          </div>
+        </div>
+        <div class="flex gap-3 items-center">
+          <button id="aanpassen-btn" class="wolf-btn wolf-btn--primary" onclick="aantallenAanpassen()"><span class="lbl">Aantallen aanpassen</span></button>
+          <button id="annuleren-btn" style="display:none" class="wolf-btn wolf-btn--ghost" onclick="annulerenAanpassen()">Annuleren</button>
+          <span id="aanpassen-bevestiging" style="display:none" class="inter-regular text-[16px]" style="color:var(--green)">Aantallen bijgewerkt</span>
+        </div>
+      </section>
+
+      <div class="wolf-infocard shrink-0" style="width:340px;">
+        <p class="wolf-infocard-title">Klantgegevens</p>
+        <div class="flex flex-col gap-1 pb-2 border-b border-[#b5ae9c]">
+          <p id="kg-naam" class="inter-semibold text-[20px] text-black"></p>
+          <p id="kg-type" class="inter-regular text-[16px] text-black"></p>
+        </div>
+        <div class="wolf-info-row"><p class="wolf-info-label">Contactpersoon</p><p id="kg-contact" class="wolf-info-value"></p></div>
+        <div class="wolf-info-row"><p class="wolf-info-label">Telefoon</p><p id="kg-telefoon" class="wolf-info-value"></p></div>
+        <div class="wolf-info-row"><p class="wolf-info-label">Email</p><p id="kg-email" class="wolf-info-value"></p></div>
+        <div class="wolf-info-row"><p class="wolf-info-label">Leverwijze</p><p id="kg-leverwijze" class="wolf-info-value"></p></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const W = window.WolfData;
+    const params = new URLSearchParams(window.location.search);
+    const dagen = W.getDeliveryDays();
+    const klantId = params.get('klant') || 'juno';
+    const dagParam = params.get('dag');
+    const dag = (dagParam && dagen.find(function (d) { return d.id === dagParam; })) || dagen.find(function (d) { return d.isFocus; }) || dagen[0];
+    const klant = W.klantById(klantId);
+    const orders = W.getOrders(dag.id);
+    const order = orders.find(function (o) { return o.klantId === klantId; });
+    const aantallen = order ? order.aantallen : klant.standaardorder;
+    const bestelnr = order ? order.bestelnr : '#000';
+
+    document.getElementById('bc-dag').textContent = dag.label;
+    document.getElementById('bc-link').href = `1-109-bestellingen.html?dag=${dag.id}`;
+    document.getElementById('titel-klant').textContent = klant.naam;
+    document.getElementById('bestelling-meta').textContent = `Bestelling ${bestelnr} · ${dag.label} · Standaardorder`;
+
+    document.getElementById('kg-naam').textContent = klant.naam;
+    document.getElementById('kg-type').textContent = klant.type === 'uitzondering' ? 'Uitzonderingsklant' : 'Reguliere klant';
+    document.getElementById('kg-contact').textContent = klant.contact;
+    document.getElementById('kg-telefoon').textContent = klant.telefoon;
+    document.getElementById('kg-email').textContent = klant.email;
+    document.getElementById('kg-leverwijze').textContent = W.LEVERWIJZE_LABEL[klant.leverwijze] || '—';
+
+    function badge(variant, tekst) { return `<span class="wolf-badge wolf-badge--${variant}"><span class="dot"></span>${tekst}</span>`; }
+    document.getElementById('product-rijen').innerHTML = Object.keys(aantallen).map(function (pid) {
+      const aantal = aantallen[pid];
+      const max = klant.producten[pid] ? klant.producten[pid].max : '—';
+      const past = typeof max === 'number' ? aantal <= max : true;
+      return `
+        <div class="wolf-row">
+          <p class="wolf-td flex-1">${W.PRODUCTEN[pid].naam}</p>
+          <div data-editable="aantal" class="w-[100px]"><p class="wolf-td">${aantal}</p></div>
+          <p class="wolf-td w-[100px]">${max}</p>
+          <div class="w-[140px] flex justify-end">${past ? badge('green', 'Past') : badge('orange', 'Controleer')}</div>
+        </div>`;
+    }).join('');
+
+    function aantallenAanpassen() {
+      const divs = document.querySelectorAll('[data-editable="aantal"]');
+      const btn = document.getElementById('aanpassen-btn');
+      const annulerBtn = document.getElementById('annuleren-btn');
+      const bevestiging = document.getElementById('aanpassen-bevestiging');
+      if (btn.dataset.mode === 'bewerken') {
+        divs.forEach(div => { const input = div.querySelector('input'); div.innerHTML = `<p class="wolf-td">${input.value}</p>`; });
+        btn.querySelector('.lbl').textContent = 'Aantallen aanpassen';
+        btn.dataset.mode = ''; annulerBtn.style.display = 'none';
+        bevestiging.style.display = 'inline'; setTimeout(() => { bevestiging.style.display = 'none'; }, 2500);
+      } else {
+        divs.forEach(div => {
+          const huidig = div.querySelector('p').textContent.trim();
+          div.dataset.origineel = huidig;
+          div.innerHTML = `<input type="number" value="${huidig}" min="0" class="inter-medium text-[16px] text-[#1e1e1e] w-[64px] border border-[#b5ae9c] rounded-[4px] px-2 py-1 text-center bg-white">`;
+        });
+        btn.querySelector('.lbl').textContent = 'Bevestigen';
+        btn.dataset.mode = 'bewerken'; annulerBtn.style.display = 'inline-flex';
+      }
+    }
+    function annulerenAanpassen() {
+      const divs = document.querySelectorAll('[data-editable="aantal"]');
+      const btn = document.getElementById('aanpassen-btn');
+      divs.forEach(div => { div.innerHTML = `<p class="wolf-td">${div.dataset.origineel}</p>`; });
+      btn.querySelector('.lbl').textContent = 'Aantallen aanpassen';
+      btn.dataset.mode = ''; document.getElementById('annuleren-btn').style.display = 'none';
+    }
+    window.aantallenAanpassen = aantallenAanpassen; window.annulerenAanpassen = annulerenAanpassen;
+  </script>
+</body>
+</html>
