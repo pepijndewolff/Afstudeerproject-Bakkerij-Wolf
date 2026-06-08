@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Bakkerij Wolf Bestelportaal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    .font-gt-ext { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    input::placeholder { color: rgba(0,0,0,0.35); font-weight: 300; }
+    input:focus { outline: none; }
+    #fout-melding { display: none; }
+  </style>
+</head>
+<body class="bg-[#ded9cc] flex items-center justify-center w-full h-full">
+
+  <!-- Login card -->
+  <div class="bg-[#f9f7f2] flex flex-col gap-6 items-center px-16 py-14 rounded-[20px]">
+
+    <!-- Logo + naam + tagline -->
+    <div class="flex flex-col gap-2 items-center">
+      <div class="flex gap-5 items-center">
+        <div class="h-[42px] w-[38px] shrink-0">
+          <img alt="Bakkerij Wolf logo" class="block w-full h-full object-contain" src="assets/wolf logo 1.svg">
+        </div>
+        <p class="font-gt-ext text-black tracking-[12px] uppercase whitespace-nowrap text-[28px]">
+          Bakkerij <span style="font-weight:600;">Wolf</span>
+        </p>
+      </div>
+      <p class="font-['Inter',sans-serif] font-medium text-black tracking-[1.4px] text-[15px] whitespace-nowrap">Bestelportaal</p>
+    </div>
+
+    <!-- Testaccounts -->
+    <div class="flex gap-3 w-[320px]">
+      <button type="button" onclick="vulIn('test@klant.nl')"
+        class="flex-1 bg-[#ded9cc] border border-[#c8c3b6] rounded-[8px] px-3 py-2.5 text-left hover:bg-[#d4cfc2] transition-colors cursor-pointer">
+        <p class="font-['Inter',sans-serif] text-[11px] text-[#979797] uppercase tracking-wider mb-0.5">Uitzonderingsklant</p>
+        <p class="font-['Inter',sans-serif] text-[13px] font-medium text-[#1e1e1e]">Juno</p>
+        <p class="font-['Inter',sans-serif] text-[11px] text-[#979797]">test@klant.nl</p>
+      </button>
+      <button type="button" onclick="vulIn('test@standaard.nl')"
+        class="flex-1 bg-[#ded9cc] border border-[#c8c3b6] rounded-[8px] px-3 py-2.5 text-left hover:bg-[#d4cfc2] transition-colors cursor-pointer">
+        <p class="font-['Inter',sans-serif] text-[11px] text-[#979797] uppercase tracking-wider mb-0.5">Reguliere klant</p>
+        <p class="font-['Inter',sans-serif] text-[13px] font-medium text-[#1e1e1e]">Juno</p>
+        <p class="font-['Inter',sans-serif] text-[11px] text-[#979797]">test@standaard.nl</p>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form id="login-form" class="flex flex-col gap-4 items-start" onsubmit="handleLogin(event)">
+      <p class="font-['Inter',sans-serif] font-medium text-[16px] text-black whitespace-nowrap">Inloggen</p>
+      <div class="flex flex-col gap-4 items-start">
+
+        <!-- Email field -->
+        <div class="border border-[#aaa49a] flex gap-3 items-center px-3 py-3 rounded-[6px] w-[320px]">
+          <div class="h-[12px] w-[16px] shrink-0 opacity-50">
+            <img alt="" class="block w-full h-full object-contain" src="assets/envelope.svg">
+          </div>
+          <input
+            id="email"
+            type="email"
+            placeholder="E-mailadres"
+            class="font-['Inter',sans-serif] text-[15px] text-black bg-transparent w-full"
+          >
+        </div>
+
+        <!-- Password field + forgot link -->
+        <div class="flex flex-col gap-1 items-end">
+          <div class="border border-[#aaa49a] flex gap-3 items-center px-3 py-3 rounded-[6px] w-[320px]">
+            <div class="h-[15px] w-[13px] shrink-0 opacity-50">
+              <img alt="" class="block w-full h-full object-contain" src="assets/lock.svg">
+            </div>
+            <input
+              id="wachtwoord"
+              type="password"
+              placeholder="Wachtwoord"
+              class="font-['Inter',sans-serif] text-[15px] text-black bg-transparent w-full"
+            >
+          </div>
+          <p class="font-['Inter',sans-serif] font-medium text-[11px] text-[#314bb3] underline cursor-pointer">Wachtwoord vergeten?</p>
+        </div>
+
+        <!-- Foutmelding -->
+        <p id="fout-melding" class="font-['Inter',sans-serif] text-[13px] text-red-600 w-full">Onbekend e-mailadres of wachtwoord.</p>
+
+        <!-- Login knop -->
+        <button
+          type="submit"
+          class="bg-[#2e2e2e] flex items-center justify-center py-3 rounded-[6px] w-[320px] cursor-pointer hover:bg-[#1a1a1a] transition-colors"
+        >
+          <p class="font-['Inter',sans-serif] font-medium text-[15px] text-[#f9f7f2] whitespace-nowrap">Inloggen</p>
+        </button>
+
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const GEBRUIKERS = [
+      { email: 'test@klant.nl',     wachtwoord: '1234', naam: 'Juno', type: 'uitzondering' },
+      { email: 'test@standaard.nl', wachtwoord: '1234', naam: 'Juno', type: 'standaard'    },
+    ];
+
+    function vulIn(email) {
+      document.getElementById('email').value = email;
+      document.getElementById('wachtwoord').value = '1234';
+      document.getElementById('fout-melding').style.display = 'none';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const ww    = document.getElementById('wachtwoord').value;
+      const gebruiker = GEBRUIKERS.find(u => u.email === email && u.wachtwoord === ww);
+
+      if (gebruiker) {
+        sessionStorage.setItem('klant_naam', gebruiker.naam);
+        sessionStorage.setItem('klant_type', gebruiker.type);
+        window.location.href = '1-240-1583-klant-dashboard.html';
+      } else {
+        document.getElementById('fout-melding').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

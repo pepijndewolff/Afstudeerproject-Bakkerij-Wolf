@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overzicht — Bakkerij Wolf Bestelportaal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    .font-gt-ext { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .sidebar-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; color: #000; position: relative; white-space: nowrap; }
+    .sidebar-item:hover { background: rgba(0,0,0,0.04); }
+    .sidebar-item.actief { background: #f9f7f2; font-weight: 500; color: #1e1e1e; }
+    .sidebar-item.actief::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #1e1e1e; border-radius: 0 2px 2px 0; }
+    .tabel-rij { display: flex; align-items: center; padding: 13px 16px; gap: 0; cursor: pointer; }
+    .tabel-rij:hover { filter: brightness(0.96); }
+    .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px; font-size: 13px; font-family: 'Inter', sans-serif; white-space: nowrap; }
+  </style>
+</head>
+<body class="bg-[#ded9cc]" style="min-height:100vh;">
+
+  <!-- ===================== DESKTOP WEERGAVE (≥768px) ===================== -->
+  <div class="hidden md:flex flex-col" style="min-height:100vh;">
+
+    <!-- Header -->
+    <header class="bg-[#ded9cc] flex items-center justify-between px-6 py-4 border-b border-[#c8c3b6]">
+      <div class="flex items-center gap-4">
+        <div class="w-[28px] h-[32px] shrink-0">
+          <img alt="Wolf logo" class="w-full h-full object-contain" src="assets/wolf logo 1.svg">
+        </div>
+        <span class="font-gt-ext text-black tracking-[8px] uppercase text-[16px]">Bakkerij <strong>Wolf</strong></span>
+      </div>
+      <div class="bg-[#f9f7f2] rounded-full px-4 py-1.5">
+        <span id="nav-naam" class="js-naam font-gt-ext text-[#1e1e1e] text-[14px]">Juno</span>
+      </div>
+    </header>
+
+    <div class="flex flex-1">
+
+      <!-- Sidebar -->
+      <aside class="bg-[#ded9cc] flex flex-col justify-between border-r border-[#c8c3b6]" style="width:185px; min-height:calc(100vh - 57px);">
+        <nav class="flex flex-col pt-2">
+          <div class="sidebar-item actief" onclick="window.location.href='1-240-1583-klant-dashboard.html'">Overzicht</div>
+          <div class="sidebar-item" onclick="nieuweBestellingKlikken()">Nieuwe bestelling</div>
+          <div class="sidebar-item" onclick="window.location.href='1-363-344-bestelgeschiedenis.html'">Bestel geschiedenis</div>
+        </nav>
+        <div class="sidebar-item text-[#2e2e2e] mb-2" onclick="window.location.href='1-364-544-klant-account.html'">Mijn account</div>
+      </aside>
+
+      <!-- Hoofdinhoud -->
+      <main class="bg-[#f9f7f2] flex-1 p-10">
+
+        <!-- Koptekst -->
+        <div class="mb-8">
+          <p class="font-['Inter',sans-serif] text-[15px] text-[#2e2e2e] mb-1" id="datum-tijd">Maandag, 1 juni, 14:00</p>
+          <h1 class="js-begroeting font-['Inter',sans-serif] font-bold text-[32px] text-black mb-1" id="begroeting">Goedemiddag, Juno</h1>
+          <p class="font-['Inter',sans-serif] text-[15px] text-[#2e2e2e]">Hier zie je je bestellingen en leverdata in één overzicht.</p>
+        </div>
+
+        <!-- Kaarten -->
+        <div class="flex gap-4 mb-8">
+
+          <!-- Eerstvolgende leverdag -->
+          <div class="bg-[#ded9cc] rounded-[12px] p-5 flex flex-col gap-3" style="min-width:200px;">
+            <div class="bg-[#f9f7f2] rounded-[8px] p-2 w-fit">
+              <img alt="" class="w-5 h-5 object-contain" src="assets/calendar.svg">
+            </div>
+            <div>
+              <p class="font-['Inter',sans-serif] text-[11px] text-[#2e2e2e] tracking-widest uppercase mb-1">Eerstvolgende leverdag</p>
+              <p class="font-['Inter',sans-serif] font-bold text-[17px] text-black leading-tight">Donderdag 4 juni</p>
+              <p class="font-['Inter',sans-serif] text-[13px] text-[#2e2e2e] mt-1">Bestellen tot dinsdag 15:00</p>
+            </div>
+          </div>
+
+          <!-- Openstaande bestellingen -->
+          <div class="bg-[#ded9cc] rounded-[12px] p-5 flex flex-col gap-3" style="min-width:200px;">
+            <div class="bg-[#f9f7f2] rounded-[8px] p-2 w-fit">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M3 5h14M3 10h14M3 15h8" stroke="#1e1e1e" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-['Inter',sans-serif] text-[11px] text-[#2e2e2e] tracking-widest uppercase mb-1">Openstaande bestellingen</p>
+              <p class="font-['Inter',sans-serif] font-bold text-[32px] text-black leading-none">1</p>
+              <p class="font-['Inter',sans-serif] text-[13px] text-[#2e2e2e] mt-0.5">1 ingepland</p>
+            </div>
+          </div>
+
+          <!-- Snel bestellen -->
+          <div class="bg-[#ded9cc] rounded-[12px] p-5 flex flex-col gap-3" style="min-width:200px;">
+            <div class="bg-[#f9f7f2] rounded-[8px] p-2 w-fit">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 4v12M4 10h12" stroke="#1e1e1e" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="flex flex-col gap-2">
+              <p class="font-['Inter',sans-serif] text-[11px] text-[#2e2e2e] tracking-widest uppercase">Snel bestellen</p>
+              <button onclick="nieuweBestellingKlikken()" class="bg-[#2e2e2e] text-[#f9f7f2] font-['Inter',sans-serif] text-[13px] font-medium px-3 py-2 rounded-[6px] flex items-center gap-2 hover:bg-[#1a1a1a] transition-colors whitespace-nowrap cursor-pointer">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5v10M1.5 6.5h10" stroke="#f9f7f2" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Nieuwe bestelling
+              </button>
+              <button onclick="herhaalBestelling()" class="bg-[#2e2e2e] text-[#f9f7f2] font-['Inter',sans-serif] text-[13px] font-medium px-3 py-2 rounded-[6px] flex items-center gap-2 hover:bg-[#1a1a1a] transition-colors whitespace-nowrap cursor-pointer">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7a4.5 4.5 0 1 0 .5-2M2 3.5V7H5.5" stroke="#f9f7f2" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Herhaal Bestelling #002
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Recente bestellingen -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-['Inter',sans-serif] font-semibold text-[17px] text-black">Recente bestellingen</h2>
+            <a href="1-363-344-bestelgeschiedenis.html" class="font-['Inter',sans-serif] text-[13px] text-[#314bb3] underline">Alle bestellingen bekijken</a>
+          </div>
+
+          <!-- Tabelheader -->
+          <div class="bg-[#ded9cc] rounded-t-[8px]">
+            <div class="tabel-rij" style="cursor:default;">
+              <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:52px;">#</span>
+              <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:130px;">Leverdag</span>
+              <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase flex-1">Producten</span>
+              <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:100px;">Prijs €</span>
+              <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:140px; text-align:right;">Status</span>
+            </div>
+          </div>
+
+          <!-- Rij 003 -->
+          <div class="bg-[#f4f0e6] tabel-rij border-t border-[#e0dbd0]" onclick="window.location.href='#'">
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:52px;">003</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:130px;">28 maart</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1 flex items-center gap-1.5">
+              20x klassiek...
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#b5ae9c" stroke-width="1.2"/><path d="M7 6.5v4M7 5h.01" stroke="#b5ae9c" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:100px;">188,00</span>
+            <div style="width:140px; display:flex; justify-content:flex-end; align-items:center; gap:8px;">
+              <span class="status-pill bg-[#c8f4cd] text-[#1c882a]">
+                <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#1c882a"/></svg>
+                Ingepland
+              </span>
+              <svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#1e1e1e" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+          <!-- Rij 002 -->
+          <div class="bg-[#fcfbf7] tabel-rij border-t border-[#e0dbd0]" onclick="window.location.href='#'">
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:52px;">002</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:130px;">26 maart</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1 flex items-center gap-1.5">
+              30x baguette...
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#b5ae9c" stroke-width="1.2"/><path d="M7 6.5v4M7 5h.01" stroke="#b5ae9c" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:100px;">188,00</span>
+            <div style="width:140px; display:flex; justify-content:flex-end; align-items:center; gap:8px;">
+              <span class="status-pill bg-[#f4dfc8] text-[#885f1c]">
+                <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#885f1c"/></svg>
+                In behandeling
+              </span>
+              <svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#1e1e1e" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+          <!-- Rij 001 -->
+          <div class="bg-[#f4f0e7] tabel-rij border-t border-[#e0dbd0] rounded-b-[8px]" onclick="window.location.href='#'">
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:52px;">001</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:130px;">12 maart</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1 flex items-center gap-1.5">
+              60x klassiek...
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#b5ae9c" stroke-width="1.2"/><path d="M7 6.5v4M7 5h.01" stroke="#b5ae9c" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:100px;">188,00</span>
+            <div style="width:140px; display:flex; justify-content:flex-end; align-items:center; gap:8px;">
+              <span class="status-pill bg-[#c6c6c6] text-[#29312a]">
+                <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#29312a"/></svg>
+                Afgehandeld
+              </span>
+              <svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#1e1e1e" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================== MOBIELE WEERGAVE (<768px) ===================== -->
+  <div class="md:hidden flex flex-col min-h-screen bg-[#f9f7f2]">
+
+    <!-- Topbar -->
+    <header class="bg-[#efeadd] flex items-center px-[18px] py-[14px] sticky top-0 z-20">
+      <div class="flex items-center gap-2">
+        <img alt="Wolf logo" class="w-[22px] h-[24px] object-contain" src="assets/wolf logo 1.svg">
+        <span class="font-gt-ext text-black tracking-[6px] uppercase text-[14px]">Bakkerij <strong>Wolf</strong></span>
+      </div>
+    </header>
+
+    <!-- Scrollbare inhoud -->
+    <main class="flex-1 overflow-y-auto px-[18px] pt-5 pb-[96px]">
+
+      <p class="font-['Inter',sans-serif] text-[12px] text-[#8a857a] mb-2">Maandag, 1 juni, 14:00</p>
+      <h1 class="js-begroeting font-['Inter',sans-serif] font-semibold text-[24px] text-black">Goedemiddag, Juno</h1>
+      <p class="font-['Inter',sans-serif] text-[13px] text-[#8a857a] mt-1 mb-4">Hier zie je je bestellingen en leverdata in één overzicht.</p>
+
+      <!-- Twee statkaarten naast elkaar -->
+      <div class="flex gap-2 mb-2">
+        <div class="flex-1 bg-[#efeadd] border border-[#cfc8b8] rounded-[14px] p-4 flex flex-col justify-between">
+          <p class="font-['Inter',sans-serif] font-medium text-[10px] text-[#8a857a] tracking-[0.8px] uppercase">Eerstvolgende leverdag</p>
+          <p class="font-['Inter',sans-serif] font-semibold text-[16px] text-black mt-2">Donderdag 4 juni</p>
+          <p class="font-['Inter',sans-serif] font-medium text-[10px] text-[#c2641b] mt-1">Bestellen tot dinsdag 15:00</p>
+        </div>
+        <div class="flex-1 bg-[#efeadd] border border-[#cfc8b8] rounded-[14px] p-4 flex flex-col">
+          <p class="font-['Inter',sans-serif] text-[11px] text-[#8a857a] tracking-[0.8px] uppercase">Openstaande bestellingen</p>
+          <p class="font-['Inter',sans-serif] font-extrabold text-[24px] text-black mt-1 leading-none">1</p>
+          <p class="font-['Inter',sans-serif] font-bold text-[13px] text-black mt-1">Ingepland</p>
+        </div>
+      </div>
+
+      <!-- Snel bestellen -->
+      <div class="bg-[#efeadd] border border-[#cfc8b8] rounded-[14px] p-4 flex flex-col gap-2.5 mb-1">
+        <p class="font-['Inter',sans-serif] text-[11px] text-[#8a857a] tracking-[0.8px] uppercase">Snel bestellen</p>
+        <button onclick="nieuweBestellingKlikken()" class="bg-[#2c2a27] text-white rounded-[9px] flex items-center gap-2 px-3.5 py-3 cursor-pointer">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2v11M2 7.5h11" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span class="font-['Inter',sans-serif] font-semibold text-[14px]">Nieuwe bestelling</span>
+        </button>
+        <button onclick="herhaalBestelling()" class="bg-[#2c2a27] text-white rounded-[9px] flex items-center gap-2 px-3.5 py-3 cursor-pointer">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 8a5 5 0 1 0 .6-2.3M2.5 4v4H6.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="font-['Inter',sans-serif] font-semibold text-[14px]">Herhaal Bestelling #002</span>
+        </button>
+      </div>
+
+      <!-- Recente bestellingen -->
+      <div class="flex items-baseline justify-between pt-[18px] pb-2">
+        <h2 class="font-['Inter',sans-serif] font-bold text-[17px] text-black">Recente bestellingen</h2>
+        <a href="1-363-344-bestelgeschiedenis.html" class="font-['Inter',sans-serif] text-[12px] text-[#4b4fb5] underline">Alle bekijken</a>
+      </div>
+
+      <!-- Order 003 -->
+      <div class="bg-[#fbfaf6] border border-[#cfc8b8] rounded-[12px] flex items-center gap-3 px-3.5 py-3 mb-2">
+        <span class="font-['Inter',sans-serif] font-semibold text-[13px] text-[#8a857a] w-[30px]">003</span>
+        <div class="flex-1">
+          <p class="font-['Inter',sans-serif] font-bold text-[14px] text-black">Donderdag 28 maart</p>
+          <p class="font-['Inter',sans-serif] text-[12px] text-[#8a857a]">20x klassiek 1000gr…</p>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+          <span class="font-['Inter',sans-serif] font-bold text-[13px] text-black">€188,00</span>
+          <span class="inline-flex items-center gap-1.5 bg-[#c7e0c0] text-[#3e8e4e] rounded-full px-2.5 py-1 font-['Inter',sans-serif] font-semibold text-[11px]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#3e8e4e]"></span>Ingepland
+          </span>
+        </div>
+      </div>
+
+      <!-- Order 002 -->
+      <div class="bg-[#fbfaf6] border border-[#cfc8b8] rounded-[12px] flex items-center gap-3 px-3.5 py-3 mb-2">
+        <span class="font-['Inter',sans-serif] font-semibold text-[13px] text-[#8a857a] w-[30px]">002</span>
+        <div class="flex-1">
+          <p class="font-['Inter',sans-serif] font-bold text-[14px] text-black">Dinsdag 26 maart</p>
+          <p class="font-['Inter',sans-serif] text-[12px] text-[#8a857a]">30x baguette…</p>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+          <span class="font-['Inter',sans-serif] font-bold text-[13px] text-black">€188,00</span>
+          <span class="inline-flex items-center gap-1.5 bg-[#f6dcbe] text-[#c2641b] rounded-full px-2.5 py-1 font-['Inter',sans-serif] font-semibold text-[11px]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#c2641b]"></span>In behandeling
+          </span>
+        </div>
+      </div>
+
+      <!-- Order 001 -->
+      <div class="bg-[#fbfaf6] border border-[#cfc8b8] rounded-[12px] flex items-center gap-3 px-3.5 py-3">
+        <span class="font-['Inter',sans-serif] font-semibold text-[13px] text-[#8a857a] w-[30px]">001</span>
+        <div class="flex-1">
+          <p class="font-['Inter',sans-serif] font-bold text-[14px] text-black">Donderdag 12 maart</p>
+          <p class="font-['Inter',sans-serif] text-[12px] text-[#8a857a]">60x klassiek…</p>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+          <span class="font-['Inter',sans-serif] font-bold text-[13px] text-black">€188,00</span>
+          <span class="inline-flex items-center gap-1.5 bg-[#dfdedc] text-[#4a4843] rounded-full px-2.5 py-1 font-['Inter',sans-serif] font-semibold text-[11px]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#4a4843]"></span>Afgehandeld
+          </span>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Bottom-nav -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#efeadd] border-t border-[#cfc8b8] flex px-1.5 py-2 z-20">
+      <a href="1-240-1583-klant-dashboard.html" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#1e1e1c]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 8.5 10 3.5l6 5V16a1 1 0 0 1-1 1h-3v-4H8v4H5a1 1 0 0 1-1-1V8.5Z" stroke="#1e1e1c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <span class="font-['Inter',sans-serif] font-bold text-[10.5px]">Overzicht</span>
+      </a>
+      <button onclick="nieuweBestellingKlikken()" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#8a857a] cursor-pointer">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" opacity="0.7"><path d="M5 6h10l-1 9a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6Z" stroke="#8a857a" stroke-width="1.4" stroke-linejoin="round"/><path d="M7.5 6a2.5 2.5 0 0 1 5 0" stroke="#8a857a" stroke-width="1.4"/></svg>
+        <span class="font-['Inter',sans-serif] font-medium text-[10.5px]">Bestellen</span>
+      </button>
+      <a href="1-363-344-bestelgeschiedenis.html" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#8a857a]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" opacity="0.7"><circle cx="10" cy="10" r="6.5" stroke="#8a857a" stroke-width="1.4"/><path d="M10 6.5V10l2.5 1.5" stroke="#8a857a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="font-['Inter',sans-serif] font-medium text-[10.5px]">Historie</span>
+      </a>
+      <a href="1-364-544-klant-account.html" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#8a857a]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" opacity="0.7"><circle cx="10" cy="7" r="3" stroke="#8a857a" stroke-width="1.4"/><path d="M4.5 16a5.5 5.5 0 0 1 11 0" stroke="#8a857a" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="font-['Inter',sans-serif] font-medium text-[10.5px]">Account</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script>
+    // Klanttype uit sessie lezen
+    const klantType = sessionStorage.getItem('klant_type') || 'standaard';
+    const naam = sessionStorage.getItem('klant_naam') || 'Juno';
+
+    document.querySelectorAll('.js-naam').forEach(el => el.textContent = naam);
+    document.querySelectorAll('.js-begroeting').forEach(el => el.textContent = 'Goedemiddag, ' + naam);
+
+    function nieuweBestellingKlikken() {
+      if (klantType === 'uitzondering') {
+        window.location.href = '1-243-348-nieuwe-bestelling-uitzondering.html';
+      } else {
+        window.location.href = '1-243-111-nieuwe-bestelling-standaard.html';
+      }
+    }
+
+    function herhaalBestelling() {
+      sessionStorage.setItem('herhaal_nr', '002');
+      sessionStorage.setItem('leverdag_label', 'Donderdag 4 juni');
+      sessionStorage.setItem('leverdag_dag', 'donderdag');
+      sessionStorage.setItem('is_aanvraag', 'false');
+      sessionStorage.setItem('heeft_aanvraag', 'false');
+      sessionStorage.setItem('aantallen', JSON.stringify({'klassiek-1000':0,'klassiek-1200':0,'burger':0,'baguette':30,'brioche':0}));
+      window.location.href = '1-244-787-bestelling-controleren.html';
+    }
+  </script>
+</body>
+</html>
