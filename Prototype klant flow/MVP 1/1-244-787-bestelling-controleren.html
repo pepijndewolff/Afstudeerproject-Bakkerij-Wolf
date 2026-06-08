@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bestelling controleren — Bakkerij Wolf Bestelportaal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    .font-gt-ext { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .sidebar-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; color: #000; position: relative; white-space: nowrap; }
+    .sidebar-item:hover { background: rgba(0,0,0,0.04); }
+    .sidebar-item.actief { background: #f9f7f2; font-weight: 500; color: #1e1e1e; }
+    .sidebar-item.actief::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #1e1e1e; border-radius: 0 2px 2px 0; }
+    .breadcrumb-item { font-family: 'Inter', sans-serif; font-size: 13px; color: #2e2e2e; }
+    .tabel-rij { display: flex; align-items: center; padding: 13px 16px; }
+    .status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 500; white-space: nowrap; }
+    .samenvatting-panel { background: #ded9cc; border-radius: 12px; padding: 20px; min-width: 220px; }
+  </style>
+</head>
+<body class="bg-[#ded9cc]" style="min-height:100vh;">
+
+  <div class="flex flex-col" style="min-height:100vh;">
+
+    <!-- Header -->
+    <header class="bg-[#ded9cc] flex items-center justify-between px-6 py-4 border-b border-[#c8c3b6]">
+      <div class="flex items-center gap-4">
+        <div class="w-[28px] h-[32px] shrink-0">
+          <img alt="Wolf logo" class="w-full h-full object-contain" src="assets/wolf logo 1.svg">
+        </div>
+        <span class="font-gt-ext text-black tracking-[8px] uppercase text-[16px]">Bakkerij <strong>Wolf</strong></span>
+      </div>
+      <div class="bg-[#f9f7f2] rounded-full px-4 py-1.5">
+        <span id="nav-naam" class="font-gt-ext text-[#1e1e1e] text-[14px]">Juno</span>
+      </div>
+    </header>
+
+    <div class="flex flex-1">
+
+      <!-- Sidebar -->
+      <aside class="bg-[#ded9cc] flex flex-col justify-between border-r border-[#c8c3b6]" style="width:185px; min-height:calc(100vh - 57px);">
+        <nav class="flex flex-col pt-2">
+          <div class="sidebar-item" onclick="window.location.href='1-240-1583-klant-dashboard.html'">Overzicht</div>
+          <div class="sidebar-item actief">Nieuwe bestelling</div>
+          <div class="sidebar-item" onclick="window.location.href='1-363-344-bestelgeschiedenis.html'">Bestel geschiedenis</div>
+        </nav>
+        <div class="sidebar-item text-[#2e2e2e] mb-2" onclick="window.location.href='1-364-544-klant-account.html'">Mijn account</div>
+      </aside>
+
+      <!-- Hoofdinhoud -->
+      <main class="bg-[#f9f7f2] flex-1 p-10">
+
+        <!-- Breadcrumb — wordt dynamisch ingevuld -->
+        <div class="flex items-center gap-2 mb-3" id="breadcrumb-container"></div>
+
+        <h1 class="font-['Inter',sans-serif] font-bold text-[28px] text-black mb-1" id="pagina-titel">Controleer je bestelling</h1>
+        <p class="font-['Inter',sans-serif] text-[15px] text-[#2e2e2e] mb-6">Klopt alles? Dan kun je de bestelling hieronder plaatsen.</p>
+
+        <!-- Tabel + samenvatting -->
+        <div class="flex gap-6 items-start">
+
+          <!-- Bestellingtabel -->
+          <div class="flex-1">
+
+            <!-- Leverdag header (donkere balk) -->
+            <div class="bg-[#2e2e2e] rounded-t-[8px] flex items-center gap-2 px-4 py-3">
+              <img alt="" src="assets/calendar.svg" class="w-4 h-4 opacity-60" style="filter:invert(1);">
+              <span class="font-['Inter',sans-serif] text-[13px] text-[#b5b0a8]">Leverdag</span>
+              <span class="font-['Inter',sans-serif] font-semibold text-[14px] text-white ml-auto" id="leverdag-header">Dinsdag 24 maart</span>
+            </div>
+
+            <!-- Kolomheaders -->
+            <div class="bg-[#ded9cc]">
+              <div class="tabel-rij" style="cursor:default;">
+                <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase flex-1">Product</span>
+                <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:80px;">Aantal</span>
+                <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:100px;">Prijs €</span>
+                <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:120px; text-align:right;">Status</span>
+              </div>
+            </div>
+
+            <!-- Productregels worden dynamisch ingeladen -->
+            <div id="product-regels"></div>
+
+            <!-- Opmerking textarea -->
+            <div class="bg-[#ded9cc] rounded-b-[8px] p-4 mt-0">
+              <textarea
+                placeholder="Opmerking invoegen voor Wolf (optioneel)"
+                class="w-full font-['Inter',sans-serif] text-[14px] text-[#979797] placeholder-[#979797] bg-[#ded9cc] border-none outline-none resize-none"
+                rows="3"
+              ></textarea>
+            </div>
+
+          </div>
+
+          <!-- Samenvatting + knoppen -->
+          <div style="width:240px; flex-shrink:0;">
+            <div class="samenvatting-panel">
+              <p class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase mb-3">Samenvatting</p>
+              <div id="samenvatting-regels" class="flex flex-col gap-2 mb-3"></div>
+              <div class="border-t border-[#c8c3b6] pt-3 flex items-center justify-between">
+                <span class="font-['Inter',sans-serif] font-semibold text-[14px] text-black">Totaal</span>
+                <span class="font-['Inter',sans-serif] font-semibold text-[14px] text-black" id="totaal-bedrag">€0,00</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2 mt-4">
+              <button onclick="plaatsBestelling()" class="bg-[#2e2e2e] text-[#f9f7f2] font-['Inter',sans-serif] font-medium text-[14px] px-4 py-3 rounded-[8px] flex items-center justify-center gap-2 hover:bg-[#1a1a1a] transition-colors cursor-pointer">
+                Bestelling plaatsen
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="#f9f7f2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button onclick="window.location.href='1-244-472-producten-kiezen.html'" class="bg-[#2e2e2e] text-[#f9f7f2] font-['Inter',sans-serif] font-medium text-[14px] px-4 py-3 rounded-[8px] flex items-center justify-center gap-2 hover:bg-[#1a1a1a] transition-colors cursor-pointer">
+                Bestelling aanpassen
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 8a5 5 0 1 0 .5-2.5M2.5 4v4H6.5" stroke="#f9f7f2" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const naam = sessionStorage.getItem('klant_naam') || 'Juno';
+    const leverdagLabel = sessionStorage.getItem('leverdag_label') || 'Donderdag 4 juni';
+    const herhaalNr = sessionStorage.getItem('herhaal_nr');
+    document.getElementById('nav-naam').textContent = naam;
+    document.getElementById('leverdag-header').textContent = leverdagLabel;
+
+    // Breadcrumb: normale flow vs herhaal
+    const bc = document.getElementById('breadcrumb-container');
+    if (herhaalNr) {
+      bc.innerHTML = `
+        <a href="1-240-1583-klant-dashboard.html" class="breadcrumb-item hover:underline">Dashboard</a>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item">Herhaal bestelling #${herhaalNr}</span>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item">${leverdagLabel}</span>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item font-medium">Controleren</span>`;
+      document.getElementById('pagina-titel').textContent = 'Controleer je herhaalbestelling';
+    } else {
+      bc.innerHTML = `
+        <a href="1-240-1583-klant-dashboard.html" class="breadcrumb-item hover:underline">Nieuwe bestelling</a>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item">${leverdagLabel}</span>
+        <span class="breadcrumb-item">›</span>
+        <a href="1-244-472-producten-kiezen.html" class="breadcrumb-item hover:underline">Producten</a>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item font-medium">Controleren</span>`;
+    }
+
+    const PRODUCTEN = {
+      'klassiek-1000': { naam: 'Klassiek 1000gr', prijs: 4.20, max: 60 },
+      'klassiek-1200': { naam: 'Klassiek 1200gr', prijs: 5.40, max: 60 },
+      'burger':        { naam: 'Burger buns',      prijs: 0.50, max: 30 },
+      'baguette':      { naam: 'Baguette',          prijs: 5.40, max: 80 },
+      'brioche':       { naam: 'Brioche',            prijs: 0.50, max: 30 },
+    };
+
+    const aantallen = JSON.parse(sessionStorage.getItem('aantallen') || '{"klassiek-1000":20,"baguette":90}');
+
+    const productRegels = document.getElementById('product-regels');
+    const samenvattingRegels = document.getElementById('samenvatting-regels');
+    let totaal = 0;
+    let totaalNormaal = 0;
+    let totaalAanvraag = 0;
+    let rijen = 0;
+
+    for (const [id, p] of Object.entries(PRODUCTEN)) {
+      const qty = aantallen[id] || 0;
+      if (qty === 0) continue;
+
+      const normaalQty = Math.min(qty, p.max);
+      const aanvraagQty = Math.max(0, qty - p.max);
+
+      const rijBg = rijen % 2 === 0 ? '#f4f0e6' : '#fdfbf7';
+
+      if (normaalQty > 0) {
+        const bedrag = normaalQty * p.prijs;
+        totaal += bedrag;
+        totaalNormaal += bedrag;
+        productRegels.innerHTML += `
+          <div class="tabel-rij border-t border-[#e0dbd0]" style="background:${rijBg};">
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1">${p.naam}</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:80px;">${normaalQty}</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:100px;">${bedrag.toFixed(2).replace('.', ',')}</span>
+            <div style="width:120px; display:flex; justify-content:flex-end;">
+              <span class="status-pill bg-[#c8f4cd] text-[#1c882a]">
+                <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#1c882a"/></svg>
+                Ingepland
+              </span>
+            </div>
+          </div>`;
+        rijen++;
+      }
+
+      if (aanvraagQty > 0) {
+        const bedrag = aanvraagQty * p.prijs;
+        totaal += bedrag;
+        totaalAanvraag += bedrag;
+        productRegels.innerHTML += `
+          <div class="tabel-rij border-t border-[#e0dbd0]" style="background:#f4dfc8;">
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1">${p.naam}</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:80px;">${aanvraagQty}</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:100px;">${bedrag.toFixed(2).replace('.', ',')}</span>
+            <div style="width:120px; display:flex; justify-content:flex-end;">
+              <span class="status-pill bg-[#f4dfc8] text-[#885f1c]" style="border:1px solid #e8c89a;">
+                <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#ff9900"/></svg>
+                Aanvraag
+              </span>
+            </div>
+          </div>`;
+        rijen++;
+      }
+    }
+
+    // Samenvatting
+    if (totaalNormaal > 0) {
+      samenvattingRegels.innerHTML += `
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#2e2e2e"/></svg>
+            <span class="font-['Inter',sans-serif] text-[13px] text-black">Ingepland</span>
+          </div>
+          <span class="font-['Inter',sans-serif] text-[13px] text-[#626262]">€${totaalNormaal.toFixed(2).replace('.', ',')}</span>
+        </div>`;
+    }
+    if (totaalAanvraag > 0) {
+      samenvattingRegels.innerHTML += `
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#ff9900"/></svg>
+            <span class="font-['Inter',sans-serif] text-[13px] text-[#c35c1d]">Aanvraag</span>
+          </div>
+          <span class="font-['Inter',sans-serif] text-[13px] text-[#c35c1d]">€${totaalAanvraag.toFixed(2).replace('.', ',')}</span>
+        </div>`;
+    }
+
+    document.getElementById('totaal-bedrag').textContent = '€' + totaal.toFixed(2).replace('.', ',');
+
+    function plaatsBestelling() {
+      sessionStorage.setItem('bestelling_geplaatst', 'true');
+      window.location.href = '1-244-990-bestel-bevestiging.html';
+    }
+  </script>
+</body>
+</html>

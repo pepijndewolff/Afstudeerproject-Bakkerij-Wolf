@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leverdag kiezen — Bakkerij Wolf Bestelportaal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/wolf.css">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    .font-gt-ext { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .sidebar-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; color: #000; position: relative; white-space: nowrap; }
+    .sidebar-item:hover { background: rgba(0,0,0,0.04); }
+    .sidebar-item.actief { background: #f9f7f2; font-weight: 500; color: #1e1e1e; }
+    .sidebar-item.actief::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #1e1e1e; border-radius: 0 2px 2px 0; }
+    .week-tab { padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; color: #2e2e2e; border: 1px solid #c8c3b6; transition: background 0.12s; }
+    .week-tab:hover { background: rgba(0,0,0,0.04); }
+    .week-tab.actief { background: #2e2e2e; color: #f9f7f2; border-color: #2e2e2e; }
+    .dag-kaart { background: #f4f0e7; border-radius: 12px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; width: 180px; flex-shrink: 0; }
+    .dag-kaart-dim { opacity: 0.7; }
+    .badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 99px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; margin-bottom: 8px; }
+    .badge-beschikbaar { background: #c8f4cd; color: #1c882a; }
+    .badge-gesloten { background: #ffa9a9; color: #bf1515; }
+    .kies-knop { display: flex; align-items: center; justify-content: center; padding: 9px 12px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; white-space: nowrap; transition: background 0.15s; }
+    .kies-knop-actief { background: #2e2e2e; color: #f9f7f2; cursor: pointer; }
+    .kies-knop-actief:hover { background: #1a1a1a; }
+    .kies-knop-uitgeschakeld { background: #2e2e2e; color: #f9f7f2; opacity: 0.4; cursor: not-allowed; }
+    .breadcrumb-item { font-family: 'Inter', sans-serif; font-size: 13px; color: #2e2e2e; }
+
+    /* Kalender */
+    .kalender-grid { display: grid; grid-template-columns: repeat(7, 36px); gap: 4px; }
+    .kal-dag { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 13px; color: #2e2e2e; }
+    .kal-dag-naam { font-size: 11px; color: #979797; font-weight: 500; }
+    .kal-leverdag { background: #f4f0e7; cursor: pointer; font-weight: 500; }
+    .kal-leverdag:hover { background: #e8e2d8; }
+    .kal-leverdag.gesloten { background: #ffa9a9; color: #bf1515; cursor: not-allowed; opacity: 0.6; }
+    .kal-leeg { }
+    .kal-vandaag { border: 2px solid #2e2e2e; }
+
+    /* Mobiele week-chips */
+    .week-tab-m { flex-shrink: 0; background: #fbfaf6; border: 1px solid #cfc8b8; border-radius: 12px; padding: 10px 14px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .week-tab-m.actief { background: #d9d2c3; }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== DESKTOP WEERGAVE (≥768px) ===================== -->
+  <div class="app hidden md:flex">
+
+
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-brand">
+          <img class="logo" src="assets/wolf logo 1.svg" alt="Bakkerij Wolf logo">
+          <span class="name">Bakkerij&nbsp;Wolf</span>
+        </div>
+        <nav class="nav">
+          <a class="nav-item" href="1-240-1583-klant-dashboard.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M2.5 7.50033L10 1.66699L17.5 7.50033V16.667C17.5 17.109 17.3244 17.5329 17.0118 17.8455C16.6993 18.1581 16.2754 18.3337 15.8333 18.3337H4.16667C3.72464 18.3337 3.30072 18.1581 2.98816 17.8455C2.67559 17.5329 2.5 17.109 2.5 16.667V7.50033Z" stroke-width="1.66667"/></svg><span>Overzicht</span></a>
+          <button class="nav-item active" onclick="wolfNieuweBestelling()"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M10.0001 4.16699V15.8337M4.16675 10.0003H15.8334" stroke-width="1.66667"/></svg><span>Nieuwe bestelling</span></button>
+          <a class="nav-item" href="1-363-344-bestelgeschiedenis.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M2.5 10C2.49844 11.7175 3.08642 13.3836 4.16569 14.7197C5.24496 16.0558 6.75011 16.9809 8.42957 17.3406C10.109 17.7002 11.8611 17.4725 13.3928 16.6955C14.9246 15.9186 16.1432 14.6394 16.8451 13.0718C17.547 11.5043 17.6896 9.74326 17.2491 8.08317C16.8086 6.42309 15.8116 4.9645 14.4248 3.95119C13.038 2.93788 11.3455 2.43125 9.63004 2.51597C7.91458 2.6007 6.28018 3.27164 5 4.41667L2.5 6.66667" stroke-width="1.66667"/><path d="M2.5 2.5V6.66667H6.66667" stroke-width="1.66667"/></svg><span>Historie</span></a>
+          <a class="nav-item" href="1-364-544-klant-account.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M10.0001 9.99967C11.841 9.99967 13.3334 8.50729 13.3334 6.66634C13.3334 4.82539 11.841 3.33301 10.0001 3.33301C8.15913 3.33301 6.66675 4.82539 6.66675 6.66634C6.66675 8.50729 8.15913 9.99967 10.0001 9.99967Z" stroke-width="1.66667"/><path d="M3.33325 17.4997C3.33325 15.7316 4.03563 14.0359 5.28587 12.7856C6.53612 11.5354 8.23181 10.833 9.99992 10.833C11.768 10.833 13.4637 11.5354 14.714 12.7856C15.9642 14.0359 16.6666 15.7316 16.6666 17.4997" stroke-width="1.66667"/></svg><span>Account</span></a>
+        </nav>
+      </div>
+      <div class="sidebar-user">
+        <div class="avatar js-avatar">JU</div>
+        <div>
+          <div class="u-naam js-naam">Juno</div>
+          <div class="u-mail js-mail">info@juno.nl</div>
+        </div>
+      </div>
+    </aside>
+
+      <!-- Hoofdinhoud -->
+      <main class="main">
+
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 mb-3">
+          <a href="1-240-1583-klant-dashboard.html" class="breadcrumb-item hover:underline">Nieuwe bestelling</a>
+          <span class="breadcrumb-item">›</span>
+          <span class="breadcrumb-item font-medium">Leverdag kiezen</span>
+        </div>
+
+        <h1 class="font-['Inter',sans-serif] font-bold text-[28px] text-black mb-1">Kies leverdag</h1>
+        <p class="font-['Inter',sans-serif] text-[15px] text-[#2e2e2e] mb-6">Kies wanneer je je bestelling wilt ontvangen.</p>
+
+        <!-- Week tabs -->
+        <div class="flex items-center gap-2 mb-6">
+          <div class="week-tab actief" id="tab-23" onclick="toonWeek(23)">
+            <div class="text-[11px] tracking-widest uppercase font-medium" style="opacity:0.7;">Week 23</div>
+            <div class="font-semibold text-[14px] mt-0.5">2–7 juni</div>
+          </div>
+          <div class="week-tab" id="tab-24" onclick="toonWeek(24)">
+            <div class="text-[11px] tracking-widest uppercase font-medium" style="opacity:0.7;">Week 24</div>
+            <div class="font-semibold text-[14px] mt-0.5">9–14 juni</div>
+          </div>
+          <div class="week-tab" id="tab-25" onclick="toonWeek(25)">
+            <div class="text-[11px] tracking-widest uppercase font-medium" style="opacity:0.7;">Week 25</div>
+            <div class="font-semibold text-[14px] mt-0.5">16–21 juni</div>
+          </div>
+          <div class="week-tab flex items-center gap-2" id="tab-kal" onclick="toonKalender()">
+            <img alt="" src="assets/calendar.svg" class="w-4 h-4" style="opacity:0.6;">
+            <span class="font-medium text-[14px]">Kalender</span>
+          </div>
+        </div>
+
+        <!-- Leverdag kaarten (per week) -->
+        <div id="kaarten-container" class="flex gap-4 pb-2"></div>
+
+        <!-- Kalender view (verborgen by default) -->
+        <div id="kalender-container" style="display:none;">
+          <div class="bg-white border border-[#b5ae9c] rounded-[12px] p-5 inline-block">
+            <p class="font-['Inter',sans-serif] font-semibold text-[15px] text-black mb-4">Juni 2026</p>
+            <div class="kalender-grid mb-1">
+              <div class="kal-dag kal-dag-naam">ma</div>
+              <div class="kal-dag kal-dag-naam">di</div>
+              <div class="kal-dag kal-dag-naam">wo</div>
+              <div class="kal-dag kal-dag-naam">do</div>
+              <div class="kal-dag kal-dag-naam">vr</div>
+              <div class="kal-dag kal-dag-naam">za</div>
+              <div class="kal-dag kal-dag-naam">zo</div>
+            </div>
+            <div id="kalender-grid" class="kalender-grid"></div>
+          </div>
+        </div>
+
+    </main>
+  </div>
+
+  <!-- ===================== MOBIELE WEERGAVE (<768px) ===================== -->
+  <div class="md:hidden flex flex-col min-h-screen bg-[#f4f1e8]">
+
+    <header class="bg-[#efeadd] flex items-center px-[18px] py-[14px] sticky top-0 z-20">
+      <div class="flex items-center gap-2">
+        <img alt="Wolf logo" class="w-[22px] h-[24px] object-contain" src="assets/wolf logo 1.svg">
+        <span class="font-gt-ext text-black tracking-[6px] uppercase text-[14px]">Bakkerij <strong>Wolf</strong></span>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto px-[18px] py-4 pb-[96px] bg-[#f9f7f2]">
+      <h1 class="font-['Inter',sans-serif] font-medium text-[24px] text-black pt-1">Kies leverdag</h1>
+      <p class="font-['Inter',sans-serif] text-[13px] text-[#8a857a] mt-1 mb-3">Kies wanneer je je bestelling wilt ontvangen.</p>
+
+      <!-- Week-chips -->
+      <div class="flex gap-2 overflow-x-auto pb-1 mb-3">
+        <div class="week-tab-m actief" id="tab-m-23" onclick="toonWeek(23)">
+          <div class="text-[11px] tracking-[0.6px] uppercase text-[#8a857a]">Week 23</div>
+          <div class="font-bold text-[14px] mt-0.5 whitespace-nowrap">2–7 juni</div>
+        </div>
+        <div class="week-tab-m" id="tab-m-24" onclick="toonWeek(24)">
+          <div class="text-[11px] tracking-[0.6px] uppercase text-[#8a857a]">Week 24</div>
+          <div class="font-bold text-[14px] mt-0.5 whitespace-nowrap">9–14 juni</div>
+        </div>
+        <div class="week-tab-m" id="tab-m-25" onclick="toonWeek(25)">
+          <div class="text-[11px] tracking-[0.6px] uppercase text-[#8a857a]">Week 25</div>
+          <div class="font-bold text-[14px] mt-0.5 whitespace-nowrap">16–21 juni</div>
+        </div>
+        <div class="week-tab-m flex flex-col items-center justify-center gap-1" id="tab-m-kal" onclick="toonKalender()">
+          <img alt="" src="assets/calendar.svg" class="w-[18px] h-[18px]" style="opacity:0.6;">
+          <span class="font-bold text-[12px]">Kalender</span>
+        </div>
+      </div>
+
+      <!-- Leverdag-kaarten (mobiel) -->
+      <div id="kaarten-container-mobile" class="flex flex-col gap-3"></div>
+
+      <!-- Kalender (mobiel) -->
+      <div id="kalender-container-mobile" style="display:none;" class="bg-white border border-[#b5ae9c] rounded-[12px] p-4 mt-1">
+        <p class="font-['Inter',sans-serif] font-semibold text-[15px] text-black mb-3">Juni 2026</p>
+        <div class="kalender-grid mb-1">
+          <div class="kal-dag kal-dag-naam">ma</div>
+          <div class="kal-dag kal-dag-naam">di</div>
+          <div class="kal-dag kal-dag-naam">wo</div>
+          <div class="kal-dag kal-dag-naam">do</div>
+          <div class="kal-dag kal-dag-naam">vr</div>
+          <div class="kal-dag kal-dag-naam">za</div>
+          <div class="kal-dag kal-dag-naam">zo</div>
+        </div>
+        <div id="kalender-grid-mobile" class="kalender-grid"></div>
+      </div>
+    </main>
+
+    <!-- Bottom-nav -->
+    <nav class="bottom-nav">
+      <a class="bn-item" href="1-240-1583-klant-dashboard.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M2.5 7.50033L10 1.66699L17.5 7.50033V16.667C17.5 17.109 17.3244 17.5329 17.0118 17.8455C16.6993 18.1581 16.2754 18.3337 15.8333 18.3337H4.16667C3.72464 18.3337 3.30072 18.1581 2.98816 17.8455C2.67559 17.5329 2.5 17.109 2.5 16.667V7.50033Z" stroke-width="1.66667"/></svg><span class="lbl">Overzicht</span></a>
+      <button class="bn-item active" onclick="wolfNieuweBestelling()"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M10.0001 4.16699V15.8337M4.16675 10.0003H15.8334" stroke-width="1.66667"/></svg><span class="lbl">Bestellen</span></button>
+      <a class="bn-item" href="1-363-344-bestelgeschiedenis.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M2.5 10C2.49844 11.7175 3.08642 13.3836 4.16569 14.7197C5.24496 16.0558 6.75011 16.9809 8.42957 17.3406C10.109 17.7002 11.8611 17.4725 13.3928 16.6955C14.9246 15.9186 16.1432 14.6394 16.8451 13.0718C17.547 11.5043 17.6896 9.74326 17.2491 8.08317C16.8086 6.42309 15.8116 4.9645 14.4248 3.95119C13.038 2.93788 11.3455 2.43125 9.63004 2.51597C7.91458 2.6007 6.28018 3.27164 5 4.41667L2.5 6.66667" stroke-width="1.66667"/><path d="M2.5 2.5V6.66667H6.66667" stroke-width="1.66667"/></svg><span class="lbl">Historie</span></a>
+      <a class="bn-item" href="1-364-544-klant-account.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M10.0001 9.99967C11.841 9.99967 13.3334 8.50729 13.3334 6.66634C13.3334 4.82539 11.841 3.33301 10.0001 3.33301C8.15913 3.33301 6.66675 4.82539 6.66675 6.66634C6.66675 8.50729 8.15913 9.99967 10.0001 9.99967Z" stroke-width="1.66667"/><path d="M3.33325 17.4997C3.33325 15.7316 4.03563 14.0359 5.28587 12.7856C6.53612 11.5354 8.23181 10.833 9.99992 10.833C11.768 10.833 13.4637 11.5354 14.714 12.7856C15.9642 14.0359 16.6666 15.7316 16.6666 17.4997" stroke-width="1.66667"/></svg><span class="lbl">Account</span></a>
+    </nav>
+
+  </div>
+
+  <script>
+    const naam = sessionStorage.getItem('klant_naam') || 'Juno';
+    document.querySelectorAll('.js-naam').forEach(el => el.textContent = naam);
+
+    const WEKEN = {
+      23: { label: '2–7 juni', dagen: [
+        { datum: 'Dinsdag 2 juni',    dag: 'dinsdag',   week: 'Week 23', status: 'gesloten',    info: 'Deadline verstreken (zondag 15:00)' },
+        { datum: 'Donderdag 4 juni',  dag: 'donderdag', week: 'Week 23', status: 'beschikbaar', info: 'Bestellen tot dinsdag 15:00' },
+        { datum: 'Zaterdag 6 juni',   dag: 'zaterdag',  week: 'Week 23', status: 'beschikbaar', info: 'Bestellen tot donderdag 15:00' },
+      ]},
+      24: { label: '9–14 juni', dagen: [
+        { datum: 'Dinsdag 9 juni',    dag: 'dinsdag',   week: 'Week 24', status: 'beschikbaar', info: 'Bestellen tot zondag 15:00' },
+        { datum: 'Donderdag 11 juni', dag: 'donderdag', week: 'Week 24', status: 'beschikbaar', info: 'Bestellen tot dinsdag 15:00' },
+        { datum: 'Zaterdag 13 juni',  dag: 'zaterdag',  week: 'Week 24', status: 'beschikbaar', info: 'Bestellen tot donderdag 15:00' },
+      ]},
+      25: { label: '16–21 juni', dagen: [
+        { datum: 'Dinsdag 16 juni',   dag: 'dinsdag',   week: 'Week 25', status: 'beschikbaar', info: 'Bestellen tot zondag 15:00' },
+        { datum: 'Donderdag 18 juni', dag: 'donderdag', week: 'Week 25', status: 'beschikbaar', info: 'Bestellen tot dinsdag 15:00' },
+        { datum: 'Zaterdag 20 juni',  dag: 'zaterdag',  week: 'Week 25', status: 'beschikbaar', info: 'Bestellen tot donderdag 15:00' },
+      ]},
+    };
+
+    function toonWeek(nr) {
+      document.querySelectorAll('.week-tab, .week-tab-m').forEach(t => t.classList.remove('actief'));
+      document.getElementById('tab-' + nr).classList.add('actief');
+      const tabM = document.getElementById('tab-m-' + nr); if (tabM) tabM.classList.add('actief');
+      document.getElementById('kalender-container').style.display = 'none';
+      document.getElementById('kaarten-container').style.display = 'flex';
+      const kalM = document.getElementById('kalender-container-mobile'); if (kalM) kalM.style.display = 'none';
+      const kaaM = document.getElementById('kaarten-container-mobile'); if (kaaM) kaaM.style.display = 'flex';
+
+      const container = document.getElementById('kaarten-container');
+      container.innerHTML = '';
+      WEKEN[nr].dagen.forEach(d => container.appendChild(maakKaart(d)));
+
+      if (kaaM) {
+        kaaM.innerHTML = '';
+        WEKEN[nr].dagen.forEach(d => kaaM.appendChild(maakKaartMobiel(d)));
+      }
+    }
+
+    function toonKalender() {
+      document.querySelectorAll('.week-tab, .week-tab-m').forEach(t => t.classList.remove('actief'));
+      document.getElementById('tab-kal').classList.add('actief');
+      const tabMk = document.getElementById('tab-m-kal'); if (tabMk) tabMk.classList.add('actief');
+      document.getElementById('kaarten-container').style.display = 'none';
+      document.getElementById('kalender-container').style.display = 'block';
+      const kaaM = document.getElementById('kaarten-container-mobile'); if (kaaM) kaaM.style.display = 'none';
+      const kalM = document.getElementById('kalender-container-mobile'); if (kalM) kalM.style.display = 'block';
+      renderKalender();
+    }
+
+    function maakKaart(d) {
+      const el = document.createElement('div');
+      el.className = 'dag-kaart' + (d.status === 'gesloten' ? ' dag-kaart-dim' : '');
+      if (d.status === 'beschikbaar') el.style.cursor = 'pointer';
+
+      const badgeKlasse = d.status === 'beschikbaar' ? 'badge-beschikbaar' : 'badge-gesloten';
+      const badgeTekst  = d.status === 'beschikbaar' ? 'Beschikbaar' : 'Gesloten';
+      const knopKlasse  = d.status === 'beschikbaar' ? 'kies-knop-actief' : 'kies-knop-uitgeschakeld';
+      const knopTekst   = d.status === 'beschikbaar' ? 'Kies ' + d.dag : 'Niet beschikbaar';
+
+      el.innerHTML = `
+        <div>
+          <span class="badge ${badgeKlasse}">${badgeTekst}</span>
+          <div class="font-['Inter',sans-serif] font-bold text-[17px] text-black leading-tight">${d.datum}</div>
+          <div class="font-['Inter',sans-serif] text-[12px] text-[#2e2e2e] mt-1">${d.week}</div>
+          <div class="font-['Inter',sans-serif] text-[13px] text-black mt-2 leading-snug">${d.info}</div>
+        </div>
+        <div class="mt-4">
+          <div class="kies-knop ${knopKlasse}">${knopTekst}</div>
+        </div>`;
+
+      if (d.status === 'beschikbaar') {
+        el.addEventListener('click', () => kiesLeverdag(d.datum, d.dag));
+      }
+      return el;
+    }
+
+    function maakKaartMobiel(d) {
+      const el = document.createElement('div');
+      const dim = d.status === 'gesloten' ? ' opacity-60' : '';
+      el.className = 'rounded-[14px] border border-[#cfc8b8] bg-[#fbfaf6] p-4 flex flex-col' + dim;
+
+      const beschikbaar = d.status === 'beschikbaar';
+      const badge = beschikbaar
+        ? '<span class="inline-flex items-center bg-[#c7e0c0] text-[#3e8e4e] rounded-full px-2.5 py-0.5 font-[\'Inter\',sans-serif] font-semibold text-[11px]">Beschikbaar</span>'
+        : '<span class="inline-flex items-center bg-[#f1d2ce] text-[#b0584e] rounded-full px-2.5 py-0.5 font-[\'Inter\',sans-serif] font-semibold text-[11px]">Gesloten</span>';
+      const infoKleur = beschikbaar ? 'text-[#1e1e1c]' : 'text-[#8a857a]';
+      const knop = beschikbaar
+        ? '<button class="w-full bg-[#2c2a27] text-white rounded-[9px] py-3 font-[\'Inter\',sans-serif] font-semibold text-[14px] cursor-pointer">Kies ' + d.dag + '</button>'
+        : '<button disabled class="w-full bg-[#c2bcb0] text-[#7d766a] rounded-[9px] py-3 font-[\'Inter\',sans-serif] font-semibold text-[14px] cursor-not-allowed">Niet beschikbaar</button>';
+
+      el.innerHTML = `
+        <div>${badge}</div>
+        <div class="font-['Inter',sans-serif] font-${beschikbaar ? 'medium' : 'extrabold'} text-[18px] text-black pt-2">${d.datum}</div>
+        <div class="font-['Inter',sans-serif] text-[12px] text-[#8a857a] pt-1">${d.week}</div>
+        <div class="font-['Inter',sans-serif] text-[13px] ${infoKleur} pt-1.5 pb-3">${d.info}</div>
+        ${knop}`;
+
+      if (beschikbaar) {
+        el.querySelector('button').addEventListener('click', () => kiesLeverdag(d.datum, d.dag));
+      }
+      return el;
+    }
+
+    function kiesLeverdag(label, dag) {
+      sessionStorage.setItem('leverdag_label', label);
+      sessionStorage.setItem('leverdag_dag', dag);
+      sessionStorage.setItem('is_aanvraag', 'false');
+      sessionStorage.removeItem('herhaal_nr');
+      window.location.href = '1-244-472-producten-kiezen.html';
+    }
+
+    // Kalender Juni 2026 (1 juni = maandag = dag 0)
+    function renderKalender() {
+      const LEVERDAGEN = new Set([2,4,6,9,11,13,16,18,20,23,25,27,30]);
+      const GESLOTEN   = new Set([2]); // deadline verstreken voor standaard klant
+      const grids = [document.getElementById('kalender-grid'), document.getElementById('kalender-grid-mobile')].filter(Boolean);
+
+      grids.forEach(grid => {
+        grid.innerHTML = '';
+        // Juni 2026: 1 = maandag → offset 0
+        for (let dag = 1; dag <= 30; dag++) {
+          const cel = document.createElement('div');
+          cel.className = 'kal-dag';
+          cel.textContent = dag;
+
+          if (dag === 1) cel.classList.add('kal-vandaag');
+
+          if (LEVERDAGEN.has(dag)) {
+            if (GESLOTEN.has(dag)) {
+              cel.classList.add('kal-leverdag', 'gesloten');
+            } else {
+              cel.classList.add('kal-leverdag');
+              const datumLabel = kalDatumLabel(dag);
+              const dagNaam = kalDagNaam(dag);
+              cel.addEventListener('click', () => kiesLeverdag(datumLabel, dagNaam));
+            }
+          }
+          grid.appendChild(cel);
+        }
+      });
+    }
+
+    const DAG_NAMEN = ['','','dinsdag','','donderdag','','zaterdag',''];
+    const MAANDEN = ['','januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+    // Juni 2026: dag 1=ma,2=di,3=wo,4=do,5=vr,6=za, 7=zo, 8=ma...
+    const DAGOFWEEK = ['ma','di','wo','do','vr','za','zo']; // (dag-1)%7
+
+    function kalDagNaam(dag) {
+      const idx = (dag - 1) % 7;
+      const namen = ['','dinsdag','','donderdag','','zaterdag',''];
+      return namen[idx] || 'dag';
+    }
+
+    function kalDatumLabel(dag) {
+      const idx = (dag - 1) % 7;
+      const voluit = ['maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag','zondag'];
+      const map = { dinsdag:'Dinsdag', donderdag:'Donderdag', zaterdag:'Zaterdag' };
+      const dagstr = voluit[idx];
+      const kort = dagstr.charAt(0).toUpperCase() + dagstr.slice(1);
+      return `${kort} ${dag} juni`;
+    }
+
+    // Start met week 23
+    toonWeek(23);
+  </script>
+  <script src="assets/wolf.js"></script>
+</body>
+</html>

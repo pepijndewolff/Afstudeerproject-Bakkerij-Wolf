@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mijn account — Bakkerij Wolf Bestelportaal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/wolf.css">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    .font-gt-ext { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .sidebar-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; color: #000; position: relative; white-space: nowrap; }
+    .sidebar-item:hover { background: rgba(0,0,0,0.04); }
+    .sidebar-item.actief { background: #f9f7f2; font-weight: 500; color: #1e1e1e; }
+    .sidebar-item.actief::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #1e1e1e; border-radius: 0 2px 2px 0; }
+    .contact-rij { display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #cdc9be; }
+    .contact-rij:last-child { border-bottom: none; }
+    .contact-label { font-family: 'Inter', sans-serif; font-size: 14px; color: #2e2e2e; min-width: 140px; }
+    .contact-waarde { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: #1e1e1e; flex: 1; text-align: right; }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== DESKTOP WEERGAVE (≥768px) ===================== -->
+  <div class="app hidden md:flex">
+
+
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-brand">
+          <img class="logo" src="assets/wolf logo 1.svg" alt="Bakkerij Wolf logo">
+          <span class="name">Bakkerij&nbsp;Wolf</span>
+        </div>
+        <nav class="nav">
+          <a class="nav-item" href="1-240-1583-klant-dashboard.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M2.5 7.50033L10 1.66699L17.5 7.50033V16.667C17.5 17.109 17.3244 17.5329 17.0118 17.8455C16.6993 18.1581 16.2754 18.3337 15.8333 18.3337H4.16667C3.72464 18.3337 3.30072 18.1581 2.98816 17.8455C2.67559 17.5329 2.5 17.109 2.5 16.667V7.50033Z" stroke-width="1.66667"/></svg><span>Overzicht</span></a>
+          <button class="nav-item" onclick="wolfNieuweBestelling()"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M10.0001 4.16699V15.8337M4.16675 10.0003H15.8334" stroke-width="1.66667"/></svg><span>Nieuwe bestelling</span></button>
+          <a class="nav-item" href="1-363-344-bestelgeschiedenis.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M2.5 10C2.49844 11.7175 3.08642 13.3836 4.16569 14.7197C5.24496 16.0558 6.75011 16.9809 8.42957 17.3406C10.109 17.7002 11.8611 17.4725 13.3928 16.6955C14.9246 15.9186 16.1432 14.6394 16.8451 13.0718C17.547 11.5043 17.6896 9.74326 17.2491 8.08317C16.8086 6.42309 15.8116 4.9645 14.4248 3.95119C13.038 2.93788 11.3455 2.43125 9.63004 2.51597C7.91458 2.6007 6.28018 3.27164 5 4.41667L2.5 6.66667" stroke-width="1.66667"/><path d="M2.5 2.5V6.66667H6.66667" stroke-width="1.66667"/></svg><span>Historie</span></a>
+          <a class="nav-item active" href="1-364-544-klant-account.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M10.0001 9.99967C11.841 9.99967 13.3334 8.50729 13.3334 6.66634C13.3334 4.82539 11.841 3.33301 10.0001 3.33301C8.15913 3.33301 6.66675 4.82539 6.66675 6.66634C6.66675 8.50729 8.15913 9.99967 10.0001 9.99967Z" stroke-width="1.66667"/><path d="M3.33325 17.4997C3.33325 15.7316 4.03563 14.0359 5.28587 12.7856C6.53612 11.5354 8.23181 10.833 9.99992 10.833C11.768 10.833 13.4637 11.5354 14.714 12.7856C15.9642 14.0359 16.6666 15.7316 16.6666 17.4997" stroke-width="1.66667"/></svg><span>Account</span></a>
+        </nav>
+      </div>
+      <div class="sidebar-user">
+        <div class="avatar js-avatar">JU</div>
+        <div>
+          <div class="u-naam js-naam">Juno</div>
+          <div class="u-mail js-mail">info@juno.nl</div>
+        </div>
+      </div>
+    </aside>
+
+      <!-- Hoofdinhoud -->
+      <main class="main">
+
+        <!-- Breadcrumb + titel + Bewerken-knop -->
+        <div class="mb-6">
+          <p class="font-['Inter',sans-serif] text-[13px] text-[#2e2e2e] mb-2">Mijn account</p>
+          <div class="flex items-center justify-between">
+            <h1 class="js-account-naam font-['Inter',sans-serif] font-bold text-[28px] text-black" id="account-naam">Juno</h1>
+            <button onclick="window.location.href='1-364-676-account-bewerken.html'"
+              class="bg-[#2e2e2e] text-[#f9f7f2] font-['Inter',sans-serif] font-medium text-[13px] px-4 py-2 rounded-[8px] flex items-center gap-2 hover:bg-[#1a1a1a] transition-colors cursor-pointer">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <path d="M9 2.5L10.5 4 4 10.5H2.5V9L9 2.5z" stroke="#f9f7f2" stroke-width="1.2" stroke-linejoin="round"/>
+              </svg>
+              Bewerken
+            </button>
+          </div>
+        </div>
+
+        <!-- Twee panelen naast elkaar -->
+        <div class="flex gap-5 items-start">
+
+          <!-- Contactgegevens -->
+          <div class="bg-white border border-[#b5ae9c] rounded-[12px] p-5 flex-1">
+            <p class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase mb-3">Contactgegevens</p>
+
+            <div class="contact-rij">
+              <span class="contact-label">Contactpersoon</span>
+              <span class="contact-waarde">Olivier</span>
+            </div>
+            <div class="contact-rij">
+              <span class="contact-label">Telefoon</span>
+              <span class="contact-waarde">+3123456789</span>
+            </div>
+            <div class="contact-rij">
+              <span class="contact-label">Email</span>
+              <span class="contact-waarde">Info@juno.nl</span>
+            </div>
+            <div class="contact-rij">
+              <span class="contact-label">Adres</span>
+              <span class="contact-waarde" style="text-align:right; line-height:1.5;">Frans halsstraat 42-3<br>1042 BT<br>Amsterdam</span>
+            </div>
+            <div class="contact-rij">
+              <span class="contact-label">BTW-nummer</span>
+              <span class="contact-waarde">NL32.4324.23456</span>
+            </div>
+          </div>
+
+          <!-- Prijs afspraken -->
+          <div class="bg-white border border-[#b5ae9c] rounded-[12px] overflow-hidden" style="min-width:280px;">
+            <div class="px-5 pt-5 pb-3">
+              <p class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase">Prijs afspraken</p>
+            </div>
+
+            <!-- Tabelheader -->
+            <div class="bg-[#2e2e2e] flex px-4 py-3">
+              <span class="font-['Inter',sans-serif] text-[11px] text-[#f9f7f2] tracking-widest uppercase flex-1">Product</span>
+              <span class="font-['Inter',sans-serif] text-[11px] text-[#f9f7f2] tracking-widest uppercase">Prijs €</span>
+            </div>
+
+            <!-- Rijen -->
+            <div class="bg-[#f4f0e7] flex px-4 py-3 border-t border-[#e0dbd0]">
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1">Klassiek 1000gr</span>
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]">4,20</span>
+            </div>
+            <div class="bg-[#fdfbf7] flex px-4 py-3 border-t border-[#e0dbd0]">
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1">Klassiek 1200gr</span>
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]">5,40</span>
+            </div>
+            <div class="bg-[#f4f0e7] flex px-4 py-3 border-t border-[#e0dbd0]">
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1">Burger buns</span>
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]">0,50</span>
+            </div>
+            <div class="bg-[#fdfbf7] flex px-4 py-3 border-t border-[#e0dbd0]">
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1">Baguette</span>
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]">5,40</span>
+            </div>
+            <div class="bg-[#f4f0e7] flex px-4 py-3 border-t border-[#e0dbd0] rounded-b-[12px]">
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1">Brioche</span>
+              <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]">6,20</span>
+            </div>
+          </div>
+
+        </div>
+    </main>
+  </div>
+
+  <!-- ===================== MOBIELE WEERGAVE (<768px) ===================== -->
+  <div class="md:hidden flex flex-col min-h-screen bg-[#f4f1e8]">
+
+    <header class="bg-[#efeadd] flex items-center px-[18px] py-[14px] sticky top-0 z-20">
+      <div class="flex items-center gap-2">
+        <img alt="Wolf logo" class="w-[22px] h-[24px] object-contain" src="assets/wolf logo 1.svg">
+        <span class="font-gt-ext text-black tracking-[6px] uppercase text-[14px]">Bakkerij <strong>Wolf</strong></span>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto px-[18px] pt-5 pb-[96px] bg-[#f9f7f2]">
+      <p class="font-['Inter',sans-serif] text-[12px] text-[#8a857a]">Mijn account</p>
+      <div class="flex items-center justify-between mt-1 mb-4">
+        <h1 class="js-account-naam font-['Inter',sans-serif] font-medium text-[26px] text-black">Juno</h1>
+        <button onclick="window.location.href='1-364-676-account-bewerken.html'" class="bg-[#2c2a27] text-white rounded-full flex items-center gap-1.5 px-4 py-2.5 cursor-pointer shrink-0">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M9 2.5L10.5 4 4 10.5H2.5V9L9 2.5z" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          <span class="font-['Inter',sans-serif] font-semibold text-[13px]">Bewerken</span>
+        </button>
+      </div>
+
+      <!-- Contactgegevens -->
+      <div class="bg-white border border-[#b5ae9c] rounded-[14px] p-4 mb-2">
+        <p class="font-['Inter',sans-serif] text-[11px] text-[#8a857a] tracking-[0.8px] uppercase mb-1">Contactgegevens</p>
+        <div class="flex justify-between py-2.5 border-b border-[#cfc8b8]"><span class="font-['Inter',sans-serif] text-[14px] text-[#55524b]">Contactpersoon</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black text-right">Olivier</span></div>
+        <div class="flex justify-between py-2.5 border-b border-[#cfc8b8]"><span class="font-['Inter',sans-serif] text-[14px] text-[#55524b]">Telefoon</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black text-right">+3123456789</span></div>
+        <div class="flex justify-between py-2.5 border-b border-[#cfc8b8]"><span class="font-['Inter',sans-serif] text-[14px] text-[#55524b]">Email</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black text-right">Info@juno.nl</span></div>
+        <div class="flex justify-between py-2.5 border-b border-[#cfc8b8]"><span class="font-['Inter',sans-serif] text-[14px] text-[#55524b]">Adres</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black text-right leading-snug">Frans halsstraat 42-3<br>1042 BT<br>Amsterdam</span></div>
+        <div class="flex justify-between py-2.5"><span class="font-['Inter',sans-serif] text-[14px] text-[#55524b]">BTW-nummer</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black text-right">NL32.4324.23456</span></div>
+      </div>
+
+      <!-- Prijs afspraken -->
+      <div class="bg-white border border-[#b5ae9c] rounded-[14px] p-4">
+        <p class="font-['Inter',sans-serif] text-[11px] text-[#8a857a] tracking-[0.8px] uppercase mb-3">Prijs afspraken</p>
+        <div class="border border-[#cfc8b8] rounded-[10px] overflow-hidden">
+          <div class="bg-[#2c2a27] flex justify-between px-3.5 py-2.5">
+            <span class="font-['Inter',sans-serif] font-bold text-[12px] text-white tracking-wide">Product</span>
+            <span class="font-['Inter',sans-serif] font-bold text-[12px] text-white tracking-wide">Prijs €</span>
+          </div>
+          <div class="bg-[#fbfaf6] flex justify-between px-3.5 py-3 border-b border-[#b5ae9c]/50"><span class="font-['Inter',sans-serif] text-[14px] text-black">Klassiek 1000gr</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black">4,20</span></div>
+          <div class="bg-[#fbfaf6] flex justify-between px-3.5 py-3 border-b border-[#b5ae9c]/50"><span class="font-['Inter',sans-serif] text-[14px] text-black">Klassiek 1200gr</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black">5,40</span></div>
+          <div class="bg-[#fbfaf6] flex justify-between px-3.5 py-3 border-b border-[#b5ae9c]/50"><span class="font-['Inter',sans-serif] text-[14px] text-black">Burger buns</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black">0,50</span></div>
+          <div class="bg-[#fbfaf6] flex justify-between px-3.5 py-3 border-b border-[#b5ae9c]/50"><span class="font-['Inter',sans-serif] text-[14px] text-black">Baguette</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black">5,40</span></div>
+          <div class="bg-[#fbfaf6] flex justify-between px-3.5 py-3"><span class="font-['Inter',sans-serif] text-[14px] text-black">Brioche</span><span class="font-['Inter',sans-serif] font-bold text-[14px] text-black">6,20</span></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom-nav -->
+    <nav class="bottom-nav">
+      <a class="bn-item" href="1-240-1583-klant-dashboard.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M2.5 7.50033L10 1.66699L17.5 7.50033V16.667C17.5 17.109 17.3244 17.5329 17.0118 17.8455C16.6993 18.1581 16.2754 18.3337 15.8333 18.3337H4.16667C3.72464 18.3337 3.30072 18.1581 2.98816 17.8455C2.67559 17.5329 2.5 17.109 2.5 16.667V7.50033Z" stroke-width="1.66667"/></svg><span class="lbl">Overzicht</span></a>
+      <button class="bn-item" onclick="wolfNieuweBestelling()"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M10.0001 4.16699V15.8337M4.16675 10.0003H15.8334" stroke-width="1.66667"/></svg><span class="lbl">Bestellen</span></button>
+      <a class="bn-item" href="1-363-344-bestelgeschiedenis.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M2.5 10C2.49844 11.7175 3.08642 13.3836 4.16569 14.7197C5.24496 16.0558 6.75011 16.9809 8.42957 17.3406C10.109 17.7002 11.8611 17.4725 13.3928 16.6955C14.9246 15.9186 16.1432 14.6394 16.8451 13.0718C17.547 11.5043 17.6896 9.74326 17.2491 8.08317C16.8086 6.42309 15.8116 4.9645 14.4248 3.95119C13.038 2.93788 11.3455 2.43125 9.63004 2.51597C7.91458 2.6007 6.28018 3.27164 5 4.41667L2.5 6.66667" stroke-width="1.66667"/><path d="M2.5 2.5V6.66667H6.66667" stroke-width="1.66667"/></svg><span class="lbl">Historie</span></a>
+      <a class="bn-item active" href="1-364-544-klant-account.html"><svg class="ico" viewBox="0 0 20 20" fill="none"><path d="M10.0001 9.99967C11.841 9.99967 13.3334 8.50729 13.3334 6.66634C13.3334 4.82539 11.841 3.33301 10.0001 3.33301C8.15913 3.33301 6.66675 4.82539 6.66675 6.66634C6.66675 8.50729 8.15913 9.99967 10.0001 9.99967Z" stroke-width="1.66667"/><path d="M3.33325 17.4997C3.33325 15.7316 4.03563 14.0359 5.28587 12.7856C6.53612 11.5354 8.23181 10.833 9.99992 10.833C11.768 10.833 13.4637 11.5354 14.714 12.7856C15.9642 14.0359 16.6666 15.7316 16.6666 17.4997" stroke-width="1.66667"/></svg><span class="lbl">Account</span></a>
+    </nav>
+
+  </div>
+
+  <script>
+    const klantType = sessionStorage.getItem('klant_type') || 'uitzondering';
+    const naam = sessionStorage.getItem('klant_naam') || 'Juno';
+    document.querySelectorAll('.js-account-naam').forEach(el => el.textContent = naam);
+
+    function nieuweBestellingKlikken() {
+      window.location.href = klantType === 'uitzondering'
+        ? '1-243-348-nieuwe-bestelling-uitzondering.html'
+        : '1-243-111-nieuwe-bestelling-standaard.html';
+    }
+  </script>
+  <script src="assets/wolf.js"></script>
+</body>
+</html>

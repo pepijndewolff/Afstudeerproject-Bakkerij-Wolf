@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bestelling controleren — Bakkerij Wolf Bestelportaal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    .font-gt-ext { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .sidebar-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; color: #000; position: relative; white-space: nowrap; }
+    .sidebar-item:hover { background: rgba(0,0,0,0.04); }
+    .sidebar-item.actief { background: #f9f7f2; font-weight: 500; color: #1e1e1e; }
+    .sidebar-item.actief::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #1e1e1e; border-radius: 0 2px 2px 0; }
+    .breadcrumb-item { font-family: 'Inter', sans-serif; font-size: 13px; color: #2e2e2e; }
+    .tabel-rij { display: flex; align-items: center; padding: 13px 16px; }
+    .status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 500; white-space: nowrap; }
+    .samenvatting-panel { background: #ded9cc; border-radius: 12px; padding: 20px; min-width: 220px; }
+  </style>
+</head>
+<body class="bg-[#ded9cc]" style="min-height:100vh;">
+
+  <!-- ===================== DESKTOP WEERGAVE (≥768px) ===================== -->
+  <div class="hidden md:flex flex-col" style="min-height:100vh;">
+
+    <!-- Header -->
+    <header class="bg-[#ded9cc] flex items-center justify-between px-6 py-4 border-b border-[#c8c3b6]">
+      <div class="flex items-center gap-4">
+        <div class="w-[28px] h-[32px] shrink-0">
+          <img alt="Wolf logo" class="w-full h-full object-contain" src="assets/wolf logo 1.svg">
+        </div>
+        <span class="font-gt-ext text-black tracking-[8px] uppercase text-[16px]">Bakkerij <strong>Wolf</strong></span>
+      </div>
+      <div class="bg-[#f9f7f2] rounded-full px-4 py-1.5">
+        <span id="nav-naam" class="font-gt-ext text-[#1e1e1e] text-[14px]">Juno</span>
+      </div>
+    </header>
+
+    <div class="flex flex-1">
+
+      <!-- Sidebar -->
+      <aside class="bg-[#ded9cc] flex flex-col justify-between border-r border-[#c8c3b6]" style="width:185px; min-height:calc(100vh - 57px);">
+        <nav class="flex flex-col pt-2">
+          <div class="sidebar-item" onclick="window.location.href='1-240-1583-klant-dashboard.html'">Overzicht</div>
+          <div class="sidebar-item actief">Nieuwe bestelling</div>
+          <div class="sidebar-item" onclick="window.location.href='1-363-344-bestelgeschiedenis.html'">Bestel geschiedenis</div>
+        </nav>
+        <div class="sidebar-item text-[#2e2e2e] mb-2" onclick="window.location.href='1-364-544-klant-account.html'">Mijn account</div>
+      </aside>
+
+      <!-- Hoofdinhoud -->
+      <main class="bg-[#f9f7f2] flex-1 p-10">
+
+        <!-- Breadcrumb — wordt dynamisch ingevuld -->
+        <div class="flex items-center gap-2 mb-3" id="breadcrumb-container"></div>
+
+        <h1 class="font-['Inter',sans-serif] font-bold text-[28px] text-black mb-1" id="pagina-titel">Controleer je bestelling</h1>
+        <p class="font-['Inter',sans-serif] text-[15px] text-[#2e2e2e] mb-6" id="pagina-subtitel">Klopt alles? Dan kun je de bestelling hieronder plaatsen.</p>
+
+        <!-- Tabel + samenvatting -->
+        <div class="flex gap-6 items-start">
+
+          <!-- Bestellingtabel -->
+          <div class="flex-1">
+
+            <!-- Leverdag header (donkere balk) -->
+            <div class="bg-[#2e2e2e] rounded-t-[8px] flex items-center gap-2 px-4 py-3">
+              <img alt="" src="assets/calendar.svg" class="w-4 h-4 opacity-60" style="filter:invert(1);">
+              <span class="font-['Inter',sans-serif] text-[13px] text-[#b5b0a8]">Leverdag</span>
+              <span class="font-['Inter',sans-serif] font-semibold text-[14px] text-white ml-auto" id="leverdag-header">Dinsdag 24 maart</span>
+            </div>
+
+            <!-- Kolomheaders -->
+            <div class="bg-[#ded9cc]">
+              <div class="tabel-rij" style="cursor:default;">
+                <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase flex-1">Product</span>
+                <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:80px;">Aantal</span>
+                <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:100px;">Prijs €</span>
+                <span class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase" style="width:120px; text-align:right;">Status</span>
+              </div>
+            </div>
+
+            <!-- Productregels worden dynamisch ingeladen -->
+            <div id="product-regels"></div>
+
+            <!-- Opmerking textarea -->
+            <div class="bg-[#ded9cc] rounded-b-[8px] p-4 mt-0">
+              <textarea
+                placeholder="Opmerking invoegen voor Wolf (optioneel)"
+                class="w-full font-['Inter',sans-serif] text-[14px] text-[#979797] placeholder-[#979797] bg-[#ded9cc] border-none outline-none resize-none"
+                rows="3"
+              ></textarea>
+            </div>
+
+          </div>
+
+          <!-- Samenvatting + knoppen -->
+          <div style="width:240px; flex-shrink:0;">
+            <div class="samenvatting-panel">
+              <p class="font-['Inter',sans-serif] text-[11px] text-[#979797] tracking-widest uppercase mb-3">Samenvatting</p>
+              <div id="samenvatting-regels" class="flex flex-col gap-2 mb-3"></div>
+              <div class="border-t border-[#c8c3b6] pt-3 flex items-center justify-between">
+                <span class="font-['Inter',sans-serif] font-semibold text-[14px] text-black">Totaal</span>
+                <span class="font-['Inter',sans-serif] font-semibold text-[14px] text-black" id="totaal-bedrag">€0,00</span>
+              </div>
+            </div>
+
+            <!-- Aanvraag-notice: alleen zichtbaar als er aanvraagartikelen zijn -->
+            <div id="aanvraag-notice" class="bg-[#f4e0c8] border border-[#e8c89a] rounded-[10px] flex items-start gap-2 px-3 py-3 mt-3" style="display:none;">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" style="flex-shrink:0; margin-top:1px;">
+                <path d="M10 2L2 17h16L10 2z" stroke="#c35c1d" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M10 8v4M10 13.5h.01" stroke="#c35c1d" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <p class="font-['Inter',sans-serif] text-[13px] font-semibold text-[#c35c1d] mb-0.5">Nog niet definitief</p>
+                <p class="font-['Inter',sans-serif] text-[12px] text-[#c35c1d] leading-snug">Wolf beoordeelt of de producten en aantallen haalbaar zijn. Het klantmaximum vervalt bij een aanvraag.</p>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2 mt-4">
+              <button onclick="plaatsBestelling()" id="plaatsen-knop" class="bg-[#2e2e2e] text-[#f9f7f2] font-['Inter',sans-serif] font-medium text-[14px] px-4 py-3 rounded-[8px] flex items-center justify-center gap-2 hover:bg-[#1a1a1a] transition-colors cursor-pointer">
+                Bestelling plaatsen
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="#f9f7f2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button onclick="window.location.href='1-244-472-producten-kiezen.html'" class="bg-[#2e2e2e] text-[#f9f7f2] font-['Inter',sans-serif] font-medium text-[14px] px-4 py-3 rounded-[8px] flex items-center justify-center gap-2 hover:bg-[#1a1a1a] transition-colors cursor-pointer">
+                Bestelling aanpassen
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 8a5 5 0 1 0 .5-2.5M2.5 4v4H6.5" stroke="#f9f7f2" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================== MOBIELE WEERGAVE (<768px) ===================== -->
+  <div class="md:hidden flex flex-col min-h-screen bg-[#f9f7f2]">
+
+    <header class="bg-[#efeadd] flex items-center px-[18px] py-[14px] sticky top-0 z-20">
+      <div class="flex items-center gap-2">
+        <img alt="Wolf logo" class="w-[22px] h-[24px] object-contain" src="assets/wolf logo 1.svg">
+        <span class="font-gt-ext text-black tracking-[6px] uppercase text-[14px]">Bakkerij <strong>Wolf</strong></span>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto px-[18px] py-4 pb-[96px]">
+      <h1 class="font-['Inter',sans-serif] font-medium text-[24px] text-black pt-1" id="pagina-titel-m">Controleer je bestelling</h1>
+      <p class="font-['Inter',sans-serif] text-[13px] text-[#8a857a] mt-1 mb-3" id="pagina-subtitel-m">Klopt alles? Dan kun je de bestelling hieronder plaatsen.</p>
+
+      <!-- Bestelling -->
+      <div class="border border-[#cfc8b8] rounded-[14px] overflow-hidden mb-2">
+        <div class="bg-[#2c2a27] flex items-center justify-between px-4 py-3">
+          <div class="flex items-center gap-2">
+            <img alt="" src="assets/calendar.svg" class="w-4 h-4 opacity-60" style="filter:invert(1);">
+            <span class="font-['Inter',sans-serif] text-[13px] text-[#cfcabe]">Leverdag</span>
+          </div>
+          <span class="font-['Inter',sans-serif] font-bold text-[13px] text-white" id="leverdag-header-m">Donderdag 4 juni</span>
+        </div>
+        <div id="product-regels-mobile"></div>
+      </div>
+
+      <!-- Opmerking -->
+      <div class="bg-[#efeadd] border border-[#cfc8b8] rounded-[14px] px-4 py-3.5 mb-2">
+        <textarea placeholder="Opmerking invoegen voor Wolf (optioneel)" rows="2"
+          class="w-full font-['Inter',sans-serif] text-[13px] text-[#555] placeholder-[#757575] bg-transparent border-none outline-none resize-none"></textarea>
+      </div>
+
+      <!-- Samenvatting -->
+      <div class="bg-[#efeadd] border border-[#cfc8b8] rounded-[14px] p-4 mb-3">
+        <p class="font-['Inter',sans-serif] text-[11px] text-[#8a857a] tracking-[0.8px] uppercase mb-2">Samenvatting</p>
+        <div id="samenvatting-regels-mobile" class="flex flex-col gap-1.5"></div>
+        <div class="border-t border-[#cfc8b8] mt-3 pt-3 flex items-center justify-between">
+          <span class="font-['Inter',sans-serif] font-extrabold text-[16px] text-black">Totaal</span>
+          <span class="font-['Inter',sans-serif] font-extrabold text-[16px] text-black" id="totaal-bedrag-mobile">€0,00</span>
+        </div>
+      </div>
+
+      <!-- Aanvraag-notice (mobiel) -->
+      <div id="aanvraag-notice-m" class="bg-[#f4e0c8] border border-[#e8c89a] rounded-[12px] flex items-start gap-2 px-3.5 py-3 mb-3" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" style="flex-shrink:0; margin-top:1px;">
+          <path d="M10 2L2 17h16L10 2z" stroke="#c35c1d" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M10 8v4M10 13.5h.01" stroke="#c35c1d" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <p class="font-['Inter',sans-serif] text-[13px] font-semibold text-[#c35c1d] mb-0.5">Nog niet definitief</p>
+          <p class="font-['Inter',sans-serif] text-[12px] text-[#c35c1d] leading-snug">Wolf beoordeelt of de producten en aantallen haalbaar zijn. Het klantmaximum vervalt bij een aanvraag.</p>
+        </div>
+      </div>
+
+      <!-- Acties -->
+      <button onclick="plaatsBestelling()" id="plaatsen-knop-m" class="w-full bg-[#2c2a27] text-white rounded-[10px] py-3.5 font-['Inter',sans-serif] font-semibold text-[15px] mb-2.5 cursor-pointer">Bestelling plaatsen&nbsp;→</button>
+      <button onclick="window.location.href='1-244-472-producten-kiezen.html'" class="w-full border border-black/80 rounded-[10px] py-3 font-['Inter',sans-serif] font-semibold text-[14px] flex items-center justify-center gap-2 cursor-pointer">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 8a5 5 0 1 0 .6-2.3M2.5 4v4H6.5" stroke="#1e1e1e" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Bestelling aanpassen
+      </button>
+    </main>
+
+    <!-- Bottom-nav -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#efeadd] border-t border-[#cfc8b8] flex px-1.5 py-2 z-20">
+      <a href="1-240-1583-klant-dashboard.html" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#8a857a]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" opacity="0.7"><path d="M4 8.5 10 3.5l6 5V16a1 1 0 0 1-1 1h-3v-4H8v4H5a1 1 0 0 1-1-1V8.5Z" stroke="#8a857a" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <span class="font-['Inter',sans-serif] font-medium text-[10.5px]">Overzicht</span>
+      </a>
+      <span class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#1e1e1c]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 6h10l-1 9a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6Z" stroke="#1e1e1c" stroke-width="1.4" stroke-linejoin="round"/><path d="M7.5 6a2.5 2.5 0 0 1 5 0" stroke="#1e1e1c" stroke-width="1.4"/></svg>
+        <span class="font-['Inter',sans-serif] font-bold text-[10.5px]">Bestellen</span>
+      </span>
+      <a href="1-363-344-bestelgeschiedenis.html" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#8a857a]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" opacity="0.7"><circle cx="10" cy="10" r="6.5" stroke="#8a857a" stroke-width="1.4"/><path d="M10 6.5V10l2.5 1.5" stroke="#8a857a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="font-['Inter',sans-serif] font-medium text-[10.5px]">Historie</span>
+      </a>
+      <a href="1-364-544-klant-account.html" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#8a857a]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" opacity="0.7"><circle cx="10" cy="7" r="3" stroke="#8a857a" stroke-width="1.4"/><path d="M4.5 16a5.5 5.5 0 0 1 11 0" stroke="#8a857a" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="font-['Inter',sans-serif] font-medium text-[10.5px]">Account</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script>
+    const naam = sessionStorage.getItem('klant_naam') || 'Juno';
+    const leverdagLabel = sessionStorage.getItem('leverdag_label') || 'Donderdag 4 juni';
+    const herhaalNr = sessionStorage.getItem('herhaal_nr');
+    document.getElementById('nav-naam').textContent = naam;
+    document.getElementById('leverdag-header').textContent = leverdagLabel;
+    document.getElementById('leverdag-header-m').textContent = leverdagLabel;
+
+    // Breadcrumb: normale flow vs herhaal
+    const bc = document.getElementById('breadcrumb-container');
+    if (herhaalNr) {
+      bc.innerHTML = `
+        <a href="1-240-1583-klant-dashboard.html" class="breadcrumb-item hover:underline">Dashboard</a>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item">Herhaal bestelling #${herhaalNr}</span>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item">${leverdagLabel}</span>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item font-medium">Controleren</span>`;
+      document.getElementById('pagina-titel').textContent = 'Controleer je herhaalbestelling';
+      document.getElementById('pagina-titel-m').textContent = 'Controleer je herhaalbestelling';
+    } else {
+      bc.innerHTML = `
+        <a href="1-240-1583-klant-dashboard.html" class="breadcrumb-item hover:underline">Nieuwe bestelling</a>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item">${leverdagLabel}</span>
+        <span class="breadcrumb-item">›</span>
+        <a href="1-244-472-producten-kiezen.html" class="breadcrumb-item hover:underline">Producten</a>
+        <span class="breadcrumb-item">›</span>
+        <span class="breadcrumb-item font-medium">Controleren</span>`;
+    }
+
+    const PRODUCTEN = {
+      'klassiek-1000': { naam: 'Klassiek 1000gr', prijs: 4.20, max: 60 },
+      'klassiek-1200': { naam: 'Klassiek 1200gr', prijs: 5.40, max: 60 },
+      'burger':        { naam: 'Burger buns',      prijs: 0.50, max: 30 },
+      'baguette':      { naam: 'Baguette',          prijs: 5.40, max: 80 },
+      'brioche':       { naam: 'Brioche',            prijs: 0.50, max: 30 },
+    };
+
+    const aantallen = JSON.parse(sessionStorage.getItem('aantallen') || '{"klassiek-1000":20,"baguette":90}');
+
+    let dHtml = '';   // desktop productregels
+    let mHtml = '';   // mobiele productregels
+    let sHtml = '';   // samenvatting (gedeeld)
+    let totaal = 0;
+    let totaalNormaal = 0;
+    let totaalAanvraag = 0;
+    let rijen = 0;
+
+    for (const [id, p] of Object.entries(PRODUCTEN)) {
+      const qty = aantallen[id] || 0;
+      if (qty === 0) continue;
+
+      const normaalQty = Math.min(qty, p.max);
+      const aanvraagQty = Math.max(0, qty - p.max);
+
+      const rijBg = rijen % 2 === 0 ? '#f4f0e6' : '#fdfbf7';
+
+      if (normaalQty > 0) {
+        const bedrag = normaalQty * p.prijs;
+        const bedragStr = bedrag.toFixed(2).replace('.', ',');
+        totaal += bedrag;
+        totaalNormaal += bedrag;
+        dHtml += `
+          <div class="tabel-rij border-t border-[#e0dbd0]" style="background:${rijBg};">
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1">${p.naam}</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:80px;">${normaalQty}</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:100px;">${bedragStr}</span>
+            <div style="width:120px; display:flex; justify-content:flex-end;">
+              <span class="status-pill bg-[#c8f4cd] text-[#1c882a]">
+                <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#1c882a"/></svg>
+                Ingepland
+              </span>
+            </div>
+          </div>`;
+        mHtml += `
+          <div class="flex items-center gap-3 px-4 py-3.5 border-b border-[#cfc8b8] bg-[#fbfaf6]">
+            <div class="flex-1">
+              <p class="font-['Inter',sans-serif] font-medium text-[15px] text-black">${p.naam}</p>
+              <p class="font-['Inter',sans-serif] text-[12px] text-[#8a857a]">${normaalQty} × · €${bedragStr}</p>
+            </div>
+            <span class="status-pill bg-[#c7e0c0] text-[#3e8e4e]">
+              <svg width="6" height="6" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#3e8e4e"/></svg>Ingepland
+            </span>
+          </div>`;
+        rijen++;
+      }
+
+      if (aanvraagQty > 0) {
+        const bedrag = aanvraagQty * p.prijs;
+        const bedragStr = bedrag.toFixed(2).replace('.', ',');
+        totaal += bedrag;
+        totaalAanvraag += bedrag;
+        dHtml += `
+          <div class="tabel-rij border-t border-[#e0dbd0]" style="background:#f4dfc8;">
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e] flex-1">${p.naam}</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:80px;">${aanvraagQty}</span>
+            <span class="font-['Inter',sans-serif] text-[14px] text-[#1e1e1e]" style="width:100px;">${bedragStr}</span>
+            <div style="width:120px; display:flex; justify-content:flex-end;">
+              <span class="status-pill bg-[#f4dfc8] text-[#885f1c]" style="border:1px solid #e8c89a;">
+                <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#ff9900"/></svg>
+                Aanvraag
+              </span>
+            </div>
+          </div>`;
+        mHtml += `
+          <div class="flex items-center gap-3 px-4 py-3.5 border-b border-[#cfc8b8] bg-[#fff2dd]">
+            <div class="flex-1">
+              <p class="font-['Inter',sans-serif] font-medium text-[15px] text-black">${p.naam}</p>
+              <p class="font-['Inter',sans-serif] text-[12px] text-[#8a857a]">${aanvraagQty} × · €${bedragStr}</p>
+            </div>
+            <span class="status-pill bg-[#f6dcbe] text-[#c2641b]">
+              <svg width="6" height="6" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#c2641b"/></svg>Aanvraag
+            </span>
+          </div>`;
+        rijen++;
+      }
+    }
+
+    // Samenvatting (gedeeld door desktop + mobiel)
+    if (totaalNormaal > 0) {
+      sHtml += `
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#2e2e2e"/></svg>
+            <span class="font-['Inter',sans-serif] text-[13px] text-black">Ingepland</span>
+          </div>
+          <span class="font-['Inter',sans-serif] text-[13px] text-[#626262]">€${totaalNormaal.toFixed(2).replace('.', ',')}</span>
+        </div>`;
+    }
+    if (totaalAanvraag > 0) {
+      sHtml += `
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><circle cx="3.5" cy="3.5" r="3.5" fill="#ff9900"/></svg>
+            <span class="font-['Inter',sans-serif] text-[13px] text-[#c35c1d]">Aanvraag</span>
+          </div>
+          <span class="font-['Inter',sans-serif] text-[13px] text-[#c35c1d]">€${totaalAanvraag.toFixed(2).replace('.', ',')}</span>
+        </div>`;
+    }
+
+    const totaalStr = '€' + totaal.toFixed(2).replace('.', ',');
+
+    document.getElementById('product-regels').innerHTML = dHtml;
+    document.getElementById('samenvatting-regels').innerHTML = sHtml;
+    document.getElementById('totaal-bedrag').textContent = totaalStr;
+
+    const mProd = document.getElementById('product-regels-mobile');
+    if (mProd) mProd.innerHTML = mHtml;
+    const mSam = document.getElementById('samenvatting-regels-mobile');
+    if (mSam) mSam.innerHTML = sHtml;
+    const mTot = document.getElementById('totaal-bedrag-mobile');
+    if (mTot) mTot.textContent = totaalStr;
+
+    // Aanvraag-signalering: leverdag-aanvraag of product boven limiet
+    const isAanvraagLeverdag = sessionStorage.getItem('is_aanvraag') === 'true';
+    if (totaalAanvraag > 0 || isAanvraagLeverdag) {
+      document.getElementById('aanvraag-notice').style.display = 'flex';
+      document.getElementById('pagina-subtitel').textContent = 'Controleer je aanvraag. Wolf beoordeelt daarna of dit haalbaar is.';
+      const mNotice = document.getElementById('aanvraag-notice-m');
+      if (mNotice) mNotice.style.display = 'flex';
+      const mSub = document.getElementById('pagina-subtitel-m');
+      if (mSub) mSub.textContent = 'Controleer je aanvraag. Wolf beoordeelt daarna of dit haalbaar is.';
+      if (isAanvraagLeverdag) {
+        document.getElementById('plaatsen-knop').innerHTML =
+          'Aanvraag indienen <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="#f9f7f2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        const mKnop = document.getElementById('plaatsen-knop-m');
+        if (mKnop) mKnop.innerHTML = 'Aanvraag indienen&nbsp;→';
+      }
+    }
+
+    function plaatsBestelling() {
+      sessionStorage.setItem('bestelling_geplaatst', 'true');
+      window.location.href = '1-244-990-bestel-bevestiging.html';
+    }
+  </script>
+</body>
+</html>

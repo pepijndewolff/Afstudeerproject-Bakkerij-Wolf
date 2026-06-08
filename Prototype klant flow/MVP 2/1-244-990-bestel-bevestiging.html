@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bestelling bevestigd — Bakkerij Wolf Bestelportaal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'GT America Extended';
+      src: url('assets/GT America Extended Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    :root { --stroke: #b5ae9c; --wolf-white: #f9f7f2; --wolf-grey: #1e1e1e; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    .font-gt-ext { font-family: 'GT America Extended', "Arial Narrow", Arial, sans-serif; font-weight: 400; }
+    .sidebar-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; color: #000; position: relative; white-space: nowrap; }
+    .sidebar-item:hover { background: rgba(0,0,0,0.04); }
+    .sidebar-item.actief { background: #f9f7f2; font-weight: 500; color: #1e1e1e; }
+    .sidebar-item.actief::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #1e1e1e; border-radius: 0 2px 2px 0; }
+  </style>
+</head>
+<body class="bg-[#ded9cc]" style="min-height:100vh;">
+
+  <!-- ===================== DESKTOP WEERGAVE (≥768px) ===================== -->
+  <div class="hidden md:flex flex-col" style="min-height:100vh;">
+
+    <!-- Header -->
+    <header class="bg-[#ded9cc] flex items-center justify-between px-6 py-4 border-b border-[#c8c3b6]">
+      <div class="flex items-center gap-4">
+        <div class="w-[28px] h-[32px] shrink-0">
+          <img alt="Wolf logo" class="w-full h-full object-contain" src="assets/wolf logo 1.svg">
+        </div>
+        <span class="font-gt-ext text-black tracking-[8px] uppercase text-[16px]">Bakkerij <strong>Wolf</strong></span>
+      </div>
+      <div class="bg-[#f9f7f2] rounded-full px-4 py-1.5">
+        <span id="nav-naam" class="font-gt-ext text-[#1e1e1e] text-[14px]">Juno</span>
+      </div>
+    </header>
+
+    <div class="flex flex-1">
+
+      <!-- Sidebar -->
+      <aside class="bg-[#ded9cc] flex flex-col justify-between border-r border-[#c8c3b6]" style="width:185px; min-height:calc(100vh - 57px);">
+        <nav class="flex flex-col pt-2">
+          <div class="sidebar-item" onclick="window.location.href='1-240-1583-klant-dashboard.html'">Overzicht</div>
+          <div class="sidebar-item actief">Nieuwe bestelling</div>
+          <div class="sidebar-item" onclick="window.location.href='1-363-344-bestelgeschiedenis.html'">Bestel geschiedenis</div>
+        </nav>
+        <div class="sidebar-item text-[#2e2e2e] mb-2" onclick="window.location.href='1-364-544-klant-account.html'">Mijn account</div>
+      </aside>
+
+      <!-- Hoofdinhoud — gecentreerd -->
+      <main class="bg-[#f9f7f2] flex-1 flex flex-col items-center justify-center p-10 text-center">
+
+        <!-- Vinkje -->
+        <div class="mb-6">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="37" stroke="#1c882a" stroke-width="3"/>
+            <path d="M25 40.5l10 10 20-20" stroke="#1c882a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Titel + tekst -->
+        <h1 class="js-titel font-['Inter',sans-serif] font-bold text-[32px] text-black mb-3" id="pagina-titel">Bestelling geplaatst</h1>
+        <p class="js-bevestiging font-['Inter',sans-serif] text-[16px] text-[#2e2e2e] max-w-[460px] mb-2" id="bevestiging-tekst">
+          Je bestelling voor dinsdag 24 maart is ontvangen en meegenomen in de productieplanning van Bakkerij Wolf.
+        </p>
+        <p class="js-email font-['Inter',sans-serif] text-[15px] text-[#626262] max-w-[460px] mb-6" id="email-tekst"></p>
+
+        <!-- Aanvraag-melding (alleen tonen als er een aanvraag is) -->
+        <div id="aanvraag-melding" class="js-aanvraag-melding bg-[#f4e0c8] border border-[#e8c89a] rounded-[10px] flex items-start gap-3 px-5 py-4 max-w-[520px] mb-8 text-left" style="display:none;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0; margin-top:1px;">
+            <path d="M10 2L2 17h16L10 2z" stroke="#c35c1d" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M10 8v4M10 13.5h.01" stroke="#c35c1d" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <p class="js-aanvraag-tekst font-['Inter',sans-serif] text-[14px] text-[#c35c1d] leading-relaxed" id="aanvraag-tekst">
+            De 10 extra baguettes zijn verstuurd als aanvraag. Wolf laat je zo snel mogelijk weten of dit haalbaar is binnen de planning.
+          </p>
+        </div>
+
+        <!-- Knoppen -->
+        <div class="flex gap-3">
+          <button onclick="window.location.href='1-240-1583-klant-dashboard.html'" class="bg-[#2e2e2e] text-[#f9f7f2] font-['Inter',sans-serif] font-medium text-[14px] px-5 py-3 rounded-[8px] flex items-center gap-2 hover:bg-[#1a1a1a] transition-colors cursor-pointer">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M6.5 3.5L3 7l3.5 3.5" stroke="#f9f7f2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Terug naar dashboard
+          </button>
+          <button onclick="bekijkBestelling()" class="bg-[#2e2e2e] text-[#f9f7f2] font-['Inter',sans-serif] font-medium text-[14px] px-5 py-3 rounded-[8px] flex items-center gap-2 hover:bg-[#1a1a1a] transition-colors cursor-pointer">
+            Bekijk bestelling
+          </button>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================== MOBIELE WEERGAVE (<768px) ===================== -->
+  <div class="md:hidden flex flex-col min-h-screen bg-[#f4f1e8]">
+
+    <header class="bg-[#efeadd] flex items-center px-[18px] py-[14px] sticky top-0 z-20">
+      <div class="flex items-center gap-2">
+        <img alt="Wolf logo" class="w-[22px] h-[24px] object-contain" src="assets/wolf logo 1.svg">
+        <span class="font-gt-ext text-black tracking-[6px] uppercase text-[14px]">Bakkerij <strong>Wolf</strong></span>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto flex flex-col items-center justify-center text-center px-7 py-8 pb-[110px] bg-[#f9f7f2]">
+      <div class="w-[96px] h-[96px] rounded-full border-[3px] border-[#3e8e4e] flex items-center justify-center mb-6 shrink-0">
+        <svg width="46" height="46" viewBox="0 0 80 80" fill="none"><path d="M25 40.5l10 10 20-20" stroke="#3e8e4e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <h1 class="js-titel font-['Inter',sans-serif] font-extrabold text-[27px] text-black mb-3">Bestelling geplaatst</h1>
+      <p class="js-bevestiging font-['Inter',sans-serif] text-[14px] text-[#55524b] leading-relaxed mb-2">
+        Je bestelling voor dinsdag 24 maart is ontvangen en meegenomen in de productieplanning van Bakkerij Wolf.
+      </p>
+      <p class="js-email font-['Inter',sans-serif] text-[13px] text-[#626262] mb-6"></p>
+
+      <!-- Aanvraag-melding (mobiel) -->
+      <div class="js-aanvraag-melding bg-[#f7e2cb] border border-[#e0a35f] rounded-[12px] flex items-start gap-2.5 px-4 py-3.5 mb-7 text-left" style="display:none;">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none" style="flex-shrink:0; margin-top:2px;">
+          <path d="M10 2L2 17h16L10 2z" stroke="#c2641b" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M10 8v4M10 13.5h.01" stroke="#c2641b" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <p class="js-aanvraag-tekst font-['Inter',sans-serif] text-[13px] text-[#c2641b] leading-relaxed">De 10 extra baguettes zijn verstuurd als aanvraag. Wolf laat je zo snel mogelijk weten of dit haalbaar is binnen de planning.</p>
+      </div>
+
+      <!-- Knoppen -->
+      <div class="w-full flex flex-col gap-2.5">
+        <button onclick="window.location.href='1-240-1583-klant-dashboard.html'" class="w-full bg-[#2c2a27] text-white rounded-[10px] py-3.5 font-['Inter',sans-serif] font-semibold text-[15px] flex items-center justify-center gap-2 cursor-pointer">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M12 7.5H3.5M6.5 4L3 7.5 6.5 11" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Terug naar dashboard
+        </button>
+        <button onclick="bekijkBestelling()" class="w-full border border-black rounded-[10px] py-3.5 font-['Inter',sans-serif] font-semibold text-[15px] cursor-pointer">Bekijk bestelling</button>
+      </div>
+    </main>
+
+    <!-- Bottom-nav -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#efeadd] border-t border-[#cfc8b8] flex px-1.5 py-2 z-20">
+      <a href="1-240-1583-klant-dashboard.html" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#8a857a]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" opacity="0.7"><path d="M4 8.5 10 3.5l6 5V16a1 1 0 0 1-1 1h-3v-4H8v4H5a1 1 0 0 1-1-1V8.5Z" stroke="#8a857a" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <span class="font-['Inter',sans-serif] font-medium text-[10.5px]">Overzicht</span>
+      </a>
+      <span class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#1e1e1c]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 6h10l-1 9a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6Z" stroke="#1e1e1c" stroke-width="1.4" stroke-linejoin="round"/><path d="M7.5 6a2.5 2.5 0 0 1 5 0" stroke="#1e1e1c" stroke-width="1.4"/></svg>
+        <span class="font-['Inter',sans-serif] font-bold text-[10.5px]">Bestellen</span>
+      </span>
+      <a href="1-363-344-bestelgeschiedenis.html" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#8a857a]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" opacity="0.7"><circle cx="10" cy="10" r="6.5" stroke="#8a857a" stroke-width="1.4"/><path d="M10 6.5V10l2.5 1.5" stroke="#8a857a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="font-['Inter',sans-serif] font-medium text-[10.5px]">Historie</span>
+      </a>
+      <a href="1-364-544-klant-account.html" class="flex-1 flex flex-col items-center gap-[3px] py-1 text-[#8a857a]">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" opacity="0.7"><circle cx="10" cy="7" r="3" stroke="#8a857a" stroke-width="1.4"/><path d="M4.5 16a5.5 5.5 0 0 1 11 0" stroke="#8a857a" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="font-['Inter',sans-serif] font-medium text-[10.5px]">Account</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script>
+    const naam = sessionStorage.getItem('klant_naam') || 'Juno';
+    const leverdagLabel = sessionStorage.getItem('leverdag_label') || 'dinsdag 24 maart';
+    const heeftAanvraag = sessionStorage.getItem('heeft_aanvraag') === 'true';
+    const isAanvraagLeverdag = sessionStorage.getItem('is_aanvraag') === 'true';
+    const klantEmail = sessionStorage.getItem('klant_email') || 'test@klant.nl';
+
+    document.getElementById('nav-naam').textContent = naam;
+
+    const lower = leverdagLabel.toLowerCase();
+    let titel, bevestigingHtml;
+    if (isAanvraagLeverdag) {
+      titel = 'Aanvraag ingediend';
+      bevestigingHtml = 'Je aanvraag voor <strong>' + lower + '</strong> is ingediend. Wacht op beoordeling — Wolf laat je zo snel mogelijk weten of dit nog haalbaar is.';
+    } else {
+      titel = 'Bestelling geplaatst';
+      bevestigingHtml = 'Je bestelling voor ' + lower + ' is ontvangen en meegenomen in de productieplanning van Bakkerij Wolf.';
+    }
+    document.querySelectorAll('.js-titel').forEach(el => el.textContent = titel);
+    document.querySelectorAll('.js-bevestiging').forEach(el => el.innerHTML = bevestigingHtml);
+
+    // E-mailregel
+    const soort = (isAanvraagLeverdag || heeftAanvraag) ? 'aanvraag' : 'bestelling';
+    const emailTekst = 'Bedankt voor je ' + soort + '. Een kopie is verstuurd naar ' + klantEmail + '.';
+    document.querySelectorAll('.js-email').forEach(el => el.textContent = emailTekst);
+
+    // Aanvraagmelding tonen indien relevant
+    if (heeftAanvraag || isAanvraagLeverdag) {
+      document.querySelectorAll('.js-aanvraag-melding').forEach(el => el.style.display = 'flex');
+      if (isAanvraagLeverdag) {
+        document.querySelectorAll('.js-aanvraag-tekst').forEach(el =>
+          el.textContent = 'Nog niet definitief. Wolf beoordeelt of dit nog haalbaar is binnen de planning.');
+      }
+    }
+
+    // Sessie opruimen na plaatsen
+    sessionStorage.removeItem('aantallen');
+    sessionStorage.removeItem('is_aanvraag');
+    sessionStorage.removeItem('heeft_aanvraag');
+
+    function bekijkBestelling() {
+      window.location.href = '1-240-1583-klant-dashboard.html';
+    }
+  </script>
+</body>
+</html>
